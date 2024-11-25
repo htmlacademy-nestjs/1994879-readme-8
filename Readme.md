@@ -1,7 +1,7 @@
 # Личный проект «Readme»
 
 * Студент: [Евгений Попов](https://up.htmlacademy.ru/nodejs-2/8/user/1994879).
-* Наставник: `Неизвестно`.
+* Наставник: [Константин Ильин](https://htmlacademy.ru/profile/id2374827).
 
 ---
 
