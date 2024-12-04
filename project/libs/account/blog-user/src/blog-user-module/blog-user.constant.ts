@@ -1,1 +1,1 @@
-export const SALT_ROUNDS = '';
+export const SALT_ROUNDS = 10;
