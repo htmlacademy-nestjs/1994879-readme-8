@@ -10,9 +10,10 @@ import { setupSwagger } from '@project/helpers';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  setupSwagger(app, 'Media');
   const globalPrefix = 'api';
   app.setGlobalPrefix(globalPrefix);
+
+  setupSwagger(app, 'Media');
   const port = process.env.PORT || 3000;
   await app.listen(port);
   Logger.log(
