@@ -1,34 +1,38 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, ClassSerializerInterceptor, Controller, Get, Param, Patch, Post, SerializeOptions, UseInterceptors } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
+import { UserRDO } from '../rdo/user.rdo';
+import { LoggedUserRDO } from '../rdo/logged-user.rdo';
 
 @Controller('auth')
+@UseInterceptors(ClassSerializerInterceptor)
+@SerializeOptions({ type: UserRDO, excludeExtraneousValues: true })
 export class AuthenticationController {
   constructor(private readonly authService: AuthenticationService) {}
 
   @Post('register')
+
   public async create(@Body() dto: CreateUserDto) {
-    const newUser = await this.authService.register(dto);
-    return newUser.toPOJO();
+    return await this.authService.register(dto);
   }
 
-  @Post('login')
+  @Post('')
+  @SerializeOptions({ type: LoggedUserRDO, excludeExtraneousValues: true })
   public async login(@Body() dto: LoginUserDto) {
-    const verifiedUser = await this.authService.verifyUser(dto);
-    return verifiedUser.toPOJO();
+    return await this.authService.verifyUser(dto);
   }
 
   @Get(':id')
+  @SerializeOptions({ type: UserRDO })
   public async show(@Param('id') id: string) {
-    const existUser = await this.authService.getUser(id);
-    return existUser.toPOJO();
+    return await this.authService.getUser(id);
   }
 
-  @Post(':id/change-password')
+  @Patch(':id')
+  @SerializeOptions({ type: UserRDO })
   public async changePassword(@Param('id') id: string, @Body() dto: ChangePasswordDto) {
-    const user = await this.authService.changePassword(id, dto);
-    return user.toPOJO();
+    return await this.authService.changePassword(id, dto);
   }
 }

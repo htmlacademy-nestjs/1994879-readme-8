@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class UserRdo {
+export class UserRDO {
   @Expose()
   public id: string;
 
