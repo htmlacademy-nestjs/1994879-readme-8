@@ -1,4 +1,14 @@
-import { Body, ClassSerializerInterceptor, Controller, Get, Param, Patch, Post, SerializeOptions, UseInterceptors } from '@nestjs/common';
+import {
+  Body,
+  ClassSerializerInterceptor,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  SerializeOptions,
+  UseInterceptors,
+} from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -13,7 +23,6 @@ export class AuthenticationController {
   constructor(private readonly authService: AuthenticationService) {}
 
   @Post('register')
-
   public async create(@Body() dto: CreateUserDto) {
     return await this.authService.register(dto);
   }
