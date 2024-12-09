@@ -1,7 +1,7 @@
 {
-  "name": "media",
+  "name": "file-vault",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/media/src",
+  "sourceRoot": "apps/file-vault/src",
   "projectType": "application",
   "tags": [],
   "targets": {
@@ -10,15 +10,15 @@
       "defaultConfiguration": "development",
       "dependsOn": ["build"],
       "options": {
-        "buildTarget": "media:build",
+        "buildTarget": "file-vault:build",
         "runBuildTargetDependencies": false
       },
       "configurations": {
         "development": {
-          "buildTarget": "media:build:development"
+          "buildTarget": "file-vault:build:development"
         },
         "production": {
-          "buildTarget": "media:build:production"
+          "buildTarget": "file-vault:build:production"
         }
       }
     }

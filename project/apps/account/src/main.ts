@@ -7,10 +7,11 @@ import { Logger } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { setupSwagger } from '@project/helpers';
+import { APP_PREFIX } from '@project/core';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
+  const globalPrefix = APP_PREFIX;
   app.setGlobalPrefix(globalPrefix);
 
   setupSwagger(app, 'Account');

@@ -1,5 +1,6 @@
 import { INestApplication } from '@nestjs/common';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { APP_PREFIX } from '@project/core';
 
 export function setupSwagger(app: INestApplication, title: string) {
   const config = new DocumentBuilder()
@@ -9,5 +10,5 @@ export function setupSwagger(app: INestApplication, title: string) {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api', app, document);
+  SwaggerModule.setup(APP_PREFIX, app, document);
 }
