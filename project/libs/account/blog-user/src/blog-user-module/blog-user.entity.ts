@@ -28,6 +28,7 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
   }
 
   public toPOJO(): AuthUser {
+    console.log('toPOJO = ', this);
     return {
       id: this.id,
       email: this.email,

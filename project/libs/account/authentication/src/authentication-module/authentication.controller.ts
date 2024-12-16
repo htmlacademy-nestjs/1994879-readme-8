@@ -45,7 +45,6 @@ export class AuthenticationController {
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.UserFound })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
-  @SerializeOptions({ type: UserRDO })
   public async show(@Param('id') id: string) {
     return await this.authService.getUser(id);
   }
@@ -54,7 +53,6 @@ export class AuthenticationController {
   @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.UserFound })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: AuthResponseDescription.LoggedError })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
-  @SerializeOptions({ type: UserRDO })
   public async changePassword(@Param('id') id: string, @Body() dto: ChangePasswordDto) {
     return await this.authService.changePassword(id, dto);
   }

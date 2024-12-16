@@ -16,7 +16,7 @@ export class AuthenticationService {
     }
 
     const userEntity = await new BlogUserEntity({ ...dto, passwordHash: '' }).setPassword(dto.password);
-    this.blogUserRepository.save(userEntity);
+    await this.blogUserRepository.save(userEntity);
 
     return userEntity;
   }
@@ -52,7 +52,7 @@ export class AuthenticationService {
     await this.checkUserPassword(user, password);
 
     const updatedUser = await user.setPassword(newPassword);
-    this.blogUserRepository.update(updatedUser);
+    await this.blogUserRepository.update(updatedUser);
 
     return updatedUser;
   }

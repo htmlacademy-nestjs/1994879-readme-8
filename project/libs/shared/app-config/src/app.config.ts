@@ -21,7 +21,6 @@ export class AppConfig {
 export async function validateConfig(config: AppConfig) {
   const validatedConfig = plainToClass(AppConfig, config);
   const errors = await validate(validatedConfig);
-  console.log(errors);
 
   if (errors.length > 0) {
     const errorMessages = errors.map((error) => Object.values(error.constraints).join(', ')).join('\n');
