@@ -19,7 +19,7 @@ import { LoggedUserRDO } from '../rdo/logged-user.rdo';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponseDescription } from './authentication.constant';
 
-@ApiTags('authentication')
+@ApiTags('Authentication')
 @Controller('auth')
 @UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserRDO, excludeExtraneousValues: true })
