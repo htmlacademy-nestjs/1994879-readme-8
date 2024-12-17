@@ -1,13 +1,18 @@
-import { ApiProperty } from "@nestjs/swagger";
-import { IsString, Length } from "class-validator";
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEmail, IsString, Length } from 'class-validator';
+import {
+  AuthSwaggerMessage,
+  PasswordLimit,
+} from '../authentication-module/authentication.constant';
 
 export class LoginUserDto {
   @IsString()
-  @ApiProperty({ required: true, type: String, example: 'user@notfound.local' })
+  @IsEmail()
+  @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.email })
   public email!: string;
 
   @IsString()
-  @Length(6, 12)
-  @ApiProperty({ required: true, type: String, example: 'Passwod_123' })
+  @Length(PasswordLimit.Min, PasswordLimit.Max, { message: PasswordLimit.Description })
+  @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.password })
   public password!: string;
 }

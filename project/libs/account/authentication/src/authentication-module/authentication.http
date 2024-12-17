@@ -11,12 +11,12 @@ Content-Type: application/json
 ###
 
 # Get user by ID
-GET http://localhost:3000/api/auth/efe03a1a-2d24-41cd-bda8-d23abaf6ca7d HTTP/1.1
+GET http://localhost:3000/api/auth/67608860bd69e5b9f659871b HTTP/1.1
 
 ###
 
 # Login user by email and password
-POST http://localhost:3000/api/auth/login HTTP/1.1
+POST http://localhost:3000/api/auth HTTP/1.1
 Content-Type: application/json
 
 {
@@ -27,7 +27,7 @@ Content-Type: application/json
 ###
 
 # Login user by email and password
-POST http://localhost:3000/api/auth/5435b24c-2ac8-4b8d-b1a0-70d6ddd1b3f1/change-password HTTP/1.1
+PATCH http://localhost:3000/api/auth/67608860bd69e5b9f659871b HTTP/1.1
 Content-Type: application/json
 
 {

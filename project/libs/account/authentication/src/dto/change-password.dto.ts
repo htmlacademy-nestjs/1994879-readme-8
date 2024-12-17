@@ -1,14 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, Length } from 'class-validator';
+import {
+  AuthSwaggerMessage,
+  PasswordLimit,
+} from '../authentication-module/authentication.constant';
 
 export class ChangePasswordDto {
   @IsString()
-  @Length(6, 12)
-  @ApiProperty({ required: true, example: '123456' })
+  @Length(PasswordLimit.Min, PasswordLimit.Max, { message: PasswordLimit.Description })
+  @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.password })
   public password!: string;
 
   @IsString()
-  @Length(6, 12)
-  @ApiProperty({ required: true, example: '654321' })
+  @Length(PasswordLimit.Min, PasswordLimit.Max, { message: PasswordLimit.Description })
+  @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.password })
   public newPassword!: string;
 }

@@ -15,6 +15,8 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@project/account-config": ["libs/account/config/src/index.ts"],
+      "@project/app-config": ["libs/shared/app-config/src/index.ts"],
       "@project/authentication": ["libs/account/authentication/src/index.ts"],
       "@project/blog-comment": ["libs/blog/blog-comment/src/index.ts"],
       "@project/blog-feed": ["libs/blog/blog-feed/src/index.ts"],

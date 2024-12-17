@@ -9,8 +9,9 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
   public name!: string;
   public avatar?: string;
   public passwordHash!: string;
+  public registrationDate!: Date;
 
-  constructor(user?: AuthUser) {
+  constructor(user: AuthUser) {
     super();
     this.populate(user);
   }
@@ -34,7 +35,7 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
       name: this.name,
       avatar: this.avatar,
       passwordHash: this.passwordHash,
-    }
+    };
   }
 
   public async setPassword(password: string): Promise<BlogUserEntity> {
