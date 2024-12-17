@@ -8,14 +8,21 @@ export abstract class BaseMongoRepository<
   DocumentType extends Document
 > implements Repository<T>
 {
-  constructor(protected readonly entityFactory: EntityFactory<T>, protected readonly model: Model<DocumentType>) {}
+  constructor(
+    protected entityFactory: EntityFactory<T>,
+    protected readonly model: Model<DocumentType>
+  ) {}
 
-  protected createEntityFromDocument(document: DocumentType | null): T | null {
+  protected createEntityFromDocument(document: DocumentType): T | null {
     if (!document) {
       return null;
     }
 
-    const plainObject = document.toObject({ versionKey: false }) as ReturnType<T['toPOJO']>;
+    const plainObject = document.toObject({
+      getters: true,
+      versionKey: false,
+      flattenObjectIds: true,
+    }) as ReturnType<T['toPOJO']>;
     return this.entityFactory.create(plainObject);
   }
 
@@ -26,8 +33,9 @@ export abstract class BaseMongoRepository<
 
   public async save(entity: T): Promise<void> {
     const newEntity = new this.model(entity.toPOJO());
-    const savedDocument = await newEntity.save();
-    entity.id = savedDocument._id.toString();
+    await newEntity.save();
+
+    entity.id = newEntity._id.toString();
   }
 
   public async update(entity: T): Promise<void> {

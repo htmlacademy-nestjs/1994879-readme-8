@@ -36,7 +36,7 @@ async function getConfig(): Promise<AppConfig> {
     title: process.env.SWAGGER_TITLE,
   };
 
-  return await validateConfig(config);
+  return validateConfig(config);
 }
 
 export const appConfig = registerAs('application', getConfig);

@@ -1,1 +1,1 @@
-export { validateConfig, AppConfig, appConfig } from './app.config';
+export { validateConfig, appConfig } from './app.config';

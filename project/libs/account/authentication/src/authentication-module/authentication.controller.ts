@@ -30,30 +30,36 @@ export class AuthenticationController {
   @ApiResponse({ status: HttpStatus.CREATED, description: AuthResponseDescription.UserCreated })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: AuthResponseDescription.UserExist })
   public async create(@Body() dto: CreateUserDto) {
-    return await this.authService.register(dto);
+    return this.authService.register(dto);
   }
 
-  @Post('')
+  @Post()
   @ApiResponse({ status: HttpStatus.CREATED, description: AuthResponseDescription.LoggedSuccess })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: AuthResponseDescription.LoggedError })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: AuthResponseDescription.LoggedError,
+  })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
   @SerializeOptions({ type: LoggedUserRDO, excludeExtraneousValues: true })
   public async login(@Body() dto: LoginUserDto) {
-    return await this.authService.verifyUser(dto);
+    return this.authService.verifyUser(dto);
   }
 
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.UserFound })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
   public async show(@Param('id') id: string) {
-    return await this.authService.getUser(id);
+    return this.authService.getUser(id);
   }
 
   @Patch(':id')
   @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.UserFound })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: AuthResponseDescription.LoggedError })
+  @ApiResponse({
+    status: HttpStatus.UNAUTHORIZED,
+    description: AuthResponseDescription.LoggedError,
+  })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
   public async changePassword(@Param('id') id: string, @Body() dto: ChangePasswordDto) {
-    return await this.authService.changePassword(id, dto);
+    return this.authService.changePassword(id, dto);
   }
 }

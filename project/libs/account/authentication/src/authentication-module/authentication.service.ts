@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { BlogUserRepository, BlogUserEntity } from '@project/blog-user';
 import { AuthMessage } from './authentication.constant';
 import { CreateUserDto } from '../dto/create-user.dto';
@@ -15,7 +20,9 @@ export class AuthenticationService {
       throw new ConflictException(AuthMessage.Exists);
     }
 
-    const userEntity = await new BlogUserEntity({ ...dto, passwordHash: '' }).setPassword(dto.password);
+    const userEntity = await new BlogUserEntity({ ...dto, passwordHash: '' }).setPassword(
+      dto.password
+    );
     await this.blogUserRepository.save(userEntity);
 
     return userEntity;
