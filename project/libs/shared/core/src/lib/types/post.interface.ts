@@ -1,8 +1,6 @@
-import { Comment } from "./comment.interface";
-import { PostStatus } from "./post-status.enum";
-import { PostType } from "./post-type.enum";
-
-type Like = string;
+import { Comment } from './comment.interface';
+import { PostStatus } from './post-status.enum';
+import { PostType } from './post-type.enum';
 
 interface BasePost {
   id?: string;
@@ -12,7 +10,7 @@ interface BasePost {
   tags?: string[];
   userId: string;
   comments: Comment[];
-  likes: Like[];
+  favorites: string[];
   isRepost: boolean;
   originalId: string;
   originalUserId: string;

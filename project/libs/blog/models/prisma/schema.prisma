@@ -1,0 +1,79 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../../../../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum PostType {
+  Video
+  Text
+  Photo
+  Link
+  Quote
+}
+
+enum PostStatus {
+  Published
+  Draft
+}
+
+model Post {
+  id          String     @id @default(cuid())
+  type        PostType
+  status      PostStatus
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  userId      String     @map("user_id")
+  title       String?
+  description String?
+  url         String?
+  text        String?
+  authorId    String?    @map("author_id")
+
+  repostId String? @map("repost_id")
+  repost   Post?   @relation("repost", fields: [repostId], references: [id])
+
+  tags      Tag[]
+  comments  Comment[]
+  favorites Favorite[]
+
+  Post Post[] @relation("repost")
+}
+
+model Tag {
+  name  String @id @unique
+  posts Post[]
+
+  @@map("tags")
+}
+
+model Comment {
+  id        String   @id @default(uuid())
+  message   String
+  userId    String   @map("user_id")
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  postId String @map("post_id")
+  post   Post   @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([postId])
+  @@map("comments")
+}
+
+model Favorite {
+  id        String   @id @default(cuid())
+  userId    String
+  postId    String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  post Post @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@index([postId])
+  @@map("favorites")
+}
