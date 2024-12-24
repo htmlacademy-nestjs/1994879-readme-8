@@ -2,10 +2,7 @@
   "name": "@project/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {
-    "docker:up": "docker compose --file ./apps/account/docker-compose.yml --project-name \"readme-account\" --env-file ./apps/account/.env up -d",
-    "docker:down": "docker compose --file ./apps/account/docker-compose.yml --project-name \"readme-account\" down"
-  },
+  "scripts": {},
   "private": true,
   "dependencies": {
     "@nestjs/common": "^10.0.2",

@@ -42,6 +42,7 @@ model Post {
   favorites Favorite[]
 
   Post Post[] @relation("repost")
+  @@map("posts")
 }
 
 model Tag {

@@ -63,6 +63,20 @@
         "command": "npx prisma migrate reset --schema ./schema.prisma --force & npx ts-node seed.ts",
         "cwd": "libs/blog/models/prisma"
       }
+    },
+    "docker:up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose --file ./docker-compose.yml --project-name readme-blog --env-file .env up -d",
+        "cwd": "apps/blog"
+      }
+    },
+    "docker:down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose --file ./docker-compose.yml --project-name readme-blog down",
+        "cwd": "apps/blog"
+      }
     }
   }
 }
