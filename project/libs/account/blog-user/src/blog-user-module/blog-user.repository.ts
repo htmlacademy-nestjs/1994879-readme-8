@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BaseMongoRepository } from '@project/data-access';
 import { BlogUserEntity } from './blog-user.entity';
 import { BlogUserFactory } from './blog-user.factory';

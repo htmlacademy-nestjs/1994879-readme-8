@@ -13,4 +13,6 @@ export { PostStatus } from './lib/types/post-status.enum';
 export { PostType } from './lib/types/post-type.enum';
 export { StorableEntity } from './lib/interfaces/storable-entity.interface';
 export { EntityFactory } from './lib/interfaces/entity-factory.interface';
+export { Comment } from './lib/types/comment.interface';
+export { Tag } from './lib/types/tag.interface';
 export { APP_PREFIX } from './lib/constants/app.config';

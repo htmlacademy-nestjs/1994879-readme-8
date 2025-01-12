@@ -1,42 +1,31 @@
-import { Entity, PostStatus, PostType } from '@project/core';
-import { StorableEntity, Post } from '@project/core';
+import {
+  Entity,
+  LinkPost,
+  PhotoPost,
+  PostStatus,
+  PostType,
+  QuotePost,
+  TextPost,
+  VideoPost,
+} from '@project/core';
+import { StorableEntity, Post, Tag } from '@project/core';
 
 export class PostEntity extends Entity implements StorableEntity<Post> {
   type: PostType;
   status: PostStatus;
   createdAt: Date;
   updatedAt: Date;
+  publicationDate: Date;
   userId: string;
   title?: string;
   description?: string;
   url?: string;
   text?: string;
-  comments: Comment[];
-  favorites: string[];
+  author: string;
+  tags?: Tag[];
   isRepost: boolean;
   originalId: string;
   originalUserId: string;
-
-  tags?: string[];
-
-  // id          String     @id @default(cuid())
-  // type        PostType
-  // status      PostStatus
-  // createdAt   DateTime   @default(now()) @map("created_at")
-  // updatedAt   DateTime   @updatedAt @map("updated_at")
-  // userId      String     @map("user_id")
-  // title       String?
-  // description String?
-  // url         String?
-  // text        String?
-  // authorId    String?    @map("author_id")
-
-  // repostId String? @map("repost_id")
-  // repost   Post?   @relation("repost", fields: [repostId], references: [id])
-
-  // tags      Tag[]
-  // comments  Comment[]
-  // favorites Favorite[]
 
   constructor(post: Post) {
     super();
@@ -48,30 +37,100 @@ export class PostEntity extends Entity implements StorableEntity<Post> {
       return;
     }
 
-    this.id = user.id ?? '';
-    this.email = user.email;
-    this.name = user.name;
-    this.avatar = user.avatar ?? '';
-    this.passwordHash = user.passwordHash;
+    this.id = post.id ?? undefined;
+    this.type = post.type;
+    this.status = post.status;
+    this.publicationDate = post.publicationDate;
+    this.userId = post.userId;
+    this.tags = post.tags;
+    this.isRepost = post.isRepost;
+    this.originalId = post.originalId;
+    this.originalUserId = post.originalUserId;
+
+    switch (post.type) {
+      case PostType.Video: {
+        const { title, url, text } = post as VideoPost;
+        this.title = title;
+        this.url = url;
+        this.text = text;
+        break;
+      }
+      case PostType.Text: {
+        const { title, description, text } = post as TextPost;
+        this.title = title;
+        this.description = description;
+        this.text = text;
+        break;
+      }
+      case PostType.Photo: {
+        const { url } = post as PhotoPost;
+        this.url = url;
+        break;
+      }
+      case PostType.Link: {
+        const { url, description } = post as LinkPost;
+        this.url = url;
+        this.description = description;
+        break;
+      }
+      case PostType.Quote: {
+        const { author, text } = post as QuotePost;
+        this.author = author;
+        this.text = text;
+        break;
+      }
+    }
   }
 
-  public toPOJO(): AuthUser {
-    return {
+  public toPOJO(): Post {
+    const basePost = {
       id: this.id,
-      email: this.email,
-      name: this.name,
-      avatar: this.avatar,
-      passwordHash: this.passwordHash,
+      type: this.type,
+      status: this.status,
+      publicationDate: this.publicationDate,
+      userId: this.userId,
+      tags: this.tags,
+      isRepost: this.isRepost,
+      originalId: this.originalId,
+      originalUserId: this.originalUserId,
     };
-  }
 
-  public async setPassword(password: string): Promise<BlogUserEntity> {
-    const salt = await genSalt(SALT_ROUNDS);
-    this.passwordHash = await hash(password, salt);
-    return this;
-  }
+    switch (this.type) {
+      case PostType.Video:
+        return {
+          ...basePost,
+          title: this.title,
+          url: this.url,
+          text: this.text,
+        } as VideoPost;
 
-  public async comparePassword(password: string): Promise<boolean> {
-    return compare(password, this.passwordHash);
+      case PostType.Text:
+        return {
+          ...basePost,
+          title: this.title,
+          description: this.description,
+          text: this.text,
+        } as TextPost;
+
+      case PostType.Photo:
+        return {
+          ...basePost,
+          url: this.url,
+        } as PhotoPost;
+
+      case PostType.Link:
+        return {
+          ...basePost,
+          url: this.url,
+          description: this.description,
+        } as LinkPost;
+
+      case PostType.Quote:
+        return {
+          ...basePost,
+          author: this.author,
+          text: this.text,
+        } as QuotePost;
+    }
   }
 }

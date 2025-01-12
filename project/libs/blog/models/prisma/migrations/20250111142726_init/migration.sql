@@ -12,11 +12,11 @@ CREATE TABLE "posts" (
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
     "user_id" TEXT NOT NULL,
-    "title" TEXT,
-    "description" TEXT,
+    "title" VARCHAR(50),
+    "description" VARCHAR(300),
     "url" TEXT,
-    "text" TEXT,
-    "author_id" TEXT,
+    "text" VARCHAR(1024),
+    "author" TEXT,
     "repost_id" TEXT,
 
     CONSTRAINT "posts_pkey" PRIMARY KEY ("id")
@@ -24,7 +24,7 @@ CREATE TABLE "posts" (
 
 -- CreateTable
 CREATE TABLE "tags" (
-    "name" TEXT NOT NULL,
+    "name" VARCHAR(10) NOT NULL,
 
     CONSTRAINT "tags_pkey" PRIMARY KEY ("name")
 );
@@ -32,7 +32,7 @@ CREATE TABLE "tags" (
 -- CreateTable
 CREATE TABLE "comments" (
     "id" TEXT NOT NULL,
-    "message" TEXT NOT NULL,
+    "message" VARCHAR(300) NOT NULL,
     "user_id" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -43,31 +43,25 @@ CREATE TABLE "comments" (
 
 -- CreateTable
 CREATE TABLE "favorites" (
-    "id" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "postId" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updated_at" TIMESTAMP(3) NOT NULL,
-
-    CONSTRAINT "favorites_pkey" PRIMARY KEY ("id")
+    "updated_at" TIMESTAMP(3) NOT NULL
 );
 
 -- CreateTable
 CREATE TABLE "_PostToTag" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL,
+    "B" VARCHAR(10) NOT NULL,
 
     CONSTRAINT "_PostToTag_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tags_name_key" ON "tags"("name");
-
--- CreateIndex
 CREATE INDEX "comments_post_id_idx" ON "comments"("post_id");
 
 -- CreateIndex
-CREATE INDEX "favorites_postId_idx" ON "favorites"("postId");
+CREATE UNIQUE INDEX "favorites_userId_postId_key" ON "favorites"("userId", "postId");
 
 -- CreateIndex
 CREATE INDEX "_PostToTag_B_index" ON "_PostToTag"("B");

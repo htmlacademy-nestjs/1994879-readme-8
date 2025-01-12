@@ -2,11 +2,11 @@ import { PostStatus, PostType, PrismaClient } from '@prisma/client';
 import { Comment } from '../../../shared/core/src/lib/types/comment.interface';
 
 const getTags = () => [
-  { name: 'Technology' },
-  { name: 'Health' },
-  { name: 'Lifestyle' },
-  { name: 'Education' },
-  { name: 'Travel' },
+  { name: 'technology' },
+  { name: 'health' },
+  { name: 'lifestyle' },
+  { name: 'education' },
+  { name: 'travel' },
 ];
 
 const getPosts = () => [
@@ -17,26 +17,24 @@ const getPosts = () => [
     title: 'Understanding TypeScript',
     description: 'A comprehensive guide to TypeScript.',
     url: 'https://example.com/typescript-guide',
-    text: 'TypeScript is a typed superset of JavaScript...',
-    authorId: 'author1',
+    tags: ['travel', 'health'],
   },
   {
-    type: PostType.Text,
+    type: PostType.Quote,
     status: PostStatus.Draft,
     userId: 'user2',
     title: 'My Journey to Fitness',
     description: 'Sharing my fitness journey and tips.',
     text: 'I started my fitness journey a year ago...',
-    authorId: 'author2',
+    author: 'Ernesto Maduro',
+    tags: ['travel'],
   },
   {
     type: PostType.Photo,
     status: PostStatus.Published,
     userId: 'user3',
     title: 'Beautiful Sunset',
-    description: 'Captured this beautiful sunset during my trip.',
     url: 'https://example.com/sunset-photo',
-    authorId: 'author3',
   },
 ];
 
@@ -45,9 +43,18 @@ async function seedDb(prismaClient: PrismaClient) {
   await prismaClient.tag.createMany({ data: tags, skipDuplicates: true });
 
   const posts = getPosts();
-  await prismaClient.post.createMany({
-    data: posts,
-  });
+  for (const post of posts) {
+    await prismaClient.post.create({
+      data: {
+        ...post,
+        tags: post.tags
+          ? {
+              connect: post.tags.map((tag) => ({ name: tag })),
+            }
+          : undefined,
+      },
+    });
+  }
 
   const [firstPost, secondPost] = await prismaClient.post.findMany({ take: 2 });
   await prismaClient.favorite.createMany({
