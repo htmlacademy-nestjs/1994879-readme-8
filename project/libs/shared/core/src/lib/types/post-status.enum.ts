@@ -1,4 +1,4 @@
-export const enum PostStatus {
-  Published = 'published',
-  Draft = 'draft',
-};
+export enum PostStatus {
+  Published = 'Published',
+  Draft = 'Draft',
+}

@@ -1,18 +1,14 @@
-import { Comment } from "./comment.interface";
-import { PostStatus } from "./post-status.enum";
-import { PostType } from "./post-type.enum";
-
-type Like = string;
+import { PostStatus } from './post-status.enum';
+import { PostType } from './post-type.enum';
+import { Tag } from './tag.interface';
 
 interface BasePost {
   id?: string;
   type: PostType;
   status: PostStatus;
   publicationDate: Date;
-  tags?: string[];
+  tags: Tag[];
   userId: string;
-  comments: Comment[];
-  likes: Like[];
   isRepost: boolean;
   originalId: string;
   originalUserId: string;
@@ -49,4 +45,4 @@ export interface QuotePost extends BasePost {
   text: string;
 }
 
-export type Post = TextPost | PhotoPost | LinkPost | QuotePost;
+export type Post = VideoPost | TextPost | PhotoPost | LinkPost | QuotePost;

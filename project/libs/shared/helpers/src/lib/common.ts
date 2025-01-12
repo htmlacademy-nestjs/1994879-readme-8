@@ -29,6 +29,13 @@ export function getApplicationUrl(host: string, port: number, prefix: string): s
   return `http://${host}:${port}/${prefix}`;
 }
 
-export function getMongoConnectionString({ username, password, host, port, databaseName, authDatabase }): string {
+export function getMongoConnectionString({
+  username,
+  password,
+  host,
+  port,
+  databaseName,
+  authDatabase,
+}): string {
   return `mongodb://${username}:${password}@${host}:${port}/${databaseName}?authSource=${authDatabase}`;
 }
