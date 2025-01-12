@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { Entity, EntityFactory, Post, PostType } from '@project/core';
+import { EntityFactory, Post } from '@project/core';
 import { PostEntity } from './entities/post.entity';
 import { CreatePostDto } from './dto/create-post.dto';
 import { plainToClass } from 'class-transformer';
