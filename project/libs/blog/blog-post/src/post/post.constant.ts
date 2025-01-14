@@ -1,5 +1,5 @@
 import { PostStatus } from '@prisma/client';
-import { PostType } from '@project/core';
+import { PostType, SortDirection } from '@project/core';
 
 export enum PostOperationSummary {
   Create = 'Create a new post',
@@ -64,6 +64,12 @@ export const PostSwaggerMessage = {
     description: 'The ID of the original post if this is a repost.',
     example: '3d11998b-f67f-480e-98ad-03bad6a22b65',
   },
+} as const;
+
+export const PaginationDefaults = {
+  Limit: 10,
+  PageCount: 1,
+  SortDirection: SortDirection.Desc,
 } as const;
 
 export const TitleLimit = {

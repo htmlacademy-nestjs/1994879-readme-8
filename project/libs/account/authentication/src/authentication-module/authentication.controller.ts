@@ -18,6 +18,7 @@ import { UserRDO } from '../rdo/user.rdo';
 import { LoggedUserRDO } from '../rdo/logged-user.rdo';
 import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponseDescription } from './authentication.constant';
+import { MongoIdValidationPipe } from '@project/pipes';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -48,7 +49,7 @@ export class AuthenticationController {
   @Get(':id')
   @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.UserFound })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
-  public async show(@Param('id') id: string) {
+  public async show(@Param('id', MongoIdValidationPipe) id: string) {
     return this.authService.getUser(id);
   }
 
@@ -59,7 +60,10 @@ export class AuthenticationController {
     description: AuthResponseDescription.LoggedError,
   })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
-  public async changePassword(@Param('id') id: string, @Body() dto: ChangePasswordDto) {
+  public async changePassword(
+    @Param('id', MongoIdValidationPipe) id: string,
+    @Body() dto: ChangePasswordDto
+  ) {
     return this.authService.changePassword(id, dto);
   }
 }

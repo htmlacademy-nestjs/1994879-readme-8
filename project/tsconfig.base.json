@@ -26,7 +26,8 @@
       "@project/core": ["libs/shared/core/src/index.ts"],
       "@project/data-access": ["libs/shared/data-access/src/index.ts"],
       "@project/helpers": ["libs/shared/helpers/src/index.ts"],
-      "@project/models": ["libs/blog/models/src/index.ts"]
+      "@project/models": ["libs/blog/models/src/index.ts"],
+      "@project/pipes": ["libs/shared/pipes/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]
