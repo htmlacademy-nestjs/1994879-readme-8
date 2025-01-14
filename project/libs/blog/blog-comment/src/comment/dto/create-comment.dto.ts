@@ -9,6 +9,7 @@ export class CreateCommentDto {
   public message: string;
 
   @IsString()
+  @IsMongoId()
   @ApiProperty({ required: true, ...CommentSwaggerMessage.userId })
   public userId: string;
 }

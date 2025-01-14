@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BasePostgresRepository } from '@project/data-access';
 import { PostEntity } from './entities/post.entity';
-import { Post as PostModel } from '@prisma/client';
+import { Post as PostModel, Prisma } from '@prisma/client';
 import { PostFactory } from './post.factory';
 import { PrismaClientService } from '@project/models';
+import { PaginationResult } from '@project/core';
+import { PostQuery } from './post.query';
 
 @Injectable()
 export class PostRepository extends BasePostgresRepository<PostEntity, PostModel> {
@@ -13,9 +15,17 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
 
   private includeFields = {
     tags: true,
-    comments: true,
-    favorites: true,
+    // comments: true,
+    // favorites: true,
   };
+
+  private async getPostCount(where: Prisma.PostWhereInput): Promise<number> {
+    return this.client.post.count({ where });
+  }
+
+  private calculatePostsPage(totalCount: number, limit: number): number {
+    return Math.ceil(totalCount / limit);
+  }
 
   public async findById(id: string): Promise<PostEntity> {
     const document = await this.client.post.findFirst({
@@ -30,23 +40,37 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
     return this.createEntityFromDocument(document);
   }
 
-  public async findAll(): Promise<PostEntity[]> {
-    const documents = await this.client.post.findMany({
-      include: this.includeFields,
-    });
+  public async findAll(query?: PostQuery): Promise<PaginationResult<PostEntity>> {
+    const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
+    const take = query?.limit;
+    const where: Prisma.PostWhereInput = {};
+    const orderBy: Prisma.PostOrderByWithRelationInput = {};
+    if (query?.sortDirection) {
+      orderBy.createdAt = query.sortDirection;
+    }
 
-    return documents.map((document) => this.createEntityFromDocument(document));
+    const [records, postCount] = await Promise.all([
+      this.client.post.findMany({ where, orderBy, skip, take, include: this.includeFields }),
+      this.getPostCount(where),
+    ]);
+
+    return {
+      entities: records.map((record) => this.createEntityFromDocument(record)),
+      currentPage: query?.page,
+      totalPages: this.calculatePostsPage(postCount, take),
+      itemsPerPage: take,
+      totalItems: postCount,
+    };
   }
 
   public async save(entity: PostEntity): Promise<void> {
-    const post = entity.toPOJO();
+    const { id, ...postData } = entity.toPOJO();
 
     const record = await this.client.post.create({
       data: {
-        ...post,
-        id: undefined,
+        ...postData,
         tags: {
-          connectOrCreate: (post.tags ?? []).map(({ name }) => ({
+          connectOrCreate: (postData.tags ?? []).map(({ name }) => ({
             where: { name },
             create: { name },
           })),

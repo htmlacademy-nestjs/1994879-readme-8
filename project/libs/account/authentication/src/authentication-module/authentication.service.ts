@@ -1,5 +1,7 @@
 import {
   ConflictException,
+  HttpException,
+  HttpStatus,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,10 +11,30 @@ import { AuthMessage } from './authentication.constant';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { LoginUserDto } from '../dto/login-user.dto';
 import { ChangePasswordDto } from '../dto/change-password.dto';
+import { JwtService } from '@nestjs/jwt';
+import { Token, TokenPayload, User } from '@project/core';
 
 @Injectable()
 export class AuthenticationService {
-  constructor(private readonly blogUserRepository: BlogUserRepository) {}
+  constructor(
+    private readonly blogUserRepository: BlogUserRepository,
+    private readonly jwtService: JwtService
+  ) {}
+
+  public async createUserToken(user: User): Promise<Token> {
+    const payload: TokenPayload = {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+    };
+
+    try {
+      const accessToken = await this.jwtService.signAsync(payload);
+      return { accessToken, refreshToken: '' };
+    } catch (error) {
+      throw new HttpException(AuthMessage.JWTCreateError, HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+  }
 
   public async register(dto: CreateUserDto): Promise<BlogUserEntity> {
     const existUser = await this.blogUserRepository.findByEmail(dto.email);

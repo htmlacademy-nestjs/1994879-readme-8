@@ -10,13 +10,16 @@ import {
   UseInterceptors,
   ClassSerializerInterceptor,
   SerializeOptions,
+  Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PostOperationSummary, PostResponseDescription } from './post.constant';
+import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { PostOperationSummary, PostResponseDescription, PostSwaggerQuery } from './post.constant';
 import { PostRdo } from './rdo/post.rdo';
+import { PostQuery } from './post.query';
+import { PostWithPaginationRdo } from './rdo/post-with-pagination.rdo';
 
 @ApiTags('Routes for posts')
 @Controller('posts')
@@ -35,9 +38,19 @@ export class PostController {
 
   @Get()
   @ApiOperation({ summary: PostOperationSummary.FindAll })
-  @ApiResponse({ status: HttpStatus.OK, description: PostResponseDescription.AllPosts })
-  async findAll() {
-    return this.postService.findAll();
+  @ApiResponse({
+    status: HttpStatus.OK,
+    type: PostWithPaginationRdo,
+    description: PostResponseDescription.AllPosts,
+  })
+  @SerializeOptions({ type: PostWithPaginationRdo, excludeExtraneousValues: true })
+  @ApiQuery({ ...PostSwaggerQuery.limit })
+  @ApiQuery({ ...PostSwaggerQuery.tags })
+  @ApiQuery({ ...PostSwaggerQuery.sort })
+  @ApiQuery({ ...PostSwaggerQuery.page })
+  async findAll(@Query() query: PostQuery) {
+    const postsWithPagination = await this.postService.findAll(query);
+    return postsWithPagination;
   }
 
   @Get(':id')

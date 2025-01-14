@@ -1,18 +1,18 @@
 import { Transform } from 'class-transformer';
-import { IsArray, IsIn, IsNumber, IsOptional, IsUUID } from 'class-validator';
+import { IsArray, IsIn, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import { SortDirection } from '@project/core';
 import { PaginationDefaults } from './post.constant';
 
-export class BlogPostQuery {
+export class PostQuery {
   @Transform(({ value }) => +value || PaginationDefaults.Limit)
   @IsNumber()
   @IsOptional()
   public limit = PaginationDefaults.Limit;
 
-  @IsUUID('all', { each: true })
   @IsArray()
+  @IsString({ each: true })
   @IsOptional()
-  public categories?: string[];
+  public tags?: string[];
 
   @IsIn(Object.values(SortDirection))
   @IsOptional()

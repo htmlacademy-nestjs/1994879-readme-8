@@ -4,6 +4,7 @@ import { PrismaClientService } from '@project/models';
 import { BasePostgresRepository } from '@project/data-access';
 import { CommentEntity } from './entities/comment.entity';
 import { CommentFactory } from './comment.factory';
+import { MAX_COMMENTS_COUNT } from './comment.constant';
 
 @Injectable()
 export class CommentRepository extends BasePostgresRepository<CommentEntity, Comment> {
@@ -12,15 +13,19 @@ export class CommentRepository extends BasePostgresRepository<CommentEntity, Com
   }
 
   public async save(entity: CommentEntity): Promise<void> {
+    const { id, ...commentData } = entity.toPOJO();
     const record = await this.client.comment.create({
-      data: { ...entity.toPOJO() },
+      data: { ...commentData },
     });
 
     entity.id = record.id;
   }
 
   public async findAll(postId: string): Promise<CommentEntity[]> {
-    const documents = await this.client.comment.findMany({ where: { postId } });
+    const documents = await this.client.comment.findMany({
+      where: { postId },
+      take: MAX_COMMENTS_COUNT,
+    });
 
     return documents.map((document) => this.createEntityFromDocument(document));
   }

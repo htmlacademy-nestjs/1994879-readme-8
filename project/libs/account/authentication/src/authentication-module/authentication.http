@@ -3,7 +3,7 @@ POST http://localhost:3000/api/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "user@notfound.local",
+  "email": "user111@notfound.local",
   "name": "Keks",
   "password": "123456"
 }
@@ -12,6 +12,7 @@ Content-Type: application/json
 
 # Get user by ID
 GET http://localhost:3000/api/auth/67608860bd69e5b9f659871b HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODY1ODc3ZWM4OWQ5YTQzMzc0ZWFjNCIsImVtYWlsIjoidXNlcjExMUBub3Rmb3VuZC5sb2NhbCIsIm5hbWUiOiJLZWtzIiwiaWF0IjoxNzM2ODU3NzMzLCJleHAiOjE3MzY4NTgwMzN9.NMZ8DidqS-96nYWENyFjsv8EGjci4Cit2tmeLyTMks4
 
 ###
 
@@ -20,7 +21,7 @@ POST http://localhost:3000/api/auth HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "user@notfound.local",
+  "email": "user111@notfound.local",
   "password": "123456"
 }
 
@@ -29,6 +30,7 @@ Content-Type: application/json
 # Login user by email and password
 PATCH http://localhost:3000/api/auth/67608860bd69e5b9f659871b HTTP/1.1
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjA4ODYwYmQ2OWU1YjlmNjU5ODcxYiIsIm5hbWUiOiJLZWtzIiwiZW1haWwiOiJ1c2VyQG5vdGZvdW5kLmxvY2FsIn0.lHmVwleHddAnLHp9TR5SveI80RtvbSIeUFriHdxN3Fw
 
 {
   "password": "123456",
