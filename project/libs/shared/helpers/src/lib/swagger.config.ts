@@ -10,5 +10,8 @@ export function setupSwagger(app: INestApplication, title: string) {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup(APP_PREFIX, app, document);
+  SwaggerModule.setup(APP_PREFIX, app, document, {
+    customSiteTitle: '«Swagger Readme»',
+    customfavIcon: 'https://up.htmlacademy.ru/meta/favicon.svg',
+  });
 }

@@ -44,10 +44,10 @@ export class PostController {
     description: PostResponseDescription.AllPosts,
   })
   @SerializeOptions({ type: PostWithPaginationRdo, excludeExtraneousValues: true })
-  @ApiQuery({ ...PostSwaggerQuery.limit })
-  @ApiQuery({ ...PostSwaggerQuery.tags })
-  @ApiQuery({ ...PostSwaggerQuery.sort })
-  @ApiQuery({ ...PostSwaggerQuery.page })
+  @ApiQuery(PostSwaggerQuery.limit)
+  @ApiQuery(PostSwaggerQuery.tags)
+  @ApiQuery(PostSwaggerQuery.sort)
+  @ApiQuery(PostSwaggerQuery.page)
   async findAll(@Query() query: PostQuery) {
     const postsWithPagination = await this.postService.findAll(query);
     return postsWithPagination;
