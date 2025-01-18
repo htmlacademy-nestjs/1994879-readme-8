@@ -1,12 +1,18 @@
 import { Transform } from 'class-transformer';
 import { IsArray, IsIn, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
 import { SortDirection } from '@project/core';
-import { PaginationDefaults } from './post.constant';
+import { PaginationDefaults, PostSwaggerQuery } from './post.constant';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 
 export class PostQuery {
   @Transform(({ value }) => +value || PaginationDefaults.Limit)
   @IsNumber()
   @IsOptional()
+  @ApiPropertyOptional({
+    type: Number,
+    default: PaginationDefaults.Limit,
+    description: PostSwaggerQuery.limit.description,
+  })
   public limit = PaginationDefaults.Limit;
 
   @IsArray()
@@ -20,5 +26,10 @@ export class PostQuery {
 
   @Transform(({ value }) => +value || PaginationDefaults.PageCount)
   @IsOptional()
+  @ApiPropertyOptional({
+    type: Number,
+    default: PaginationDefaults.PageCount,
+    description: PostSwaggerQuery.page.description,
+  })
   public page: number = PaginationDefaults.PageCount;
 }

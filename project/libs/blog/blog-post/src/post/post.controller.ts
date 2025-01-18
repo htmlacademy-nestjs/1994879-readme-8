@@ -15,7 +15,7 @@ import {
 import { PostService } from './post.service';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PostOperationSummary, PostResponseDescription, PostSwaggerQuery } from './post.constant';
 import { PostRdo } from './rdo/post.rdo';
 import { PostQuery } from './post.query';
@@ -44,10 +44,6 @@ export class PostController {
     description: PostResponseDescription.AllPosts,
   })
   @SerializeOptions({ type: PostWithPaginationRdo, excludeExtraneousValues: true })
-  @ApiQuery(PostSwaggerQuery.limit)
-  @ApiQuery(PostSwaggerQuery.tags)
-  @ApiQuery(PostSwaggerQuery.sort)
-  @ApiQuery(PostSwaggerQuery.page)
   async findAll(@Query() query: PostQuery) {
     const postsWithPagination = await this.postService.findAll(query);
     return postsWithPagination;
