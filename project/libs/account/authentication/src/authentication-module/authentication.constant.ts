@@ -2,6 +2,7 @@ export enum AuthMessage {
   Exists = 'User with this email exists',
   NotFound = 'User not found',
   WrongPassword = 'User password is wrong',
+  JWTCreateError = 'Jwt token error',
 }
 
 export enum AuthResponseDescription {

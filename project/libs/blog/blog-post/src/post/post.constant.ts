@@ -1,5 +1,5 @@
 import { PostStatus } from '@prisma/client';
-import { PostType } from '@project/core';
+import { PostType, SortDirection } from '@project/core';
 
 export enum PostOperationSummary {
   Create = 'Create a new post',
@@ -64,6 +64,30 @@ export const PostSwaggerMessage = {
     description: 'The ID of the original post if this is a repost.',
     example: '3d11998b-f67f-480e-98ad-03bad6a22b65',
   },
+} as const;
+
+export const PostSwaggerQuery = {
+  limit: { name: 'limit', required: false, type: Number, description: 'Number of posts to return' },
+  tags: {
+    name: 'tags',
+    required: false,
+    type: String,
+    description: 'Array of tag strings',
+  },
+  sort: {
+    name: 'sortDirection',
+    required: false,
+    enum: SortDirection,
+    default: SortDirection.Desc,
+    description: 'Direction to sort the posts',
+  },
+  page: { name: 'page', required: false, type: Number, description: 'Page number for pagination' },
+} as const;
+
+export const PaginationDefaults = {
+  Limit: 10,
+  PageCount: 1,
+  SortDirection: SortDirection.Desc,
 } as const;
 
 export const TitleLimit = {

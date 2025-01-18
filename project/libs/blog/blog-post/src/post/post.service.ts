@@ -5,6 +5,8 @@ import { PostRepository } from './post.repository';
 import { plainToClass } from 'class-transformer';
 import { PostEntity } from './entities/post.entity';
 import { PostFactory } from './post.factory';
+import { PostQuery } from './post.query';
+import { PaginationResult } from '@project/core';
 
 @Injectable()
 export class PostService {
@@ -16,8 +18,8 @@ export class PostService {
     return newPost;
   }
 
-  async findAll(): Promise<PostEntity[]> {
-    return this.postRepository.findAll();
+  async findAll(query: PostQuery): Promise<PaginationResult<PostEntity>> {
+    return this.postRepository.findAll(query);
   }
 
   async findOne(id: string): Promise<PostEntity | null> {
@@ -28,7 +30,6 @@ export class PostService {
     const existsPost = await this.postRepository.findById(id);
     const updatePost = PostFactory.createFromPostDto(dto);
     let hasChanges = false;
-    console.log(existsPost);
 
     for (const [key, value] of Object.entries(updatePost)) {
       if (value !== undefined && existsPost[key] !== value) {
@@ -41,7 +42,6 @@ export class PostService {
       return existsPost;
     }
 
-    console.log(existsPost);
     await this.postRepository.update(existsPost);
 
     return existsPost;

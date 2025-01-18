@@ -1,4 +1,4 @@
-import { Logger } from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { getApplicationUrl, setupSwagger } from '@project/helpers';
@@ -9,6 +9,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = APP_PREFIX;
   app.setGlobalPrefix(globalPrefix);
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
 
   const appConfig = app.get(ConfigService);
   const host = appConfig.get<string>('application.host');

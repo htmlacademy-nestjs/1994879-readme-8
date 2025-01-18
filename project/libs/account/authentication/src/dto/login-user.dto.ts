@@ -6,7 +6,6 @@ import {
 } from '../authentication-module/authentication.constant';
 
 export class LoginUserDto {
-  @IsString()
   @IsEmail()
   @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.email })
   public email!: string;
