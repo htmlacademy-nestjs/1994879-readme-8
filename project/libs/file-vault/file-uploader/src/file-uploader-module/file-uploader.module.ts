@@ -14,7 +14,7 @@ import { FileUploaderRepository } from './file-uploader.repository';
     ServeStaticModule.forRootAsync({
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => {
-        const rootPath = configService.get<string>('application.uploadDirectory');
+        const rootPath = configService.get<string>('fileVault.uploadDirectory');
         return [
           {
             rootPath,
