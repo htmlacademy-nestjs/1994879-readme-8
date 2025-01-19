@@ -10,6 +10,7 @@ export {
   PhotoPost,
   LinkPost,
 } from './lib/types/post.interface';
+export { Environment } from './lib/types/environment.enum';
 export { PostStatus } from './lib/types/post-status.enum';
 export { PostType } from './lib/types/post-type.enum';
 export { Comment } from './lib/types/comment.interface';

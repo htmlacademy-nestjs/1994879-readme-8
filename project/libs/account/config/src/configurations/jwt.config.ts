@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
-import { IsString, validate } from 'class-validator';
-import { plainToClass } from 'class-transformer';
+import { IsString } from 'class-validator';
+import { validateConfig } from '@project/app-config';
 
 export class JWTConfig {
   @IsString()
@@ -16,27 +16,15 @@ export class JWTConfig {
   refreshTokenExpiresIn: string;
 }
 
-async function validateConfig(config: JWTConfig): Promise<void> {
-  const errors = await validate(config);
-
-  if (errors.length > 0) {
-    const errorMessages = errors
-      .map((error) => Object.values(error.constraints).join(', '))
-      .join('\n');
-    throw new Error(`Account JWTConfig Validation Error!\n${errorMessages}`);
-  }
-}
-
 async function getConfig(): Promise<JWTConfig> {
-  const config = plainToClass(JWTConfig, {
+  const config = {
     accessTokenSecret: process.env.JWT_ACCESS_TOKEN_SECRET,
     accessTokenExpiresIn: process.env.JWT_ACCESS_TOKEN_EXPIRES_IN,
     refreshTokenSecret: process.env.JWT_REFRESH_TOKEN_SECRET,
     refreshTokenExpiresIn: process.env.JWT_REFRESH_TOKEN_EXPIRES_IN,
-  });
+  };
 
-  await validateConfig(config);
-  return config;
+  return validateConfig(config, JWTConfig);
 }
 
 export default registerAs('jwt', getConfig);

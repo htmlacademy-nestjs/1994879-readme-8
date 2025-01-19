@@ -22,8 +22,4 @@ export class MongoConfiguration {
 
   @IsString({ message: EnvValidationMessage.DBBaseAuthRequired })
   public authBase: string;
-
-  public async validate(): Promise<void> {
-    await validateOrReject(this);
-  }
 }
