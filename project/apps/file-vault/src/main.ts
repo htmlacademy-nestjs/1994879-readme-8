@@ -3,8 +3,8 @@
  * This is only a minimal backend to get started.
  */
 
-import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { getApplicationUrl, setupSwagger } from '@project/helpers';
 import { APP_PREFIX } from '@project/core';
@@ -14,6 +14,7 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = APP_PREFIX;
   app.setGlobalPrefix(globalPrefix);
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const appConfig = app.get(ConfigService);
   const host = appConfig.get<string>('application.host');

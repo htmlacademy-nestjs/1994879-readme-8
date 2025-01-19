@@ -4,6 +4,10 @@ import { ConfigService } from '@nestjs/config';
 import { FileUploaderService } from './file-uploader.service';
 import { FileUploaderController } from './file-uploader.controller';
 import { SERVE_ROOT } from './file-uploader.constant';
+import { FileUploaderFactory } from './file-uploader.factory';
+import { FileModel, FileSchema } from './file.model';
+import { MongooseModule } from '@nestjs/mongoose';
+import { FileUploaderRepository } from './file-uploader.repository';
 
 @Module({
   imports: [
@@ -23,8 +27,9 @@ import { SERVE_ROOT } from './file-uploader.constant';
         ];
       },
     }),
+    MongooseModule.forFeature([{ name: FileModel.name, schema: FileSchema }]),
   ],
-  providers: [FileUploaderService],
+  providers: [FileUploaderService, FileUploaderRepository, FileUploaderFactory],
   controllers: [FileUploaderController],
 })
 export class FileUploaderModule {}

@@ -10,4 +10,4 @@ Content-Disposition: form-data; name="file"; filename="file-uploader.http"
 
 ###
 
-GET http://localhost:6000/api/files/662927b0ffe4e19093c1963b HTTP/1.1
+GET http://localhost:6000/api/files/678d1175037e2ddb29f65655 HTTP/1.1

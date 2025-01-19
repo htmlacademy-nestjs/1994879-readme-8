@@ -1,6 +1,5 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpStatus,
@@ -9,7 +8,6 @@ import {
   Post,
   SerializeOptions,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { ChangePasswordDto } from '../dto/change-password.dto';
@@ -24,7 +22,6 @@ import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
 @ApiTags('Authentication')
 @Controller('auth')
-@UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserRDO, excludeExtraneousValues: true })
 export class AuthenticationController {
   constructor(private readonly authService: AuthenticationService) {}

@@ -5,8 +5,6 @@ import {
   Body,
   Param,
   Delete,
-  UseInterceptors,
-  ClassSerializerInterceptor,
   SerializeOptions,
   HttpStatus,
 } from '@nestjs/common';
@@ -22,7 +20,6 @@ import {
 
 @ApiTags('Routes for comments')
 @Controller('posts/:postId/comments')
-@UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: CommentRdo, excludeExtraneousValues: true })
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}

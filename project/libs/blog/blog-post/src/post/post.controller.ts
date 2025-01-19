@@ -7,8 +7,6 @@ import {
   Param,
   Delete,
   HttpStatus,
-  UseInterceptors,
-  ClassSerializerInterceptor,
   SerializeOptions,
   Query,
 } from '@nestjs/common';
@@ -23,7 +21,6 @@ import { PostWithPaginationRdo } from './rdo/post-with-pagination.rdo';
 
 @ApiTags('Routes for posts')
 @Controller('posts')
-@UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: PostRdo, excludeExtraneousValues: true })
 export class PostController {
   constructor(private readonly postService: PostService) {}
