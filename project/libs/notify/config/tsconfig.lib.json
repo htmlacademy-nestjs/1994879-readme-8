@@ -7,5 +7,5 @@
     "types": ["node"]
   },
   "exclude": ["jest.config.ts", "src/**/*.spec.ts", "src/**/*.test.ts"],
-  "include": ["src/**/*.ts", "../app-config/src/get-rabbit-options.ts"]
+  "include": ["src/**/*.ts", "../../shared/app-config/src/rabbit/rabbit.config.ts"]
 }

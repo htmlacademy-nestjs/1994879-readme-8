@@ -4,7 +4,7 @@ import { ConfigType } from '@nestjs/config';
 import { ensureDir } from 'fs-extra';
 import { writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
-import { FileVaultConfig } from '@project/file-vault-config';
+import { fileVaultConfig } from '@project/file-vault-config';
 import { randomUUID } from 'node:crypto';
 import { extension } from 'mime-types';
 import { FileUploaderRepository } from './file-uploader.repository';
@@ -17,7 +17,7 @@ export class FileUploaderService {
   private readonly logger = new Logger(FileUploaderService.name);
 
   constructor(
-    @Inject(FileVaultConfig.KEY) private readonly config: ConfigType<typeof FileVaultConfig>,
+    @Inject(fileVaultConfig.KEY) private readonly config: ConfigType<typeof fileVaultConfig>,
     @Inject(FileUploaderRepository) private readonly fileRepository: FileUploaderRepository
   ) {}
 

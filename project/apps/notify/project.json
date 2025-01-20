@@ -21,6 +21,20 @@
           "buildTarget": "notify:build:production"
         }
       }
+    },
+    "docker:up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose --file ./docker-compose.dev.yml --project-name readme-notify --env-file .env up -d",
+        "cwd": "apps/notify"
+      }
+    },
+    "docker:down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose --file ./docker-compose.dev.yml --project-name readme-notify down",
+        "cwd": "apps/notify"
+      }
     }
   }
 }

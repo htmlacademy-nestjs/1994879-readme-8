@@ -1,6 +1,6 @@
 import { ConfigType, registerAs } from '@nestjs/config';
-import { MongoConfiguration } from './mongodb/mongo-configuration';
-import { validateConfig } from './validate-config';
+import { MongoConfiguration } from './mongo-configuration';
+import { validateConfig } from '../validate-config';
 
 async function getDbConfig(): Promise<MongoConfiguration> {
   const config = {

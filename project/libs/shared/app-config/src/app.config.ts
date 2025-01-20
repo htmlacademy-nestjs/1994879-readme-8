@@ -1,9 +1,15 @@
 import { registerAs } from '@nestjs/config';
-import { IsString, IsNumber, validate, IsOptional, Max, Min, Length } from 'class-validator';
-import { DEFAULT_HOST, PortLimit, TitleLimit } from './const';
+import { IsString, IsNumber, IsOptional, Max, Min, Length, IsEnum } from 'class-validator';
+import { DEFAULT_HOST, TitleLimit } from './const';
+import { PortLimit } from '@project/helpers';
 import { validateConfig } from './validate-config';
+import { Environment } from '@project/core';
 
 export class AppConfig {
+  @IsEnum(Environment)
+  @IsOptional()
+  environment: Environment;
+
   @IsString()
   @IsOptional()
   host: string;
@@ -20,6 +26,7 @@ export class AppConfig {
 
 async function getConfig(): Promise<AppConfig> {
   const config = {
+    environment: process.env.NODE_ENV,
     host: process.env.HOST || DEFAULT_HOST,
     port: parseInt(process.env.PORT, 10),
     title: process.env.SWAGGER_TITLE,
