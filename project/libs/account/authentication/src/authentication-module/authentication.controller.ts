@@ -1,15 +1,14 @@
 import {
   Body,
-  ClassSerializerInterceptor,
   Controller,
   Get,
   HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
   SerializeOptions,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
 import { ChangePasswordDto } from '../dto/change-password.dto';
@@ -21,19 +20,26 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponseDescription } from './authentication.constant';
 import { MongoIdValidationPipe } from '@project/pipes';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { NotifyService } from '@project/account-notify';
 
 @ApiTags('Authentication')
 @Controller('auth')
-@UseInterceptors(ClassSerializerInterceptor)
 @SerializeOptions({ type: UserRDO, excludeExtraneousValues: true })
 export class AuthenticationController {
-  constructor(private readonly authService: AuthenticationService) {}
+  constructor(
+    @Inject(AuthenticationService) private readonly authService: AuthenticationService,
+    @Inject(NotifyService) private readonly notifyService: NotifyService
+  ) {}
 
   @Post('register')
   @ApiResponse({ status: HttpStatus.CREATED, description: AuthResponseDescription.UserCreated })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: AuthResponseDescription.UserExist })
   public async create(@Body() dto: CreateUserDto) {
-    return this.authService.register(dto);
+    const user = await this.authService.register(dto);
+    const { email, name } = user;
+    await this.notifyService.registerSubscriber({ email, name });
+
+    return user;
   }
 
   @Post()

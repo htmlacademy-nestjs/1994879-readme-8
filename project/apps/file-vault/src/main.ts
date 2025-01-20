@@ -1,24 +1,21 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
-
-import { Logger } from '@nestjs/common';
-import { NestFactory } from '@nestjs/core';
+import { ClassSerializerInterceptor, Logger } from '@nestjs/common';
+import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app/app.module';
 import { getApplicationUrl, setupSwagger } from '@project/helpers';
 import { APP_PREFIX } from '@project/core';
 import { ConfigService } from '@nestjs/config';
+import { ConfigKey } from '@project/app-config';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = APP_PREFIX;
   app.setGlobalPrefix(globalPrefix);
+  app.useGlobalInterceptors(new ClassSerializerInterceptor(app.get(Reflector)));
 
   const appConfig = app.get(ConfigService);
-  const host = appConfig.get<string>('application.host');
-  const port = appConfig.get<number>('application.port');
-  const title = appConfig.get<string>('application.title');
+  const host = appConfig.get<string>(ConfigKey.AppHost);
+  const port = appConfig.get<number>(ConfigKey.AppPort);
+  const title = appConfig.get<string>(ConfigKey.AppTitle);
 
   setupSwagger(app, title);
 

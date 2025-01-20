@@ -1,17 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import mongoConfig from './configurations/mongo.config';
-import jwtConfig from './configurations/jwt.config';
-
-const ENV_USERS_FILE_PATH = 'apps/account/account.env';
+import { default as JWTConfig } from './configurations/jwt.config';
+import { MongoDbConfig, RabbitMQConfig } from '@project/app-config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [mongoConfig, jwtConfig],
-      envFilePath: ENV_USERS_FILE_PATH,
+      load: [MongoDbConfig, JWTConfig, RabbitMQConfig],
     }),
   ],
 })
