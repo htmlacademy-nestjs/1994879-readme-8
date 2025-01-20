@@ -4,6 +4,7 @@ import { DEFAULT_HOST, TitleLimit } from './const';
 import { PortLimit } from '@project/helpers';
 import { validateConfig } from './validate-config';
 import { Environment } from '@project/core';
+import { ConfigSpace } from '../app-config.constatnt.';
 
 export class AppConfig {
   @IsEnum(Environment)
@@ -35,4 +36,4 @@ async function getConfig(): Promise<AppConfig> {
   return validateConfig(config, AppConfig);
 }
 
-export const appConfig = registerAs('application', getConfig);
+export const appConfig = registerAs(ConfigSpace.App, getConfig);

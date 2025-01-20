@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 import { getRabbitMQConnectionString } from '@project/helpers';
+import { ConfigKey } from '../app-config.constatnt.';
 
 export function getRabbitMQOptions(optionSpace) {
   return {
@@ -7,15 +8,15 @@ export function getRabbitMQOptions(optionSpace) {
     useFactory: async (config: ConfigService) => ({
       exchanges: [
         {
-          name: config.get<string>(`${optionSpace}.queue`),
+          name: config.get<string>(`${optionSpace}.${ConfigKey.Exchange}`),
           type: 'direct',
         },
       ],
       uri: getRabbitMQConnectionString({
-        host: config.get<string>(`${optionSpace}.host`),
-        password: config.get<string>(`${optionSpace}.password`),
-        user: config.get<string>(`${optionSpace}.user`),
-        port: config.get<string>(`${optionSpace}.port`),
+        host: config.get<string>(`${optionSpace}.${ConfigKey.Host}`),
+        password: config.get<string>(`${optionSpace}.${ConfigKey.Password}`),
+        user: config.get<string>(`${optionSpace}.${ConfigKey.User}`),
+        port: config.get<string>(`${optionSpace}.${ConfigKey.Port}`),
       }),
       connectionInitOptions: { wait: false },
       enableControllerDiscovery: true,

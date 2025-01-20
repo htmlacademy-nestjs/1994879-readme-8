@@ -1,5 +1,5 @@
 import { registerAs } from '@nestjs/config';
-import { validateConfig } from '@project/app-config';
+import { ConfigSpace, validateConfig } from '@project/app-config';
 import { RabbitConfiguration } from './rabbit-configuration';
 
 async function getConfig(): Promise<RabbitConfiguration> {
@@ -15,4 +15,4 @@ async function getConfig(): Promise<RabbitConfiguration> {
   return validateConfig(config, RabbitConfiguration);
 }
 
-export default registerAs('rabbit', getConfig);
+export default registerAs(ConfigSpace.Rabbit, getConfig);
