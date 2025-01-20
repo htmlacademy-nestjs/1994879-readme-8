@@ -11,7 +11,6 @@ import { appConfig } from '@project/app-config';
     ConfigModule.forRoot({
       load: [appConfig],
     }),
-    // NotifyModule,
   ],
 })
 export class AppModule {}

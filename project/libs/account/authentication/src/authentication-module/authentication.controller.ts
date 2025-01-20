@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   HttpStatus,
+  Inject,
   Param,
   Patch,
   Post,
@@ -19,18 +20,26 @@ import { ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponseDescription } from './authentication.constant';
 import { MongoIdValidationPipe } from '@project/pipes';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+import { NotifyService } from '@project/account-notify';
 
 @ApiTags('Authentication')
 @Controller('auth')
 @SerializeOptions({ type: UserRDO, excludeExtraneousValues: true })
 export class AuthenticationController {
-  constructor(private readonly authService: AuthenticationService) {}
+  constructor(
+    @Inject(AuthenticationService) private readonly authService: AuthenticationService,
+    @Inject(NotifyService) private readonly notifyService: NotifyService
+  ) {}
 
   @Post('register')
   @ApiResponse({ status: HttpStatus.CREATED, description: AuthResponseDescription.UserCreated })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: AuthResponseDescription.UserExist })
   public async create(@Body() dto: CreateUserDto) {
-    return this.authService.register(dto);
+    const user = await this.authService.register(dto);
+    const { email, name } = user;
+    await this.notifyService.registerSubscriber({ email, name });
+
+    return user;
   }
 
   @Post()
