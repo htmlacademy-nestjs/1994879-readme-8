@@ -12,6 +12,7 @@ export enum AuthResponseDescription {
   UserNotFound = 'User not found',
   UserExist = 'User with the email already exists',
   UserCreated = 'The new user has been successfully created.',
+  RefreshToken = 'Get a new access/refresh tokens',
 }
 
 export const AuthSwaggerMessage = {
@@ -21,6 +22,7 @@ export const AuthSwaggerMessage = {
   email: { description: 'Email', example: 'keks-the-cat@gmail.com' },
   password: { description: 'User password', example: '123456' },
   accessToken: { description: 'Access token', example: 'WDwFsqLk...' },
+  refreshToken: { description: 'Refresh token', example: 'KxwOSwAs...' },
   registrationDate: { description: 'Registration date', example: '2024-12-12' },
   publicationCount: { description: 'Publication count', example: 0 },
   followersCount: { description: 'Followers count', example: 4 },

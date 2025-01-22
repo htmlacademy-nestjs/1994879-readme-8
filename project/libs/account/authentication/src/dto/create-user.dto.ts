@@ -6,12 +6,14 @@ import { AuthSwaggerMessage, NameLimit } from '../authentication-module/authenti
 export class CreateUserDto extends LoginUserDto {
   @IsString()
   @Length(NameLimit.Min, NameLimit.Max, { message: NameLimit.Description })
-  @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.name })
+  @ApiProperty({ required: true, type: String })
+  @ApiProperty(AuthSwaggerMessage.name)
   public name: string;
 
   @IsOptional()
   @IsString()
-  @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.avatar })
+  @ApiProperty({ required: true, type: String })
+  @ApiProperty(AuthSwaggerMessage.avatar)
   @Matches(/\.(jpg|png)$/)
   public avatar?: string;
 }

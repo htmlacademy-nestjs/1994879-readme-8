@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { BaseMongoRepository } from '@project/data-access';
 import { BlogUserEntity } from './blog-user.entity';
 import { BlogUserFactory } from './blog-user.factory';
@@ -9,7 +9,7 @@ import { Model } from 'mongoose';
 @Injectable()
 export class BlogUserRepository extends BaseMongoRepository<BlogUserEntity, BlogUserModel> {
   constructor(
-    entityFactory: BlogUserFactory,
+    @Inject(BlogUserFactory) entityFactory: BlogUserFactory,
     @InjectModel(BlogUserModel.name) blogUserModel: Model<BlogUserModel>
   ) {
     super(entityFactory, blogUserModel);
