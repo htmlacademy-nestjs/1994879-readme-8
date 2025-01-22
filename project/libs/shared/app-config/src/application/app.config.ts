@@ -4,7 +4,7 @@ import { DEFAULT_HOST, TitleLimit } from './const';
 import { PortLimit } from '@project/helpers';
 import { validateConfig } from './validate-config';
 import { Environment } from '@project/core';
-import { ConfigSpace } from '../app-config.constatnt.';
+import { ConfigSpace } from '../app-config.constant';
 
 export class AppConfig {
   @IsEnum(Environment)

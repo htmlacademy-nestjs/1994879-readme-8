@@ -1,10 +1,12 @@
 export { DEFAULT_MONGO_PORT } from './mongodb/mongo.const';
-export { ConfigSpace, ConfigKey } from './app-config.constatnt.';
+export { ConfigSpace, ConfigKey } from './app-config.constant';
 export { appConfig } from './application/app.config';
 export { validateConfig } from './application/validate-config';
 export { getMongooseOptions } from './mongodb/get-mongoose-options';
 export { getMailerAsyncOptions } from './mail/get-mail-options';
 export { getRabbitMQOptions } from './rabbit/get-rabbit-options';
+export { getHttpAsyncOptions } from './http/get-http-options';
 export { default as mongoDbConfig } from './mongodb/mongo.config';
 export { default as rabbitMQConfig } from './rabbit/rabbit.config';
 export { default as mailConfig } from './mail/mail.config';
+export { default as httpConfig } from './http/http.config';

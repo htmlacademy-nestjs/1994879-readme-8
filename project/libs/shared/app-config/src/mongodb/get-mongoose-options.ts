@@ -1,7 +1,7 @@
 import { getMongoConnectionString } from '@project/helpers';
 import { MongooseModuleAsyncOptions } from '@nestjs/mongoose';
 import { ConfigService } from '@nestjs/config';
-import { ConfigKey, ConfigSpace } from '../app-config.constatnt.';
+import { ConfigKey, ConfigSpace } from '../app-config.constant';
 
 export function getMongooseOptions(
   optionSpace: string = ConfigSpace.Mongo
