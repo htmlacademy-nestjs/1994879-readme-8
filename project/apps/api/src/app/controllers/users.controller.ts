@@ -1,18 +1,24 @@
 import { HttpService } from '@nestjs/axios';
-import { Body, Controller, Post, Req, UseFilters } from '@nestjs/common';
+import { Body, Controller, Inject, Post, Req, UseFilters } from '@nestjs/common';
 import { LoginUserDto } from '@project/authentication';
-import { ApplicationServiceURL } from '../app.config';
+import { ApiUnit, ApplicationServiceURL } from '../app.config';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
+import { NotifyService } from '@project/api-notify';
+import { ApiTags } from '@nestjs/swagger';
 
 @Controller('users')
+@ApiTags(ApiUnit.User)
 @UseFilters(AxiosExceptionFilter)
 export class UsersController {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    @Inject(HttpService) private readonly httpService: HttpService,
+    @Inject(NotifyService) private notifyService: NotifyService
+  ) {}
 
   @Post('login')
   public async login(@Body() loginUserDto: LoginUserDto) {
     const { data } = await this.httpService.axiosRef.post(
-      `${ApplicationServiceURL.Users}/login`,
+      ApplicationServiceURL.Users,
       loginUserDto
     );
     return data;

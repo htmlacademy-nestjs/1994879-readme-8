@@ -21,7 +21,6 @@ import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponseDescription } from './authentication.constant';
 import { MongoIdValidationPipe } from '@project/pipes';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
-import { NotifyService } from '@project/account-notify';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { RequestWithUser } from './request-with-user.interface';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
@@ -32,20 +31,13 @@ import { RequestWithTokenPayload } from './request-with-token-payload.interface'
 @ApiBearerAuth()
 @SerializeOptions({ type: UserRDO, excludeExtraneousValues: true })
 export class AuthenticationController {
-  constructor(
-    @Inject(AuthenticationService) private readonly authService: AuthenticationService,
-    @Inject(NotifyService) private readonly notifyService: NotifyService
-  ) {}
+  constructor(@Inject(AuthenticationService) private readonly authService: AuthenticationService) {}
 
   @Post('register')
   @ApiResponse({ status: HttpStatus.CREATED, description: AuthResponseDescription.UserCreated })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: AuthResponseDescription.UserExist })
   public async create(@Body() dto: CreateUserDto) {
-    const user = await this.authService.register(dto);
-    const { email, name } = user;
-    await this.notifyService.registerSubscriber({ email, name });
-
-    return user;
+    return this.authService.register(dto);
   }
 
   @Post()

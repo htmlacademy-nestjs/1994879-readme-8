@@ -1,3 +1,3 @@
-# account-notify
+# api-notify
 
 This library was generated with [Nx](https://nx.dev).

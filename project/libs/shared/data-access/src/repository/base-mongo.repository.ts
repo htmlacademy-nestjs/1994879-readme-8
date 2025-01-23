@@ -54,4 +54,11 @@ export abstract class BaseMongoRepository<
       throw new NotFoundException(`Entity with id ${id} not found.`);
     }
   }
+
+  public async findAll(): Promise<T[]> {
+    const documents = await this.model.find().exec();
+    return documents
+      .map((doc) => this.createEntityFromDocument(doc))
+      .filter((entity) => entity !== null) as T[];
+  }
 }

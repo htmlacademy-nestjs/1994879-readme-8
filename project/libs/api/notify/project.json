@@ -1,0 +1,9 @@
+{
+  "name": "api-notify",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/notify/src",
+  "projectType": "library",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project api-notify --web",
+  "targets": {}
+}

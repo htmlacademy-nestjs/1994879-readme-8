@@ -1,4 +1,4 @@
-import { ConfigService } from '@nestjs/config';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getRabbitMQConnectionString } from '@project/helpers';
 import { ConfigKey } from '../app-config.constant';
 
