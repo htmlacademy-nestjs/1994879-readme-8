@@ -17,7 +17,7 @@ import { ChangePasswordDto } from '../dto/change-password.dto';
 import { CreateUserDto } from '../dto/create-user.dto';
 import { UserRDO } from '../rdo/user.rdo';
 import { LoggedUserRDO } from '../rdo/logged-user.rdo';
-import { ApiBearerAuth, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { AuthResponseDescription } from './authentication.constant';
 import { MongoIdValidationPipe } from '@project/pipes';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
@@ -25,6 +25,7 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { RequestWithUser } from './request-with-user.interface';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 import { RequestWithTokenPayload } from './request-with-token-payload.interface';
+import { LoginUserDto } from '../dto/login-user.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -48,6 +49,7 @@ export class AuthenticationController {
     description: AuthResponseDescription.LoggedError,
   })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
+  @ApiBody({ type: LoginUserDto })
   @SerializeOptions({ type: LoggedUserRDO, excludeExtraneousValues: true })
   public async login(@Req() { user }: RequestWithUser) {
     const userToken = await this.authService.createUserToken(user);
@@ -64,7 +66,7 @@ export class AuthenticationController {
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
-  @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.UserFound })
+  @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.Updated })
   @ApiResponse({
     status: HttpStatus.UNAUTHORIZED,
     description: AuthResponseDescription.LoggedError,
@@ -77,8 +79,8 @@ export class AuthenticationController {
     return this.authService.changePassword(id, dto);
   }
 
-  @UseGuards(JwtRefreshGuard)
   @Post('refresh')
+  @UseGuards(JwtRefreshGuard)
   @HttpCode(HttpStatus.OK)
   @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.RefreshToken })
   public async refreshToken(@Req() { user }: RequestWithUser) {

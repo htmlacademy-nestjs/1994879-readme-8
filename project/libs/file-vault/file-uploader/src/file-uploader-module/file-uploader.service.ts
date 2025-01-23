@@ -65,7 +65,7 @@ export class FileUploaderService {
     const fileEntity = new FileUploaderFactory().create({
       hashName: storedFile.filename,
       mimetype: file.mimetype,
-      originalName: file.originalname,
+      originalName: encodeURIComponent(file.originalname),
       path: storedFile.path,
       size: file.size,
       subDirectory: storedFile.subDirectory,

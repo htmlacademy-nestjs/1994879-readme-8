@@ -7,6 +7,7 @@ import { CheckAuthGuard } from './guards/check-auth.guard';
 import { UsersController } from './controllers/users.controller';
 import { BlogController } from './controllers/blog.controller';
 import { NotifyModule } from '@project/api-notify';
+import { AppService } from './app.service';
 
 @Module({
   imports: [
@@ -17,6 +18,6 @@ import { NotifyModule } from '@project/api-notify';
     NotifyModule,
   ],
   controllers: [UsersController, BlogController],
-  providers: [CheckAuthGuard],
+  providers: [CheckAuthGuard, AppService],
 })
 export class AppModule {}

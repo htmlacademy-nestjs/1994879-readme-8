@@ -12,9 +12,9 @@ export class BlogController {
 
   @UseGuards(CheckAuthGuard)
   @UseInterceptors(UseInterceptors)
-  @Post('/')
+  @Post('')
   public async create(@Body() dto: AddNewPostDto) {
-    const { data } = await this.httpService.axiosRef.post(`${ApplicationServiceURL.Blog}/`, dto);
+    const { data } = await this.httpService.axiosRef.post(ApplicationServiceURL.Blog, dto);
     return data;
   }
 }

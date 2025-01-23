@@ -12,6 +12,7 @@ export enum AuthResponseDescription {
   UserNotFound = 'User not found',
   UserExist = 'User with the email already exists',
   UserCreated = 'The new user has been successfully created.',
+  Updated = 'User password updated',
   RefreshToken = 'Get a new access/refresh tokens',
 }
 
