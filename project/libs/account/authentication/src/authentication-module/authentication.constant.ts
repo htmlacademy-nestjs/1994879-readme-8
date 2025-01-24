@@ -26,7 +26,7 @@ export const AuthSwaggerMessage = {
   refreshToken: { description: 'Refresh token', example: 'KxwOSwAs...' },
   registrationDate: { description: 'Registration date', example: '2024-12-12' },
   publicationCount: { description: 'Publication count', example: 0 },
-  followersCount: { description: 'Followers count', example: 4 },
+  subscriptionsCount: { description: 'Subscriptions count', example: 4 },
 } as const;
 
 export const NameLimit = {

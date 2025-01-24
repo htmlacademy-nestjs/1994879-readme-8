@@ -5,6 +5,7 @@ export { LoginUserDto } from './dto/login-user.dto';
 export { CreateUserDto } from './dto/create-user.dto';
 export { RegisterUserDto } from './dto/register-user.dto';
 export { UserRDO } from './rdo/user.rdo';
+export { UserDetailedRDO } from './rdo/user-detailed.rdo';
 export { LoggedUserRDO } from './rdo/logged-user.rdo';
 export { AuthResponseDescription } from './authentication-module/authentication.constant';
 export { ChangePasswordDto } from './dto/change-password.dto';

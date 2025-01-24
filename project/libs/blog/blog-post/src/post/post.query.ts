@@ -13,7 +13,7 @@ export class PostQuery {
     default: PaginationDefaults.Limit,
     description: PostSwaggerQuery.limit.description,
   })
-  public limit = PaginationDefaults.Limit;
+  public limit? = PaginationDefaults.Limit;
 
   @IsArray()
   @IsString({ each: true })
@@ -22,7 +22,7 @@ export class PostQuery {
 
   @IsIn(Object.values(SortDirection))
   @IsOptional()
-  public sortDirection: SortDirection = PaginationDefaults.SortDirection;
+  public sortDirection?: SortDirection = PaginationDefaults.SortDirection;
 
   @Transform(({ value }) => +value || PaginationDefaults.PageCount)
   @IsOptional()
@@ -31,5 +31,9 @@ export class PostQuery {
     default: PaginationDefaults.PageCount,
     description: PostSwaggerQuery.page.description,
   })
-  public page: number = PaginationDefaults.PageCount;
+  public page?: number = PaginationDefaults.PageCount;
+
+  @IsOptional()
+  @IsArray()
+  public userIds?: string[];
 }

@@ -52,9 +52,14 @@ export class AuthenticationService {
       throw new ConflictException(AuthMessage.Exists);
     }
 
-    const userEntity = await new BlogUserEntity({ ...dto, passwordHash: '' }).setPassword(
-      dto.password
-    );
+    const userDto = {
+      ...dto,
+      passwordHash: '',
+      registrationDate: undefined,
+      subscriptions: [],
+    };
+
+    const userEntity = await new BlogUserEntity(userDto).setPassword(dto.password);
     await this.blogUserService.save(userEntity);
 
     return userEntity;

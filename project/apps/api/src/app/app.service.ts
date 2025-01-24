@@ -1,15 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { NotifyService } from '@project/api-notify';
-import { UserRDO } from '@project/authentication';
+import { UserDetailedRDO, UserRDO } from '@project/authentication';
 import { UploadedFileRdo } from '@project/file-uploader';
 import { ApplicationServiceURL } from './app.config';
 import { NotifyNewPostDto } from '@project/email-subscriber';
 import FormData from 'form-data';
 import 'multer';
+import { PostRDO } from 'libs/blog/blog-post/src/post/rdo/post.rdo';
 
 @Injectable()
 export class AppService {
+  private readonly logger = new Logger(AppService.name);
+
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
     @Inject(NotifyService) private notifyService: NotifyService
@@ -41,5 +44,30 @@ export class AppService {
 
   public async notifyNewPost(dto: NotifyNewPostDto): Promise<boolean> {
     return this.notifyService.notifyNewPost(dto);
+  }
+
+  public async getUserDetails(user: UserRDO): Promise<UserDetailedRDO> {
+    const { data: publicationsCount } = await this.httpService.axiosRef.get<number>(
+      `${ApplicationServiceURL.Blog}/count/${user.id}`
+    );
+    return {
+      ...user,
+      publicationsCount,
+      subscriptionsCount: user.subscriptions.length,
+    };
+  }
+
+  public async appendUserInfo(posts: PostRDO[]) {
+    await Promise.all(
+      posts.map(async (post) => {
+        try {
+          post['user'] = await this.httpService.axiosRef.get<UserRDO>(
+            `ApplicationServiceURL.Users/${post.userId}`
+          );
+        } catch (error) {
+          this.logger.error(`Failed to get details fot user ${post.userId}:`, error);
+        }
+      })
+    );
   }
 }

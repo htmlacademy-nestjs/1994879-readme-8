@@ -2,8 +2,8 @@ import { HttpService } from '@nestjs/axios';
 import {
   Body,
   Controller,
+  Delete,
   Get,
-  HttpStatus,
   Inject,
   Param,
   ParseFilePipeBuilder,
@@ -26,13 +26,27 @@ import {
 } from '@project/authentication';
 import { ApiUnit, ApplicationServiceURL, AvatarLimit } from '../app.config';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
-import { ApiBearerAuth, ApiBody, ApiConsumes, ApiResponse, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiBody,
+  ApiConflictResponse,
+  ApiConsumes,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiResponse,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { DEFAULT_AVATAR } from '@project/file-uploader';
 import { plainToInstance } from 'class-transformer';
 import { AppService } from '../app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
 import { TokenName } from '@project/helpers';
+import { MongoIdValidationPipe } from '@project/pipes';
+import { InjectUserIdInterceptor } from '@project/interceptors';
 
 const DEFAULT_AVATAR_PATH = `${ApplicationServiceURL.File}${DEFAULT_AVATAR}`;
 
@@ -45,12 +59,20 @@ export class UsersController {
     @Inject(AppService) private appService: AppService
   ) {}
 
+  private getAuthorizationHeaders(req: Request) {
+    return {
+      headers: {
+        Authorization: req.headers['authorization'],
+      },
+    };
+  }
+
   @Post('register')
   @UseInterceptors(FileInterceptor('avatarFile'))
   @ApiConsumes('multipart/form-data')
-  @ApiResponse({ status: HttpStatus.CREATED, description: AuthResponseDescription.UserCreated })
-  @ApiResponse({ status: HttpStatus.CONFLICT, description: AuthResponseDescription.UserExist })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST })
+  @ApiCreatedResponse({ description: AuthResponseDescription.UserCreated })
+  @ApiConflictResponse({ description: AuthResponseDescription.UserExist })
+  @ApiBadRequestResponse()
   public async register(
     @Body() dto: RegisterUserDto,
     @UploadedFile(
@@ -77,91 +99,108 @@ export class UsersController {
     return data;
   }
 
-  @ApiBody({ type: LoginUserDto })
   @Post('login')
+  @ApiCreatedResponse({ description: AuthResponseDescription.UserCreated })
+  @ApiNotFoundResponse({ description: AuthResponseDescription.UserNotFound })
+  @ApiBadRequestResponse()
+  @ApiBody({ type: LoginUserDto })
   public async login(@Body() loginUserDto: LoginUserDto) {
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
       ApplicationServiceURL.Users,
       loginUserDto
     );
-    const { accessToken, refreshToken } = data;
-    return { accessToken, refreshToken };
+    return { data };
   }
 
   @Patch(':id')
-  @ApiResponse({ status: HttpStatus.OK, description: AuthResponseDescription.Updated })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
+  @ApiOkResponse({ type: UserRDO, description: AuthResponseDescription.Updated })
+  @ApiNotFoundResponse({ description: AuthResponseDescription.UserNotFound })
+  @ApiUnauthorizedResponse()
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
   public async update(@Body() dto: ChangePasswordDto, @Req() req: Request) {
     const { data } = await this.httpService.axiosRef.patch<UserRDO>(
       `${ApplicationServiceURL.Users}`,
       dto,
-      {
-        headers: {
-          Authorization: req.headers['authorization'],
-        },
-      }
+      this.getAuthorizationHeaders(req)
     );
 
-    return data;
+    return this.appService.getUserDetails(data);
   }
 
   @Get(':id')
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
-  @ApiResponse({
-    type: UserRDO,
-    status: HttpStatus.OK,
-    description: AuthResponseDescription.UserFound,
-  })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
-  @ApiResponse({ status: HttpStatus.UNAUTHORIZED })
+  @ApiOkResponse({ type: UserRDO, description: AuthResponseDescription.UserFound })
+  @ApiNotFoundResponse({ description: AuthResponseDescription.UserNotFound })
+  @ApiUnauthorizedResponse()
   public async show(@Param('id') id: string, @Req() req: Request) {
-    const { data } = await this.httpService.axiosRef.get(`${ApplicationServiceURL.Users}/${id}`, {
-      headers: {
-        Authorization: req.headers['authorization'],
-      },
-    });
+    const { data } = await this.httpService.axiosRef.get<UserRDO>(
+      `${ApplicationServiceURL.Users}/${id}`,
+      this.getAuthorizationHeaders(req)
+    );
 
-    return data;
+    return this.appService.getUserDetails(data);
   }
 
   @Post('refresh')
-  @UseGuards(CheckAuthGuard)
+  @ApiUnauthorizedResponse()
   @ApiBearerAuth(TokenName.Refresh)
   public async refreshToken(@Req() req: Request) {
-    const { data } = await this.httpService.axiosRef.post(
+    const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
       `${ApplicationServiceURL.Users}/refresh`,
       null,
-      {
-        headers: {
-          Authorization: req.headers['authorization'],
-        },
-      }
+      this.getAuthorizationHeaders(req)
     );
+
     return data;
   }
 
   @Post('check')
   @UseGuards(CheckAuthGuard)
+  @ApiUnauthorizedResponse()
   @ApiBearerAuth(TokenName.Access)
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    description: AuthResponseDescription.UserFound,
-  })
+  @ApiCreatedResponse({ type: LoggedUserRDO, description: AuthResponseDescription.UserFound })
   public async checkToken(@Req() req: Request) {
-    const { data } = await this.httpService.axiosRef.post(
+    const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
       `${ApplicationServiceURL.Users}/check`,
       null,
-      {
-        headers: {
-          Authorization: req.headers['authorization'],
-        },
-      }
+      this.getAuthorizationHeaders(req)
     );
 
+    return data;
+  }
+
+  @Post('subscribe/:id')
+  @UseGuards(CheckAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
+  @ApiBearerAuth(TokenName.Access)
+  @ApiOkResponse()
+  @ApiUnauthorizedResponse()
+  public async subscribe(
+    @Param('id', MongoIdValidationPipe) id: string,
+    @Body('userId') userId: string
+  ) {
+    const { data } = await this.httpService.axiosRef.post(
+      `${ApplicationServiceURL.Users}/${userId}/subscribe/${id}`
+    );
+    return data;
+  }
+
+  @Delete('unsubscribe/:id')
+  @UseGuards(CheckAuthGuard)
+  @UseInterceptors(InjectUserIdInterceptor)
+  @ApiBearerAuth(TokenName.Access)
+  @ApiOkResponse()
+  @ApiBadRequestResponse()
+  @ApiUnauthorizedResponse()
+  public async unsubscribe(
+    @Param('id', MongoIdValidationPipe) id: string,
+    @Body('userId') userId: string
+  ) {
+    const { data } = await this.httpService.axiosRef.delete(
+      `${ApplicationServiceURL.Users}/${userId}/unsubscribe/${id}`
+    );
     return data;
   }
 }

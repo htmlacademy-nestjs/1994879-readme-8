@@ -10,6 +10,7 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
   public avatar?: string;
   public passwordHash!: string;
   public registrationDate!: Date;
+  public subscriptions: string[];
 
   constructor(user: AuthUser) {
     super();
@@ -26,6 +27,8 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
     this.name = user.name;
     this.avatar = user.avatar ?? '';
     this.passwordHash = user.passwordHash;
+    this.registrationDate = user.registrationDate ?? new Date();
+    this.subscriptions = user.subscriptions ?? [];
   }
 
   public toPOJO(): AuthUser {
@@ -35,6 +38,8 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
       name: this.name,
       avatar: this.avatar,
       passwordHash: this.passwordHash,
+      registrationDate: this.registrationDate,
+      subscriptions: this.subscriptions,
     };
   }
 
@@ -46,5 +51,17 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
 
   public async comparePassword(password: string): Promise<boolean> {
     return compare(password, this.passwordHash);
+  }
+
+  public updateSubscribers(userId: string) {
+    const subscriptionsSet = new Set(this.subscriptions);
+
+    if (subscriptionsSet.has(userId)) {
+      subscriptionsSet.delete(userId);
+    } else {
+      subscriptionsSet.add(userId);
+    }
+
+    this.subscriptions = Array.from(subscriptionsSet);
   }
 }

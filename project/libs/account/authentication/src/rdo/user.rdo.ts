@@ -19,15 +19,11 @@ export class UserRDO {
   @ApiProperty(AuthSwaggerMessage.avatar)
   public avatar: string;
 
-  @Expose({ name: 'createdAt' })
+  @Expose()
   @ApiProperty(AuthSwaggerMessage.registrationDate)
   public registrationDate: string;
 
   @Expose()
-  @ApiProperty(AuthSwaggerMessage.publicationCount)
-  public publicationCount: number;
-
-  @Expose()
-  @ApiProperty(AuthSwaggerMessage.followersCount)
-  public followersCount: number;
+  @ApiProperty(AuthSwaggerMessage.subscriptionsCount)
+  public subscriptions: string[];
 }

@@ -1,5 +1,6 @@
 export enum ApplicationServiceURL {
-  Users = 'http://localhost:3000/api/auth',
+  Auth = 'http://localhost:3000/api/auth',
+  Users = 'http://localhost:3000/api/users',
   Blog = 'http://localhost:4000/api/posts',
   File = 'http://localhost:8000/api/files',
   Notify = 'http://localhost:7000/api',
@@ -7,9 +8,7 @@ export enum ApplicationServiceURL {
 }
 
 export enum ApiUnit {
-  Post = 'Post API',
-  Like = 'Like API',
-  Comment = 'Comment API',
+  Blog = 'Blog API',
   User = 'User API',
 }
 

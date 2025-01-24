@@ -15,13 +15,13 @@ import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PostOperationSummary, PostResponseDescription, PostSwaggerQuery } from './post.constant';
-import { PostRdo } from './rdo/post.rdo';
+import { PostRDO } from './rdo/post.rdo';
 import { PostQuery } from './post.query';
 import { PostWithPaginationRdo } from './rdo/post-with-pagination.rdo';
 
 @ApiTags('Routes for posts')
 @Controller('posts')
-@SerializeOptions({ type: PostRdo, excludeExtraneousValues: true })
+@SerializeOptions({ type: PostRDO, excludeExtraneousValues: true })
 export class PostController {
   constructor(private readonly postService: PostService) {}
 

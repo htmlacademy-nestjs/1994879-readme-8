@@ -1,10 +1,10 @@
 import { Expose, Type } from 'class-transformer';
-import { PostRdo } from './post.rdo';
+import { PostRDO } from './post.rdo';
 
 export class PostWithPaginationRdo {
   @Expose()
-  @Type(() => PostRdo)
-  public entities: PostRdo[];
+  @Type(() => PostRDO)
+  public entities: PostRDO[];
 
   @Expose()
   public totalPages: number;
