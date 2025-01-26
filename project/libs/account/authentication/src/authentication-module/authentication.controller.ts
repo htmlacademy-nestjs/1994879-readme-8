@@ -52,8 +52,7 @@ export class AuthenticationController {
   @ApiBody({ type: LoginUserDTO })
   @SerializeOptions({ type: LoggedUserRDO, excludeExtraneousValues: true })
   public async login(@Req() { user }: RequestWithUser) {
-    const userToken = await this.authService.createUserToken(user);
-    return { ...userToken };
+    return await this.authService.createUserToken(user);
   }
 
   @Get(':id')

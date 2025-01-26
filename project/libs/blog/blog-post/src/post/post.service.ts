@@ -6,7 +6,7 @@ import { plainToClass } from 'class-transformer';
 import { PostEntity } from './entities/post.entity';
 import { PostFactory } from './post.factory';
 import { PostQuery } from './post.query';
-import { PaginationResult } from '@project/core';
+import { Nullable, PaginationResult } from '@project/core';
 
 @Injectable()
 export class PostService {
@@ -22,7 +22,7 @@ export class PostService {
     return this.postRepository.findAll(query);
   }
 
-  async findOne(id: string): Promise<PostEntity | null> {
+  async findOne(id: string): Promise<PostEntity> {
     return this.postRepository.findById(id);
   }
 

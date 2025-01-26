@@ -5,6 +5,7 @@ import { BlogUserFactory } from './blog-user.factory';
 import { BlogUserModel } from './blog-user.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
+import { Nullable } from '@project/core';
 
 @Injectable()
 export class BlogUserRepository extends BaseMongoRepository<BlogUserEntity, BlogUserModel> {
@@ -15,7 +16,7 @@ export class BlogUserRepository extends BaseMongoRepository<BlogUserEntity, Blog
     super(entityFactory, blogUserModel);
   }
 
-  public async findByEmail(email: string): Promise<BlogUserEntity | null> {
+  public async findByEmail(email: string): Promise<Nullable<BlogUserEntity>> {
     const document = await this.model.findOne({ email }).exec();
     return this.createEntityFromDocument(document);
   }

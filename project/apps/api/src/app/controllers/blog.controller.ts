@@ -13,7 +13,7 @@ import {
 import { HttpService } from '@nestjs/axios';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
-import { ApiUnit, ApplicationServiceURL } from '../app.config';
+import { ApiUnit } from '../app.const';
 import { AddNewPostDTO } from '../dto/add-new-post.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AppService } from '../app.service';
@@ -21,14 +21,19 @@ import { InjectUserIdInterceptor } from '@project/interceptors';
 import { UserRDO } from '@project/authentication';
 import { PostWithPaginationRDO } from '@project/blog-post';
 import { PostQuery } from '@project/blog-post';
+import { ConfigType } from '@nestjs/config';
+import { gatewayConfig } from '@project/api-config';
+import { getAppURL } from '@project/helpers';
 
 @Controller('blog')
 @ApiTags(ApiUnit.Blog)
+@UseGuards(CheckAuthGuard)
 @UseFilters(AxiosExceptionFilter)
 export class BlogController {
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
-    @Inject(AppService) private appService: AppService
+    @Inject(AppService) private appService: AppService,
+    @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>
   ) {}
 
   private getAuthorizationHeaders(req: Request) {
@@ -40,11 +45,10 @@ export class BlogController {
   }
 
   @Get()
-  @UseGuards(CheckAuthGuard)
   @UseInterceptors(UseInterceptors)
   public async index(@Query() queryParams: PostQuery) {
     const { data } = await this.httpService.axiosRef.get<PostWithPaginationRDO>(
-      ApplicationServiceURL.Blog,
+      getAppURL(this.baseUrl.blog),
       { params: queryParams }
     );
     await this.appService.appendUserInfo(data.entities);
@@ -52,11 +56,10 @@ export class BlogController {
   }
 
   @Post()
-  @UseGuards(CheckAuthGuard)
   @UseInterceptors(UseInterceptors)
   public async create(@Body() dto: AddNewPostDTO) {
     const { data } = await this.httpService.axiosRef.post<PostWithPaginationRDO>(
-      ApplicationServiceURL.Blog,
+      getAppURL(this.baseUrl.blog),
       dto
     );
     await this.appService.appendUserInfo(data.entities);
@@ -64,11 +67,10 @@ export class BlogController {
   }
 
   @Get('feed')
-  @UseGuards(CheckAuthGuard)
   @UseInterceptors(InjectUserIdInterceptor)
   public async getUserFeed(@Body('userId') userId: string, @Req() req: Request) {
     const { data: user } = await this.httpService.axiosRef.get<UserRDO>(
-      `${ApplicationServiceURL.Users}/${userId}`,
+      getAppURL(this.baseUrl.account, `${userId}`),
       this.getAuthorizationHeaders(req)
     );
 

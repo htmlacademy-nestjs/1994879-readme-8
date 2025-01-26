@@ -24,7 +24,7 @@ import {
   AuthResponseDescription,
   ChangePasswordDTO,
 } from '@project/authentication';
-import { ApiUnit, ApplicationServiceURL, AvatarLimit } from '../app.config';
+import { ApiUnit, AvatarLimit } from '../app.const';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
 import {
   ApiBadRequestResponse,
@@ -44,9 +44,11 @@ import { plainToInstance } from 'class-transformer';
 import { AppService } from '../app.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
-import { TokenName } from '@project/helpers';
+import { getAppURL, TokenName } from '@project/helpers';
 import { MongoIdValidationPipe } from '@project/pipes';
 import { InjectUserIdInterceptor } from '@project/interceptors';
+import { ConfigType } from '@nestjs/config';
+import { gatewayConfig } from '@project/api-config';
 
 const DEFAULT_AVATAR_PATH = `${ApplicationServiceURL.File}${DEFAULT_AVATAR}`;
 
@@ -56,7 +58,8 @@ const DEFAULT_AVATAR_PATH = `${ApplicationServiceURL.File}${DEFAULT_AVATAR}`;
 export class UsersController {
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
-    @Inject(AppService) private appService: AppService
+    @Inject(AppService) private appService: AppService,
+    @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>
   ) {}
 
   private getAuthorizationHeaders(req: Request) {
@@ -91,7 +94,7 @@ export class UsersController {
     });
 
     const { data } = await this.httpService.axiosRef.post<UserRDO>(
-      `${ApplicationServiceURL.Users}/register`,
+      getAppURL(this.baseUrl.account, 'register'),
       userDTO
     );
 
@@ -106,7 +109,7 @@ export class UsersController {
   @ApiBody({ type: LoginUserDTO })
   public async login(@Body() loginUserDTO: LoginUserDTO) {
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
-      ApplicationServiceURL.Users,
+      getAppURL(this.baseUrl.account),
       loginUserDTO
     );
     return { data };
@@ -118,9 +121,13 @@ export class UsersController {
   @ApiUnauthorizedResponse()
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
-  public async update(@Body() dto: ChangePasswordDTO, @Req() req: Request) {
+  public async update(
+    @Param('id') id: string,
+    @Body() dto: ChangePasswordDTO,
+    @Req() req: Request
+  ) {
     const { data } = await this.httpService.axiosRef.patch<UserRDO>(
-      `${ApplicationServiceURL.Users}`,
+      getAppURL(this.baseUrl.account, `${id}`),
       dto,
       this.getAuthorizationHeaders(req)
     );
@@ -136,7 +143,7 @@ export class UsersController {
   @ApiUnauthorizedResponse()
   public async show(@Param('id') id: string, @Req() req: Request) {
     const { data } = await this.httpService.axiosRef.get<UserRDO>(
-      `${ApplicationServiceURL.Users}/${id}`,
+      getAppURL(this.baseUrl.account, `${id}`),
       this.getAuthorizationHeaders(req)
     );
 
@@ -148,7 +155,7 @@ export class UsersController {
   @ApiBearerAuth(TokenName.Refresh)
   public async refreshToken(@Req() req: Request) {
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
-      `${ApplicationServiceURL.Users}/refresh`,
+      getAppURL(this.baseUrl.account, 'refresh'),
       null,
       this.getAuthorizationHeaders(req)
     );
@@ -163,7 +170,7 @@ export class UsersController {
   @ApiCreatedResponse({ type: LoggedUserRDO, description: AuthResponseDescription.UserFound })
   public async checkToken(@Req() req: Request) {
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
-      `${ApplicationServiceURL.Users}/check`,
+      getAppURL(this.baseUrl.account, 'check'),
       null,
       this.getAuthorizationHeaders(req)
     );
@@ -182,7 +189,7 @@ export class UsersController {
     @Body('userId') userId: string
   ) {
     const { data } = await this.httpService.axiosRef.post(
-      `${ApplicationServiceURL.Users}/${userId}/subscribe/${id}`
+      getAppURL(this.baseUrl.account, `${userId}/subscribe/${id}`)
     );
     return data;
   }
@@ -199,7 +206,7 @@ export class UsersController {
     @Body('userId') userId: string
   ) {
     const { data } = await this.httpService.axiosRef.delete(
-      `${ApplicationServiceURL.Users}/${userId}/unsubscribe/${id}`
+      getAppURL(this.baseUrl.account, `${userId}/unsubscribe/${id}`)
     );
     return data;
   }

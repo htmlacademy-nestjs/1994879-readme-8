@@ -1,6 +1,6 @@
 import { Document, Model } from 'mongoose';
 import { NotFoundException } from '@nestjs/common';
-import { Entity, StorableEntity, EntityFactory } from '@project/core';
+import { Entity, StorableEntity, EntityFactory, Nullable } from '@project/core';
 import { Repository } from './repository.interface';
 
 export abstract class BaseMongoRepository<
@@ -13,7 +13,7 @@ export abstract class BaseMongoRepository<
     protected readonly model: Model<DocumentType>
   ) {}
 
-  protected createEntityFromDocument(document: DocumentType): T | null {
+  protected createEntityFromDocument(document: DocumentType): Nullable<T> {
     if (!document) {
       return null;
     }

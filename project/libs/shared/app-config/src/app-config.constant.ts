@@ -4,6 +4,7 @@ export enum ConfigSpace {
   Mail = 'mail',
   Rabbit = 'rabbit',
   Http = 'http_client',
+  Gateway = 'api_gateway',
 }
 
 export enum ConfigKey {

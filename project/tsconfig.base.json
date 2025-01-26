@@ -17,6 +17,7 @@
     "baseUrl": ".",
     "paths": {
       "@project/account-config": ["libs/account/config/src/index.ts"],
+      "@project/api-config": ["libs/api/config/src/index.ts"],
       "@project/api-notify": ["libs/api/notify/src/index.ts"],
       "@project/app-config": ["libs/shared/app-config/src/index.ts"],
       "@project/authentication": ["libs/account/authentication/src/index.ts"],

@@ -1,6 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { BlogUserRepository } from './blog-user.repository';
 import { BlogUserEntity } from './blog-user.entity';
+import { Nullable } from '@project/core';
 
 @Injectable()
 export class BlogUserService {
@@ -14,11 +15,11 @@ export class BlogUserService {
     return this.blogUserRepository.update(userEntity);
   }
 
-  public async findById(id: string): Promise<BlogUserEntity | null> {
+  public async findById(id: string): Promise<Nullable<BlogUserEntity>> {
     return this.blogUserRepository.findById(id);
   }
 
-  public async findByEmail(email: string): Promise<BlogUserEntity | null> {
+  public async findByEmail(email: string): Promise<Nullable<BlogUserEntity>> {
     return this.blogUserRepository.findByEmail(email);
   }
 }

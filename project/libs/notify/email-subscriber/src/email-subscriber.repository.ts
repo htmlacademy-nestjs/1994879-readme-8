@@ -5,6 +5,7 @@ import { BaseMongoRepository } from '@project/data-access';
 import { EmailSubscriberEntity } from './email-subscriber.entity';
 import { EmailSubscriberFactory } from './email-subscriber.factory';
 import { EmailSubscriberModel } from './email-subscriber.model';
+import { Nullable } from '@project/core';
 
 @Injectable()
 export class EmailSubscriberRepository extends BaseMongoRepository<
@@ -18,7 +19,7 @@ export class EmailSubscriberRepository extends BaseMongoRepository<
     super(entityFactory, emailSubscriberModel);
   }
 
-  public async findByEmail(email: string): Promise<EmailSubscriberEntity | null> {
+  public async findByEmail(email: string): Promise<Nullable<EmailSubscriberEntity>> {
     const document = await this.model.findOne({ email }).exec();
     return this.createEntityFromDocument(document);
   }

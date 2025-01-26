@@ -1,13 +1,15 @@
-import { Inject, Injectable, Logger } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { NotifyService } from '@project/api-notify';
 import { UserDetailedRDO, UserRDO } from '@project/authentication';
 import { UploadedFileRDO } from '@project/file-uploader';
-import { ApplicationServiceURL } from './app.config';
 import { NotifyNewPostDTO } from '@project/email-subscriber';
 import FormData from 'form-data';
 import 'multer';
 import { PostRDO } from 'libs/blog/blog-post/src/post/rdo/post.rdo';
+import { ConfigType } from '@nestjs/config';
+import { gatewayConfig } from '@project/api-config';
+import { getAppURL } from '@project/helpers';
 
 @Injectable()
 export class AppService {
@@ -15,23 +17,22 @@ export class AppService {
 
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
-    @Inject(NotifyService) private notifyService: NotifyService
+    @Inject(NotifyService) private notifyService: NotifyService,
+    @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>
   ) {}
 
   public async uploadFile(file: Express.Multer.File): Promise<string> {
     if (!file) {
-      return '';
+      throw new BadRequestException('File is required!');
     }
 
     const formData = new FormData();
     formData.append('file', file.buffer, file.originalname);
     const { data } = await this.httpService.axiosRef.post<UploadedFileRDO>(
-      `${ApplicationServiceURL.File}/upload`,
+      getAppURL(this.baseUrl.file, 'upload'),
       formData,
       {
-        headers: {
-          ...formData.getHeaders(),
-        },
+        headers: formData.getHeaders(),
       }
     );
     return `${data.subDirectory}/${data.hashName}`.replace(/\\/g, '/');
@@ -47,26 +48,20 @@ export class AppService {
 
   public async getUserDetails(user: UserRDO): Promise<UserDetailedRDO> {
     const { data: publicationsCount } = await this.httpService.axiosRef.get<number>(
-      `${ApplicationServiceURL.Blog}/count/${user.id}`
+      getAppURL(this.baseUrl.blog, `count/${user.id}`)
     );
-    return {
-      ...user,
+    return Object.assign(user, {
       publicationsCount,
       subscriptionsCount: user.subscriptions.length,
-    };
+    });
   }
 
   public async appendUserInfo(posts: PostRDO[]) {
-    await Promise.all(
-      posts.map(async (post) => {
-        try {
-          post['user'] = await this.httpService.axiosRef.get<UserRDO>(
-            `ApplicationServiceURL.Users/${post.userId}`
-          );
-        } catch (error) {
-          this.logger.error(`Failed to get details fot user ${post.userId}:`, error);
-        }
-      })
+    const result = await Promise.allSettled(
+      posts.map((post) =>
+        this.httpService.axiosRef.get(`ApplicationServiceURL.Users/${post.userId}`)
+      )
     );
+    result.filter((r) => r.status === 'rejected').forEach((i) => this.logger.error);
   }
 }

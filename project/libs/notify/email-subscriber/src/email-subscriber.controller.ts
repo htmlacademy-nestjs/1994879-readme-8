@@ -39,15 +39,19 @@ export class EmailSubscriberController {
       return;
     }
 
-    const subscribers = await this.subscriberService.findAll();
-    await Promise.all(
-      subscribers.map(async (subscriber) => {
-        try {
-          await this.mailService.sendNotifyNewPost(subscriber, post);
-        } catch (error) {
-          this.logger.error(`Failed to send email to subscriber ${subscriber.email}:`, error);
-        }
-      })
-    );
+    // for await (const subscribers of generator()) {
+    //   await this.mailService.sendNotifyNewPost(post, subscribers);
+    // }
+
+    // const subscribers = await this.subscriberService.findAll();
+    // await Promise.all(
+    //   subscribers.map(async (subscriber) => {
+    //     try {
+    //       await this.mailService.sendNotifyNewPost(subscriber, post);
+    //     } catch (error) {
+    //       this.logger.error(`Failed to send email to subscriber ${subscriber.email}:`, error);
+    //     }
+    //   })
+    // );
   }
 }

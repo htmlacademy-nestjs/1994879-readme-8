@@ -3,14 +3,12 @@ import dayjs from 'dayjs';
 export type DateTimeUnit = 's' | 'h' | 'd' | 'm' | 'y';
 export type TimeAndUnit = { value: number; unit: DateTimeUnit };
 
-type PlainObject = Record<string, unknown>;
-
 export function parseTime(time: string): TimeAndUnit {
   const regex = /^(\d+)([shdmy])/;
   const match = regex.exec(time);
 
   if (!match) {
-    throw new Error(`[parseTime] Bad time string: ${time}`);
+    new TypeError(`Unable to parse "${time}" as time`);
   }
 
   const [, valueRaw, unitRaw] = match;
@@ -18,7 +16,7 @@ export function parseTime(time: string): TimeAndUnit {
   const unit = unitRaw as DateTimeUnit;
 
   if (isNaN(value)) {
-    throw new Error(`[parseTime] Can't parse value count. Result is NaN.`);
+    throw new TypeError(`Unable to parse "${value}" as number`);
   }
 
   return { value, unit };

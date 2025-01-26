@@ -5,6 +5,7 @@ import { BaseMongoRepository } from '@project/data-access';
 import { RefreshTokenEntity } from './refresh-token.entity';
 import { RefreshTokenModel } from './refresh-token.model';
 import { RefreshTokenFactory } from './refresh-token.factory';
+import { Nullable } from '@project/core';
 
 @Injectable()
 export class RefreshTokenRepository extends BaseMongoRepository<
@@ -22,7 +23,7 @@ export class RefreshTokenRepository extends BaseMongoRepository<
     return this.model.deleteOne({ tokenId }).exec();
   }
 
-  public async findByTokenId(tokenId: string): Promise<RefreshTokenEntity | null> {
+  public async findByTokenId(tokenId: string): Promise<Nullable<RefreshTokenEntity>> {
     const document = await this.model.findOne({ tokenId }).exec();
     return this.createEntityFromDocument(document);
   }

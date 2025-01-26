@@ -1,4 +1,5 @@
 export { APP_PREFIX } from './lib/constants/app.config';
+export { Nullable } from './lib/interfaces/nullable';
 export { Entity } from './lib/base/entity';
 export { User } from './lib/types/user.interface';
 export { AuthUser } from './lib/types/auth-user.interface';
