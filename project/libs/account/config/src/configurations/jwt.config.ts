@@ -1,6 +1,7 @@
 import { registerAs } from '@nestjs/config';
 import { IsString } from 'class-validator';
 import { validateConfig } from '@project/app-config';
+import { JWT_CONFIG_KEY } from './const';
 
 export class JWTConfig {
   @IsString()
@@ -27,4 +28,4 @@ async function getConfig(): Promise<JWTConfig> {
   return validateConfig(config, JWTConfig);
 }
 
-export default registerAs('jwt', getConfig);
+export const jwtConfig = registerAs(JWT_CONFIG_KEY, getConfig);

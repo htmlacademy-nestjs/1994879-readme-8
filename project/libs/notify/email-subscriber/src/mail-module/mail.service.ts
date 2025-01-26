@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { Subscriber } from '@project/core';
 import { mailConfig } from '@project/app-config';
-import { NotifyNewPostDto } from '../dto/notify-new-post.dto';
+import { NotifyNewPostDTO } from '../dto/notify-new-post.dto';
 import { MailConfig } from './mail.constant';
 
 @Injectable()
@@ -24,7 +24,7 @@ export class MailService {
     });
   }
 
-  public async sendNotifyNewPost(subscriber: Subscriber, postData: NotifyNewPostDto) {
+  public async sendNotifyNewPost(subscriber: Subscriber, postData: NotifyNewPostDTO) {
     await this.mailerService.sendMail({
       ...MailConfig.newPost,
       from: this.mailOptions.from,

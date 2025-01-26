@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, NotImplementedException } from '@nestjs/common';
-import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateCommentDTO } from './dto/create-comment.dto';
 import { CommentRepository } from './comment.repository';
 import { CommentFactory } from './comment.factory';
 import { CommentEntity } from './entities/comment.entity';
@@ -19,9 +19,9 @@ export class CommentService {
     return this.commentRepository.findAll(postId);
   }
 
-  async create(postId: string, dto: CreateCommentDto) {
+  async create(postId: string, dto: CreateCommentDTO) {
     try {
-      const newComment = this.commentFactory.createFromDto(dto, postId);
+      const newComment = this.commentFactory.createFromDTO(dto, postId);
       await this.commentRepository.save(newComment);
 
       return newComment;

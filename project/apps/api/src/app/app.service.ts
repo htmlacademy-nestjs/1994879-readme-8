@@ -2,9 +2,9 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { NotifyService } from '@project/api-notify';
 import { UserDetailedRDO, UserRDO } from '@project/authentication';
-import { UploadedFileRdo } from '@project/file-uploader';
+import { UploadedFileRDO } from '@project/file-uploader';
 import { ApplicationServiceURL } from './app.config';
-import { NotifyNewPostDto } from '@project/email-subscriber';
+import { NotifyNewPostDTO } from '@project/email-subscriber';
 import FormData from 'form-data';
 import 'multer';
 import { PostRDO } from 'libs/blog/blog-post/src/post/rdo/post.rdo';
@@ -25,7 +25,7 @@ export class AppService {
 
     const formData = new FormData();
     formData.append('file', file.buffer, file.originalname);
-    const { data } = await this.httpService.axiosRef.post<UploadedFileRdo>(
+    const { data } = await this.httpService.axiosRef.post<UploadedFileRDO>(
       `${ApplicationServiceURL.File}/upload`,
       formData,
       {
@@ -34,15 +34,14 @@ export class AppService {
         },
       }
     );
-    return `${data.subDirectory}/${data.hashName}`;
+    return `${data.subDirectory}/${data.hashName}`.replace(/\\/g, '/');
   }
 
-  public async notifyNewUser(dto: UserRDO): Promise<boolean> {
-    const { email, name } = dto;
+  public async notifyNewUser({ email, name }: UserRDO): Promise<boolean> {
     return this.notifyService.registerSubscriber({ email, name });
   }
 
-  public async notifyNewPost(dto: NotifyNewPostDto): Promise<boolean> {
+  public async notifyNewPost(dto: NotifyNewPostDTO): Promise<boolean> {
     return this.notifyService.notifyNewPost(dto);
   }
 

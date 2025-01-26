@@ -13,8 +13,8 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { AuthenticationService } from './authentication.service';
-import { ChangePasswordDto } from '../dto/change-password.dto';
-import { CreateUserDto } from '../dto/create-user.dto';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
+import { CreateUserDTO } from '../dto/create-user.dto';
 import { UserRDO } from '../rdo/user.rdo';
 import { LoggedUserRDO } from '../rdo/logged-user.rdo';
 import { ApiBearerAuth, ApiBody, ApiResponse, ApiTags } from '@nestjs/swagger';
@@ -25,7 +25,7 @@ import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { RequestWithUser } from './request-with-user.interface';
 import { JwtRefreshGuard } from '../guards/jwt-refresh.guard';
 import { RequestWithTokenPayload } from './request-with-token-payload.interface';
-import { LoginUserDto } from '../dto/login-user.dto';
+import { LoginUserDTO } from '../dto/login-user.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -37,7 +37,7 @@ export class AuthenticationController {
   @Post('register')
   @ApiResponse({ status: HttpStatus.CREATED, description: AuthResponseDescription.UserCreated })
   @ApiResponse({ status: HttpStatus.CONFLICT, description: AuthResponseDescription.UserExist })
-  public async create(@Body() dto: CreateUserDto) {
+  public async create(@Body() dto: CreateUserDTO) {
     return this.authService.register(dto);
   }
 
@@ -49,7 +49,7 @@ export class AuthenticationController {
     description: AuthResponseDescription.LoggedError,
   })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
-  @ApiBody({ type: LoginUserDto })
+  @ApiBody({ type: LoginUserDTO })
   @SerializeOptions({ type: LoggedUserRDO, excludeExtraneousValues: true })
   public async login(@Req() { user }: RequestWithUser) {
     const userToken = await this.authService.createUserToken(user);
@@ -74,7 +74,7 @@ export class AuthenticationController {
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: AuthResponseDescription.UserNotFound })
   public async changePassword(
     @Param('id', MongoIdValidationPipe) id: string,
-    @Body() dto: ChangePasswordDto
+    @Body() dto: ChangePasswordDTO
   ) {
     return this.authService.changePassword(id, dto);
   }

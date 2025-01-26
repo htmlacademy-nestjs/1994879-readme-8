@@ -9,9 +9,9 @@ import {
 } from '@nestjs/common';
 import { BlogUserService, BlogUserEntity } from '@project/blog-user';
 import { AuthMessage } from './authentication.constant';
-import { CreateUserDto } from '../dto/create-user.dto';
-import { LoginUserDto } from '../dto/login-user.dto';
-import { ChangePasswordDto } from '../dto/change-password.dto';
+import { CreateUserDTO } from '../dto/create-user.dto';
+import { LoginUserDTO } from '../dto/login-user.dto';
+import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Token, User } from '@project/core';
 import { jwtConfig } from '@project/account-config';
@@ -46,20 +46,20 @@ export class AuthenticationService {
     }
   }
 
-  public async register(dto: CreateUserDto): Promise<BlogUserEntity> {
+  public async register(dto: CreateUserDTO): Promise<BlogUserEntity> {
     const existUser = await this.blogUserService.findByEmail(dto.email);
     if (existUser) {
       throw new ConflictException(AuthMessage.Exists);
     }
 
-    const userDto = {
+    const userDTO = {
       ...dto,
       passwordHash: '',
       registrationDate: undefined,
       subscriptions: [],
     };
 
-    const userEntity = await new BlogUserEntity(userDto).setPassword(dto.password);
+    const userEntity = await new BlogUserEntity(userDTO).setPassword(dto.password);
     await this.blogUserService.save(userEntity);
 
     return userEntity;
@@ -71,7 +71,7 @@ export class AuthenticationService {
     }
   }
 
-  public async verifyUser({ email, password }: LoginUserDto) {
+  public async verifyUser({ email, password }: LoginUserDTO) {
     const existUser = await this.blogUserService.findByEmail(email);
 
     if (!existUser) {
@@ -91,7 +91,7 @@ export class AuthenticationService {
     return user;
   }
 
-  public async changePassword(id: string, { password, newPassword }: ChangePasswordDto) {
+  public async changePassword(id: string, { password, newPassword }: ChangePasswordDTO) {
     const user = await this.getUser(id);
     await this.checkUserPassword(user, password);
 

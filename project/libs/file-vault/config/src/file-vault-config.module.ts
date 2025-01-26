@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { default as fileVaultConfig } from './file-vault.config';
+import { fileVaultConfig } from './file-vault.config';
 import { mongoDbConfig } from '@project/app-config';
 
 @Module({

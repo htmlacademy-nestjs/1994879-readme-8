@@ -1,7 +1,7 @@
 import { Expose, Type } from 'class-transformer';
 import { PostRDO } from './post.rdo';
 
-export class PostWithPaginationRdo {
+export class PostWithPaginationRDO {
   @Expose()
   @Type(() => PostRDO)
   public entities: PostRDO[];

@@ -24,4 +24,4 @@ async function getConfig(): Promise<HttpConfig> {
   return validateConfig(config, HttpConfig);
 }
 
-export default registerAs(ConfigSpace.Http, getConfig);
+export const httpConfig = registerAs(ConfigSpace.Http, getConfig);

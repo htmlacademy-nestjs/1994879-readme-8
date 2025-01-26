@@ -16,13 +16,13 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import {
-  RegisterUserDto,
-  LoginUserDto,
+  RegisterUserDTO,
+  LoginUserDTO,
   UserRDO,
-  CreateUserDto,
+  CreateUserDTO,
   LoggedUserRDO,
   AuthResponseDescription,
-  ChangePasswordDto,
+  ChangePasswordDTO,
 } from '@project/authentication';
 import { ApiUnit, ApplicationServiceURL, AvatarLimit } from '../app.config';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
@@ -74,7 +74,7 @@ export class UsersController {
   @ApiConflictResponse({ description: AuthResponseDescription.UserExist })
   @ApiBadRequestResponse()
   public async register(
-    @Body() dto: RegisterUserDto,
+    @Body() dto: RegisterUserDTO,
     @UploadedFile(
       new ParseFilePipeBuilder()
         .addMaxSizeValidator({ maxSize: AvatarLimit.MaxSize })
@@ -83,7 +83,7 @@ export class UsersController {
     )
     avatarFile?: Express.Multer.File
   ) {
-    const userDto = plainToInstance(CreateUserDto, {
+    const userDTO = plainToInstance(CreateUserDTO, {
       email: dto.email,
       name: dto.name,
       password: dto.password,
@@ -92,7 +92,7 @@ export class UsersController {
 
     const { data } = await this.httpService.axiosRef.post<UserRDO>(
       `${ApplicationServiceURL.Users}/register`,
-      userDto
+      userDTO
     );
 
     this.appService.notifyNewUser(data);
@@ -103,11 +103,11 @@ export class UsersController {
   @ApiCreatedResponse({ description: AuthResponseDescription.UserCreated })
   @ApiNotFoundResponse({ description: AuthResponseDescription.UserNotFound })
   @ApiBadRequestResponse()
-  @ApiBody({ type: LoginUserDto })
-  public async login(@Body() loginUserDto: LoginUserDto) {
+  @ApiBody({ type: LoginUserDTO })
+  public async login(@Body() loginUserDTO: LoginUserDTO) {
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
       ApplicationServiceURL.Users,
-      loginUserDto
+      loginUserDTO
     );
     return { data };
   }
@@ -118,7 +118,7 @@ export class UsersController {
   @ApiUnauthorizedResponse()
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
-  public async update(@Body() dto: ChangePasswordDto, @Req() req: Request) {
+  public async update(@Body() dto: ChangePasswordDTO, @Req() req: Request) {
     const { data } = await this.httpService.axiosRef.patch<UserRDO>(
       `${ApplicationServiceURL.Users}`,
       dto,

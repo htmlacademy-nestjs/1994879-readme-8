@@ -1,24 +1,23 @@
 import { Module } from '@nestjs/common';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { ConfigService } from '@nestjs/config';
+import { ConfigType } from '@nestjs/config';
 import { FileUploaderService } from './file-uploader.service';
 import { FileUploaderController } from './file-uploader.controller';
-import { SERVE_ROOT } from './file-uploader.constant';
 import { FileUploaderFactory } from './file-uploader.factory';
 import { FileModel, FileSchema } from './file.model';
 import { MongooseModule } from '@nestjs/mongoose';
 import { FileUploaderRepository } from './file-uploader.repository';
+import { fileVaultConfig } from '@project/file-vault-config';
 
 @Module({
   imports: [
     ServeStaticModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) => {
-        const rootPath = configService.get<string>('fileVault.uploadDirectory');
+      inject: [fileVaultConfig.KEY],
+      useFactory: (configService: ConfigType<typeof fileVaultConfig>) => {
         return [
           {
-            rootPath,
-            serveRoot: SERVE_ROOT,
+            rootPath: configService.uploadDirectory,
+            serveRoot: configService.serveDirectory,
             serveStaticOptions: {
               fallthrough: true,
               etag: true,

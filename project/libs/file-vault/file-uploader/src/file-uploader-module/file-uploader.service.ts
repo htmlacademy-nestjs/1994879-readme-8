@@ -1,5 +1,11 @@
 import 'multer';
-import { Inject, Injectable, Logger, NotFoundException } from '@nestjs/common';
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+  NotFoundException,
+} from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { ensureDir } from 'fs-extra';
 import { writeFile } from 'node:fs/promises';
@@ -56,7 +62,7 @@ export class FileUploaderService {
       };
     } catch (error) {
       this.logger.error(`Error while saving file: ${error.message}`);
-      throw new Error(`Can't save file`);
+      throw new InternalServerErrorException(`Can't save file`);
     }
   }
 

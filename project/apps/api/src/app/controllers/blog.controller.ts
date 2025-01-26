@@ -14,12 +14,12 @@ import { HttpService } from '@nestjs/axios';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
 import { ApiUnit, ApplicationServiceURL } from '../app.config';
-import { AddNewPostDto } from '../dto/add-new-post.dto';
+import { AddNewPostDTO } from '../dto/add-new-post.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AppService } from '../app.service';
 import { InjectUserIdInterceptor } from '@project/interceptors';
 import { UserRDO } from '@project/authentication';
-import { PostWithPaginationRdo } from '@project/blog-post';
+import { PostWithPaginationRDO } from '@project/blog-post';
 import { PostQuery } from '@project/blog-post';
 
 @Controller('blog')
@@ -43,7 +43,7 @@ export class BlogController {
   @UseGuards(CheckAuthGuard)
   @UseInterceptors(UseInterceptors)
   public async index(@Query() queryParams: PostQuery) {
-    const { data } = await this.httpService.axiosRef.get<PostWithPaginationRdo>(
+    const { data } = await this.httpService.axiosRef.get<PostWithPaginationRDO>(
       ApplicationServiceURL.Blog,
       { params: queryParams }
     );
@@ -54,8 +54,8 @@ export class BlogController {
   @Post()
   @UseGuards(CheckAuthGuard)
   @UseInterceptors(UseInterceptors)
-  public async create(@Body() dto: AddNewPostDto) {
-    const { data } = await this.httpService.axiosRef.post<PostWithPaginationRdo>(
+  public async create(@Body() dto: AddNewPostDTO) {
+    const { data } = await this.httpService.axiosRef.post<PostWithPaginationRDO>(
       ApplicationServiceURL.Blog,
       dto
     );

@@ -1,4 +1,4 @@
-export class AddNewPostDto {
+export class AddNewPostDTO {
   public title: string;
   public description: string;
   public content: string;

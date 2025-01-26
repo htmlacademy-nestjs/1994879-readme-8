@@ -1,3 +1,3 @@
 export { EmailSubscriberModule } from './email-subscriber.module';
-export { CreateSubscriberDto } from './dto/create-subscriber.dto';
-export { NotifyNewPostDto } from './dto/notify-new-post.dto';
+export { CreateSubscriberDTO } from './dto/create-subscriber.dto';
+export { NotifyNewPostDTO } from './dto/notify-new-post.dto';

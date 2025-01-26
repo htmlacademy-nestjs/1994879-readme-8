@@ -11,13 +11,13 @@ import {
   Query,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostDTO } from './dto/create-post.dto';
+import { UpdatePostDTO } from './dto/update-post.dto';
 import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { PostOperationSummary, PostResponseDescription, PostSwaggerQuery } from './post.constant';
 import { PostRDO } from './rdo/post.rdo';
 import { PostQuery } from './post.query';
-import { PostWithPaginationRdo } from './rdo/post-with-pagination.rdo';
+import { PostWithPaginationRDO } from './rdo/post-with-pagination.rdo';
 
 @ApiTags('Routes for posts')
 @Controller('posts')
@@ -29,7 +29,7 @@ export class PostController {
   @ApiOperation({ summary: PostOperationSummary.Create })
   @ApiResponse({ status: HttpStatus.CREATED, description: PostResponseDescription.Created })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: PostResponseDescription.BadRequest })
-  async create(@Body() dto: CreatePostDto) {
+  async create(@Body() dto: CreatePostDTO) {
     return this.postService.create(dto);
   }
 
@@ -37,10 +37,10 @@ export class PostController {
   @ApiOperation({ summary: PostOperationSummary.FindAll })
   @ApiResponse({
     status: HttpStatus.OK,
-    type: PostWithPaginationRdo,
+    type: PostWithPaginationRDO,
     description: PostResponseDescription.AllPosts,
   })
-  @SerializeOptions({ type: PostWithPaginationRdo, excludeExtraneousValues: true })
+  @SerializeOptions({ type: PostWithPaginationRDO, excludeExtraneousValues: true })
   async findAll(@Query() query: PostQuery) {
     const postsWithPagination = await this.postService.findAll(query);
     return postsWithPagination;
@@ -58,7 +58,7 @@ export class PostController {
   @ApiOperation({ summary: PostOperationSummary.Update })
   @ApiResponse({ status: HttpStatus.OK, description: PostResponseDescription.Updated })
   @ApiResponse({ status: HttpStatus.NOT_FOUND, description: PostResponseDescription.NotFound })
-  async update(@Param('id') id: string, @Body() dto: UpdatePostDto) {
+  async update(@Param('id') id: string, @Body() dto: UpdatePostDTO) {
     return this.postService.update(id, dto);
   }
 

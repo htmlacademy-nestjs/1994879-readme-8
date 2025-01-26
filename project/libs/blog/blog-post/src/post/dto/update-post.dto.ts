@@ -21,7 +21,7 @@ import {
   TitleLimit,
 } from '../post.constant';
 
-export class UpdatePostDto {
+export class UpdatePostDTO {
   @IsEnum(PostStatus)
   @IsOptional()
   @ApiProperty({ enum: PostStatus, ...PostSwaggerMessage.status })

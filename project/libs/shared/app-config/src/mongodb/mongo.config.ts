@@ -16,7 +16,7 @@ async function getDbConfig(): Promise<MongoConfiguration> {
   return validateConfig(config, MongoConfiguration);
 }
 
-export default registerAs(
+export const mongoDbConfig = registerAs(
   ConfigSpace.Mongo,
   async (): Promise<ConfigType<typeof getDbConfig>> => getDbConfig()
 );

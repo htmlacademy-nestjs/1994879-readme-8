@@ -13,13 +13,21 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FileUploaderService } from './file-uploader.service';
 import { MongoIdValidationPipe } from '@project/pipes';
-import { UploadedFileRdo } from './rdo/uploaded-file.rdo';
-import { ApiBody, ApiConsumes, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { UploadedFileRDO } from './rdo/uploaded-file.rdo';
+import {
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
 import { SWAGGER_RESPONSE, SWAGGER_SUMMARY } from './file-uploader.constant';
+import { ApiFileUpload } from './decorators/api-file-upload.decorator.ts';
 
 @Controller('files')
 @ApiTags('Works with files')
-@SerializeOptions({ type: UploadedFileRdo, excludeExtraneousValues: true })
+@SerializeOptions({ type: UploadedFileRDO, excludeExtraneousValues: true })
 export class FileUploaderController {
   constructor(
     @Inject(FileUploaderService) private readonly fileUploaderService: FileUploaderService
@@ -27,35 +35,17 @@ export class FileUploaderController {
 
   @Post('/upload')
   @ApiOperation({ summary: SWAGGER_SUMMARY.UPLOAD })
-  @ApiResponse({
-    status: HttpStatus.CREATED,
-    type: UploadedFileRdo,
-    description: SWAGGER_RESPONSE.CREATED,
-  })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: SWAGGER_RESPONSE.BAD })
-  @ApiConsumes('multipart/form-data')
-  @ApiBody({
-    required: true,
-    schema: {
-      type: 'object',
-      properties: {
-        file: {
-          type: 'string',
-          format: 'binary',
-        },
-      },
-      required: ['file'],
-    },
-  })
-  @UseInterceptors(FileInterceptor('file'))
+  @ApiCreatedResponse({ type: UploadedFileRDO, description: SWAGGER_RESPONSE.CREATED })
+  @ApiBadRequestResponse({ description: SWAGGER_RESPONSE.BAD })
+  @ApiFileUpload('file')
   public async uploadFile(@UploadedFile() file: Express.Multer.File) {
     return this.fileUploaderService.saveFile(file);
   }
 
   @Get(':fileId')
-  @ApiResponse({ status: HttpStatus.OK, type: UploadedFileRdo, description: SWAGGER_RESPONSE.OK })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: SWAGGER_RESPONSE.BAD })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: SWAGGER_RESPONSE.NOT_FOUND })
+  @ApiOkResponse({ type: UploadedFileRDO, description: SWAGGER_RESPONSE.OK })
+  @ApiBadRequestResponse({ description: SWAGGER_RESPONSE.BAD })
+  @ApiNotFoundResponse({ description: SWAGGER_RESPONSE.NOT_FOUND })
   public async show(@Param('fileId', MongoIdValidationPipe) fileId: string) {
     return this.fileUploaderService.getFile(fileId);
   }

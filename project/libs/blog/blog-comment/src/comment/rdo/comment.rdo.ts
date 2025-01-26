@@ -1,6 +1,6 @@
 import { Expose } from 'class-transformer';
 
-export class CommentRdo {
+export class CommentRDO {
   @Expose()
   public id: string;
 

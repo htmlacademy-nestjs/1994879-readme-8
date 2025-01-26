@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { CreatePostDTO } from './dto/create-post.dto';
+import { UpdatePostDTO } from './dto/update-post.dto';
 import { PostRepository } from './post.repository';
 import { plainToClass } from 'class-transformer';
 import { PostEntity } from './entities/post.entity';
@@ -12,8 +12,8 @@ import { PaginationResult } from '@project/core';
 export class PostService {
   constructor(private readonly postRepository: PostRepository) {}
 
-  async create(dto: CreatePostDto): Promise<PostEntity> {
-    const newPost = PostFactory.createFromPostDto(dto);
+  async create(dto: CreatePostDTO): Promise<PostEntity> {
+    const newPost = PostFactory.createFromPostDTO(dto);
     await this.postRepository.save(newPost);
     return newPost;
   }
@@ -26,9 +26,9 @@ export class PostService {
     return this.postRepository.findById(id);
   }
 
-  async update(id: string, dto: UpdatePostDto): Promise<PostEntity> {
+  async update(id: string, dto: UpdatePostDTO): Promise<PostEntity> {
     const existsPost = await this.postRepository.findById(id);
-    const updatePost = PostFactory.createFromPostDto(dto);
+    const updatePost = PostFactory.createFromPostDTO(dto);
     let hasChanges = false;
 
     for (const [key, value] of Object.entries(updatePost)) {

@@ -1,6 +1,6 @@
 import { HttpModuleAsyncOptions } from '@nestjs/axios';
 import { ConfigType } from '@nestjs/config';
-import httpConfig from './http.config';
+import { httpConfig } from './http.config';
 
 export function getHttpAsyncOptions(): HttpModuleAsyncOptions {
   return {

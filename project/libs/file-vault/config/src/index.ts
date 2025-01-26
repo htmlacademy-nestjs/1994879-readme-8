@@ -1,2 +1,3 @@
 export { FileVaultConfigModule } from './file-vault-config.module';
-export { default as fileVaultConfig } from './file-vault.config';
+export { fileVaultConfig } from './file-vault.config';
+export { FILE_VAULT_CONFIG_KEY } from './const';

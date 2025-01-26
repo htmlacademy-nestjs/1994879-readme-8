@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator';
 
-export class NotifyNewPostDto {
+export class NotifyNewPostDTO {
   @IsString()
   title: string;
 

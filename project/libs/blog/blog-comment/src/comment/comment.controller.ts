@@ -9,9 +9,9 @@ import {
   HttpStatus,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
-import { CreateCommentDto } from './dto/create-comment.dto';
+import { CreateCommentDTO } from './dto/create-comment.dto';
 import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CommentRdo } from './rdo/comment.rdo';
+import { CommentRDO } from './rdo/comment.rdo';
 import {
   CommentApiParam,
   CommentOperationSummary,
@@ -20,7 +20,7 @@ import {
 
 @ApiTags('Routes for comments')
 @Controller('posts/:postId/comments')
-@SerializeOptions({ type: CommentRdo, excludeExtraneousValues: true })
+@SerializeOptions({ type: CommentRDO, excludeExtraneousValues: true })
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
@@ -32,7 +32,7 @@ export class CommentController {
     status: HttpStatus.BAD_REQUEST,
     description: CommentResponseDescription.BadRequest,
   })
-  async create(@Body() dto: CreateCommentDto, @Param('postId') postId: string) {
+  async create(@Body() dto: CreateCommentDTO, @Param('postId') postId: string) {
     return this.commentService.create(postId, dto);
   }
 

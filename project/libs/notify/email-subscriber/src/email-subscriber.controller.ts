@@ -1,11 +1,11 @@
 import { Controller, Inject, Logger } from '@nestjs/common';
 import { RabbitSubscribe } from '@golevelup/nestjs-rabbitmq';
 import { EmailSubscriberService } from './email-subscriber.service';
-import { CreateSubscriberDto } from './dto/create-subscriber.dto';
+import { CreateSubscriberDTO } from './dto/create-subscriber.dto';
 import { RabbitRouting } from '@project/core';
 import { MailService } from './mail-module/mail.service';
 import { RabbitConfig } from '../constant';
-import { NotifyNewPostDto } from './dto/notify-new-post.dto';
+import { NotifyNewPostDTO } from './dto/notify-new-post.dto';
 
 @Controller()
 export class EmailSubscriberController {
@@ -21,7 +21,7 @@ export class EmailSubscriberController {
     routingKey: RabbitRouting.AddSubscriber,
     queue: RabbitConfig.Queue,
   })
-  public async create(subscriber: CreateSubscriberDto) {
+  public async create(subscriber: CreateSubscriberDTO) {
     this.logger.debug(RabbitRouting.AddSubscriber);
     this.subscriberService.addSubscriber(subscriber);
     this.mailService.sendNotifyNewSubscriber(subscriber);
@@ -32,10 +32,10 @@ export class EmailSubscriberController {
     routingKey: RabbitRouting.NewPost,
     queue: RabbitConfig.Queue,
   })
-  public async notifyNewPost(post: NotifyNewPostDto) {
+  public async notifyNewPost(post: NotifyNewPostDTO) {
     this.logger.debug(RabbitRouting.NewPost, post);
 
-    if (!(post instanceof NotifyNewPostDto)) {
+    if (!(post instanceof NotifyNewPostDTO)) {
       return;
     }
 
