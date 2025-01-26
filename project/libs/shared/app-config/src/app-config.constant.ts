@@ -3,6 +3,8 @@ export enum ConfigSpace {
   Mongo = 'db',
   Mail = 'mail',
   Rabbit = 'rabbit',
+  Http = 'http_client',
+  Gateway = 'api_gateway',
 }
 
 export enum ConfigKey {

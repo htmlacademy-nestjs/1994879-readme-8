@@ -2,7 +2,7 @@ import { MailerAsyncOptions } from '@nestjs-modules/mailer/dist/interfaces/maile
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { ConfigService } from '@nestjs/config';
 import { resolve } from 'node:path';
-import { ConfigKey } from '../app-config.constatnt.';
+import { ConfigKey } from '../app-config.constant';
 
 export function getMailerAsyncOptions(optionSpace: string): MailerAsyncOptions {
   return {

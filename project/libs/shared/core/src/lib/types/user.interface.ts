@@ -3,4 +3,6 @@ export interface User {
   avatar?: string;
   email: string;
   name: string;
+  registrationDate: Date;
+  subscriptions: string[];
 }

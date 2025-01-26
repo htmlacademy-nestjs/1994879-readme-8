@@ -15,4 +15,4 @@ async function getConfig(): Promise<MailConfiguration> {
   return validateConfig(mail, MailConfiguration);
 }
 
-export default registerAs(ConfigSpace.Mail, getConfig);
+export const mailConfig = registerAs(ConfigSpace.Mail, getConfig);

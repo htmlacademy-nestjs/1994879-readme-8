@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
 
-export class UploadedFileRdo {
+export class UploadedFileRDO {
   @Expose()
   @ApiProperty()
   public id: string;

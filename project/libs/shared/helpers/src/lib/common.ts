@@ -1,28 +1,30 @@
-import { ClassTransformOptions, plainToInstance } from 'class-transformer';
+import dayjs from 'dayjs';
 
-type PlainObject = Record<string, unknown>;
+export type DateTimeUnit = 's' | 'h' | 'd' | 'm' | 'y';
+export type TimeAndUnit = { value: number; unit: DateTimeUnit };
 
-export function fillDTO<T, V extends PlainObject>(
-  DtoClass: new () => T,
-  plainObject: V,
-  options?: ClassTransformOptions
-): T;
+export function parseTime(time: string): TimeAndUnit {
+  const regex = /^(\d+)([shdmy])/;
+  const match = regex.exec(time);
 
-export function fillDTO<T, V extends PlainObject[]>(
-  DtoClass: new () => T,
-  plainObject: V,
-  options?: ClassTransformOptions
-): T[];
+  if (!match) {
+    new TypeError(`Unable to parse "${time}" as time`);
+  }
 
-export function fillDTO<T, V extends PlainObject>(
-  DtoClass: new () => T,
-  plainObject: V,
-  options?: ClassTransformOptions
-): T | T[] {
-  return plainToInstance(DtoClass, plainObject, {
-    excludeExtraneousValues: true,
-    ...options,
-  });
+  const [, valueRaw, unitRaw] = match;
+  const value = parseInt(valueRaw, 10);
+  const unit = unitRaw as DateTimeUnit;
+
+  if (isNaN(value)) {
+    throw new TypeError(`Unable to parse "${value}" as number`);
+  }
+
+  return { value, unit };
+}
+
+export function getExpiresIn(value: string): Date {
+  const timeValue = parseTime(value);
+  return dayjs().add(timeValue.value, timeValue.unit).toDate();
 }
 
 export function getApplicationUrl(host: string, port: number, prefix: string): string {

@@ -21,7 +21,7 @@ import {
   TitleLimit,
 } from '../post.constant';
 
-export class CreatePostDto {
+export class CreatePostDTO {
   @IsEnum(PostType)
   @ApiProperty({ required: true, enum: PostType, ...PostSwaggerMessage.type })
   public type: PostType;

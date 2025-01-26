@@ -4,14 +4,10 @@ import { AuthSwaggerMessage } from '../authentication-module/authentication.cons
 
 export class LoggedUserRDO {
   @Expose()
-  @ApiProperty({ ...AuthSwaggerMessage.id })
-  public id: string;
-
-  @Expose()
-  @ApiProperty({ ...AuthSwaggerMessage.email })
-  public email: string;
-
-  @Expose()
-  @ApiProperty({ ...AuthSwaggerMessage.accessToken })
+  @ApiProperty(AuthSwaggerMessage.accessToken)
   public accessToken: string;
+
+  @Expose()
+  @ApiProperty(AuthSwaggerMessage.refreshToken)
+  public refreshToken: string;
 }

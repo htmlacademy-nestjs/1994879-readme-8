@@ -1,7 +1,7 @@
 import { ConfigType, registerAs } from '@nestjs/config';
 import { validateConfig } from '../application/validate-config';
 import { MongoConfiguration } from './mongo-configuration';
-import { ConfigSpace } from '../app-config.constatnt.';
+import { ConfigSpace } from '../app-config.constant';
 
 async function getDbConfig(): Promise<MongoConfiguration> {
   const config = {
@@ -16,7 +16,7 @@ async function getDbConfig(): Promise<MongoConfiguration> {
   return validateConfig(config, MongoConfiguration);
 }
 
-export default registerAs(
+export const mongoDbConfig = registerAs(
   ConfigSpace.Mongo,
   async (): Promise<ConfigType<typeof getDbConfig>> => getDbConfig()
 );

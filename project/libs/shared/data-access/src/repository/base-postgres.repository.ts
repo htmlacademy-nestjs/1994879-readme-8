@@ -1,4 +1,4 @@
-import { Entity, StorableEntity, EntityFactory } from '@project/core';
+import { Entity, StorableEntity, EntityFactory, Nullable } from '@project/core';
 import { Repository } from './repository.interface';
 import { PrismaClientService } from '@project/models';
 
@@ -12,7 +12,7 @@ export abstract class BasePostgresRepository<
     protected readonly client: PrismaClientService
   ) {}
 
-  protected createEntityFromDocument(document: DocumentType): T | null {
+  protected createEntityFromDocument(document: DocumentType): Nullable<T> {
     if (!document) {
       return null;
     }

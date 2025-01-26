@@ -1,14 +1,14 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { default as JWTConfig } from './configurations/jwt.config';
-import { MongoDbConfig, RabbitMQConfig } from '@project/app-config';
+import { jwtConfig } from './configurations/jwt.config';
+import { mongoDbConfig } from '@project/app-config';
 
 @Module({
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
       cache: true,
-      load: [MongoDbConfig, JWTConfig, RabbitMQConfig],
+      load: [mongoDbConfig, jwtConfig],
     }),
   ],
 })

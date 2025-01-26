@@ -16,6 +16,18 @@ docker compose --file ./apps/account/docker-compose.yml --project-name readme-ac
 docker compose --file ./apps/blog/docker-compose.yml --project-name readme-blog --env-file ./apps/blog/.env up -d
 ```
 
+## Полезные ссылки
+
+Внимание, проверьте порты, которые указали в `.env` файлах
+
+http://localhost:8082/browser/ - pgAdmin
+
+http://localhost:8081/ - MongoExpress
+
+http://localhost:1085/ - FakeSMTPServer
+
+http://localhost:1088/ - RabbitMQ
+
 ## Схема проекта
 
 ![specification.drawio](./specification.drawio.png)

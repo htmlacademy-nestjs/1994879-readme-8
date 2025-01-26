@@ -5,13 +5,15 @@ import {
   PasswordLimit,
 } from '../authentication-module/authentication.constant';
 
-export class LoginUserDto {
+export class LoginUserDTO {
   @IsEmail()
-  @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.email })
+  @ApiProperty({ required: true, type: String })
+  @ApiProperty(AuthSwaggerMessage.email)
   public email!: string;
 
   @IsString()
   @Length(PasswordLimit.Min, PasswordLimit.Max, { message: PasswordLimit.Description })
-  @ApiProperty({ required: true, type: String, ...AuthSwaggerMessage.password })
+  @ApiProperty({ required: true, type: String })
+  @ApiProperty(AuthSwaggerMessage.password)
   public password!: string;
 }

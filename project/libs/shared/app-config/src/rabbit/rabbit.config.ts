@@ -15,4 +15,4 @@ async function getConfig(): Promise<RabbitConfiguration> {
   return validateConfig(config, RabbitConfiguration);
 }
 
-export default registerAs(ConfigSpace.Rabbit, getConfig);
+export const rabbitMQConfig = registerAs(ConfigSpace.Rabbit, getConfig);

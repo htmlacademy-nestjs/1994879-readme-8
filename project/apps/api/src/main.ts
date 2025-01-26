@@ -5,11 +5,13 @@ import { getApplicationUrl, setupSwagger } from '@project/helpers';
 import { APP_PREFIX } from '@project/core';
 import { ConfigService } from '@nestjs/config';
 import { ConfigKey } from '@project/app-config';
+import { RequestIdInterceptor } from '@project/interceptors';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = APP_PREFIX;
   app.setGlobalPrefix(globalPrefix);
+  app.useGlobalInterceptors(new RequestIdInterceptor());
 
   const appConfig = app.get(ConfigService);
   const host = appConfig.get<string>(ConfigKey.AppHost);

@@ -1,7 +1,7 @@
 import { PostStatus, PostType } from '@project/core';
 import { Expose, Transform } from 'class-transformer';
 
-export class PostRdo {
+export class PostRDO {
   @Expose()
   public id: string;
 

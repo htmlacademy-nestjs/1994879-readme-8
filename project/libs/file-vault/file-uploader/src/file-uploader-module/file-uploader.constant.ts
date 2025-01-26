@@ -1,4 +1,4 @@
-export const SERVE_ROOT = '/static';
+export const DEFAULT_AVATAR = 'default-avatar.jpg';
 
 export const SWAGGER_SUMMARY = {
   UPLOAD: 'Upload file.',

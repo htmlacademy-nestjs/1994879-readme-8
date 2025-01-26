@@ -1,13 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { EmailSubscriberEntity } from './email-subscriber.entity';
-import { CreateSubscriberDto } from './dto/create-subscriber.dto';
+import { CreateSubscriberDTO } from './dto/create-subscriber.dto';
 import { EmailSubscriberRepository } from './email-subscriber.repository';
 
 @Injectable()
 export class EmailSubscriberService {
-  constructor(private readonly emailSubscriberRepository: EmailSubscriberRepository) {}
+  constructor(
+    @Inject(EmailSubscriberRepository)
+    private readonly emailSubscriberRepository: EmailSubscriberRepository
+  ) {}
 
-  public async addSubscriber(subscriber: CreateSubscriberDto) {
+  public async addSubscriber(subscriber: CreateSubscriberDTO) {
     const { email } = subscriber;
     const existsSubscriber = await this.emailSubscriberRepository.findByEmail(email);
 
@@ -19,5 +22,9 @@ export class EmailSubscriberService {
     await this.emailSubscriberRepository.save(emailSubscriber);
 
     return emailSubscriber;
+  }
+
+  public async findAll(): Promise<EmailSubscriberEntity[]> {
+    return this.emailSubscriberRepository.findAll();
   }
 }

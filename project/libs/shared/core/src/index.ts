@@ -1,4 +1,5 @@
 export { APP_PREFIX } from './lib/constants/app.config';
+export { Nullable } from './lib/interfaces/nullable';
 export { Entity } from './lib/base/entity';
 export { User } from './lib/types/user.interface';
 export { AuthUser } from './lib/types/auth-user.interface';
@@ -20,7 +21,9 @@ export { EntityFactory } from './lib/interfaces/entity-factory.interface';
 export { SortDirection } from './lib/interfaces/sort-direction.interface';
 export { PaginationResult } from './lib/interfaces/pagination.interface';
 export { Token } from './lib/interfaces/token.interface';
+export { JwtToken } from './lib/interfaces/jwt-token.interface';
 export { TokenPayload } from './lib/interfaces/token-payload.interface';
+export { RefreshTokenPayload } from './lib/interfaces/refresh-token-payload.interface';
 export { File } from './lib/types/file.interface';
 export { StoredFile } from './lib/types/stored-file.interface';
 export { Subscriber } from './lib/types/subscriber.interface';

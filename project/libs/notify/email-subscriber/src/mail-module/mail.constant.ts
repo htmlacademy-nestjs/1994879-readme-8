@@ -1,1 +1,10 @@
-export const EMAIL_ADD_SUBSCRIBER_SUBJECT = 'Подписка на рассылку оформлена';
+export const MailConfig = {
+  addSubscriber: {
+    subject: 'Подписка на рассылку оформлена',
+    template: './add-subscriber',
+  },
+  newPost: {
+    subject: 'Новый пост!',
+    template: './new-post',
+  },
+};
