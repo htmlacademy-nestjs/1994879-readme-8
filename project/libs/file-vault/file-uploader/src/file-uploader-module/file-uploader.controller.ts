@@ -23,10 +23,11 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SWAGGER_RESPONSE, SWAGGER_SUMMARY } from './file-uploader.constant';
-import { ApiFileUpload } from './decorators/api-file-upload.decorator.ts';
+import { SwaggerTag } from '@project/core';
+import { ApiFileUpload } from '@project/decorators';
 
 @Controller('files')
-@ApiTags('Works with files')
+@ApiTags(SwaggerTag.File)
 @SerializeOptions({ type: UploadedFileRDO, excludeExtraneousValues: true })
 export class FileUploaderController {
   constructor(

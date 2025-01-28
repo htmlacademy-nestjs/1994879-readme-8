@@ -13,8 +13,8 @@ export class BlogUserModel extends Document implements AuthUser {
   @Prop({ required: true })
   name: string;
 
-  @Prop()
-  avatar?: string;
+  @Prop({ required: true })
+  avatar: string;
 
   @Prop({ required: true })
   passwordHash: string;
@@ -23,7 +23,7 @@ export class BlogUserModel extends Document implements AuthUser {
   registrationDate: Date;
 
   @Prop()
-  subscriptions: string[];
+  subscribers: string[];
 }
 
 export const BlogUserSchema = SchemaFactory.createForClass(BlogUserModel);

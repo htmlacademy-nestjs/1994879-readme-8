@@ -17,8 +17,9 @@ import {
   CommentOperationSummary,
   CommentResponseDescription,
 } from './comment.constant';
+import { SwaggerTag } from '@project/core';
 
-@ApiTags('Routes for comments')
+@ApiTags(SwaggerTag.Comment)
 @Controller('posts/:postId/comments')
 @SerializeOptions({ type: CommentRDO, excludeExtraneousValues: true })
 export class CommentController {

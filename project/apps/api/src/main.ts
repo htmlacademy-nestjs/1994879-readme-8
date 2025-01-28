@@ -11,7 +11,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const globalPrefix = APP_PREFIX;
   app.setGlobalPrefix(globalPrefix);
-  app.useGlobalInterceptors(new RequestIdInterceptor());
 
   const appConfig = app.get(ConfigService);
   const host = appConfig.get<string>(ConfigKey.AppHost);

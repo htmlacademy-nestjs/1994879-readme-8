@@ -9,9 +9,7 @@ import {
 } from '@nestjs/common';
 import { BlogUserService, BlogUserEntity } from '@project/blog-user';
 import { AuthMessage } from './authentication.constant';
-import { CreateUserDTO } from '../dto/create-user.dto';
 import { LoginUserDTO } from '../dto/login-user.dto';
-import { ChangePasswordDTO } from '../dto/change-password.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Token, User } from '@project/core';
 import { jwtConfig } from '@project/account-config';
@@ -46,58 +44,29 @@ export class AuthenticationService {
     }
   }
 
-  public async register(dto: CreateUserDTO): Promise<BlogUserEntity> {
-    const existUser = await this.blogUserService.findByEmail(dto.email);
-    if (existUser) {
-      throw new ConflictException(AuthMessage.Exists);
-    }
-
-    const userDTO = {
-      ...dto,
-      passwordHash: '',
-      registrationDate: undefined,
-      subscriptions: [],
-    };
-
-    const userEntity = await new BlogUserEntity(userDTO).setPassword(dto.password);
-    await this.blogUserService.save(userEntity);
-
-    return userEntity;
-  }
-
   private async checkUserPassword(user: BlogUserEntity, password: string): Promise<void> {
     if (!(await user.comparePassword(password))) {
       throw new UnauthorizedException(AuthMessage.WrongPassword);
     }
   }
 
-  public async verifyUser({ email, password }: LoginUserDTO) {
-    const existUser = await this.blogUserService.findByEmail(email);
-
-    if (!existUser) {
-      throw new NotFoundException(AuthMessage.NotFound);
-    }
-
-    await this.checkUserPassword(existUser, password);
-    return existUser;
-  }
-
-  public async getUser(id: string) {
-    const user = await this.blogUserService.findById(id);
+  private checkExistsUser(user: BlogUserEntity): BlogUserEntity {
     if (!user) {
       throw new NotFoundException(AuthMessage.NotFound);
     }
-
     return user;
   }
 
-  public async changePassword(id: string, { password, newPassword }: ChangePasswordDTO) {
-    const user = await this.getUser(id);
+  public async getUser(id: string) {
+    const user = await this.blogUserService.getById(id);
+    return this.checkExistsUser(user);
+  }
+
+  public async verifyUser({ email, password }: LoginUserDTO) {
+    const user = await this.blogUserService.findByEmail(email);
+
+    this.checkExistsUser(user);
     await this.checkUserPassword(user, password);
-
-    const updatedUser = await user.setPassword(newPassword);
-    await this.blogUserService.update(updatedUser);
-
-    return updatedUser;
+    return user;
   }
 }

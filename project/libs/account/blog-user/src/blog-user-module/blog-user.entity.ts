@@ -7,10 +7,10 @@ import { SALT_ROUNDS } from './blog-user.constant';
 export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
   public email!: string;
   public name!: string;
-  public avatar?: string;
+  public avatar!: string;
   public passwordHash!: string;
   public registrationDate!: Date;
-  public subscriptions: string[];
+  public subscribers: string[];
 
   constructor(user: AuthUser) {
     super();
@@ -22,13 +22,13 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
       return;
     }
 
-    this.id = user.id ?? '';
+    this.id = user.id;
     this.email = user.email;
     this.name = user.name;
-    this.avatar = user.avatar ?? '';
+    this.avatar = user.avatar;
     this.passwordHash = user.passwordHash;
     this.registrationDate = user.registrationDate ?? new Date();
-    this.subscriptions = user.subscriptions ?? [];
+    this.subscribers = user.subscribers ?? [];
   }
 
   public toPOJO(): AuthUser {
@@ -39,7 +39,7 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
       avatar: this.avatar,
       passwordHash: this.passwordHash,
       registrationDate: this.registrationDate,
-      subscriptions: this.subscriptions,
+      subscribers: this.subscribers,
     };
   }
 
@@ -54,14 +54,12 @@ export class BlogUserEntity extends Entity implements StorableEntity<AuthUser> {
   }
 
   public updateSubscribers(userId: string) {
-    const subscriptionsSet = new Set(this.subscriptions);
+    const index = this.subscribers.indexOf(userId);
 
-    if (subscriptionsSet.has(userId)) {
-      subscriptionsSet.delete(userId);
+    if (index !== -1) {
+      this.subscribers.splice(index, 1);
     } else {
-      subscriptionsSet.add(userId);
+      this.subscribers.push(userId);
     }
-
-    this.subscriptions = Array.from(subscriptionsSet);
   }
 }

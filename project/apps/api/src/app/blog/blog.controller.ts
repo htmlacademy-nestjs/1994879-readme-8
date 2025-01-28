@@ -13,20 +13,20 @@ import {
 import { HttpService } from '@nestjs/axios';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
-import { ApiUnit } from '../app.const';
 import { AddNewPostDTO } from '../dto/add-new-post.dto';
 import { ApiTags } from '@nestjs/swagger';
 import { AppService } from '../app.service';
-import { InjectUserIdInterceptor } from '@project/interceptors';
-import { UserRDO } from '@project/authentication';
+import { UserRDO } from '@project/blog-user';
 import { PostWithPaginationRDO } from '@project/blog-post';
 import { PostQuery } from '@project/blog-post';
 import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
 import { getAppURL } from '@project/helpers';
+import { UserId } from '@project/decorators';
+import { SwaggerTag } from '@project/core';
 
 @Controller('blog')
-@ApiTags(ApiUnit.Blog)
+@ApiTags(SwaggerTag.Blog)
 @UseGuards(CheckAuthGuard)
 @UseFilters(AxiosExceptionFilter)
 export class BlogController {
@@ -45,7 +45,6 @@ export class BlogController {
   }
 
   @Get()
-  @UseInterceptors(UseInterceptors)
   public async index(@Query() queryParams: PostQuery) {
     const { data } = await this.httpService.axiosRef.get<PostWithPaginationRDO>(
       getAppURL(this.baseUrl.blog),
@@ -56,7 +55,6 @@ export class BlogController {
   }
 
   @Post()
-  @UseInterceptors(UseInterceptors)
   public async create(@Body() dto: AddNewPostDTO) {
     const { data } = await this.httpService.axiosRef.post<PostWithPaginationRDO>(
       getAppURL(this.baseUrl.blog),
@@ -67,14 +65,13 @@ export class BlogController {
   }
 
   @Get('feed')
-  @UseInterceptors(InjectUserIdInterceptor)
-  public async getUserFeed(@Body('userId') userId: string, @Req() req: Request) {
+  public async getUserFeed(@UserId() userId: string, @Req() req: Request) {
     const { data: user } = await this.httpService.axiosRef.get<UserRDO>(
       getAppURL(this.baseUrl.account, `${userId}`),
       this.getAuthorizationHeaders(req)
     );
 
-    const userIds = [user.id, ...user.subscriptions];
+    const userIds = [user.id, ...user.subscribers];
     const userPostsFeed = await this.index({ userIds });
 
     return userPostsFeed;

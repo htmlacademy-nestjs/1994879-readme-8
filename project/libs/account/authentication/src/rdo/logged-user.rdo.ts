@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Expose } from 'class-transformer';
-import { AuthSwaggerMessage } from '../authentication-module/authentication.constant';
+import { SwaggerProperty } from '@project/core';
 
 export class LoggedUserRDO {
   @Expose()
-  @ApiProperty(AuthSwaggerMessage.accessToken)
+  @ApiProperty(SwaggerProperty.accessToken)
   public accessToken: string;
 
   @Expose()
-  @ApiProperty(AuthSwaggerMessage.refreshToken)
+  @ApiProperty(SwaggerProperty.refreshToken)
   public refreshToken: string;
 }

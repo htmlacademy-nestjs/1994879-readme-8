@@ -18,8 +18,9 @@ import { PostOperationSummary, PostResponseDescription, PostSwaggerQuery } from 
 import { PostRDO } from './rdo/post.rdo';
 import { PostQuery } from './post.query';
 import { PostWithPaginationRDO } from './rdo/post-with-pagination.rdo';
+import { SwaggerTag } from '@project/core';
 
-@ApiTags('Routes for posts')
+@ApiTags(SwaggerTag.Post)
 @Controller('posts')
 @SerializeOptions({ type: PostRDO, excludeExtraneousValues: true })
 export class PostController {

@@ -28,6 +28,7 @@
       "@project/blog-user": ["libs/account/blog-user/src/index.ts"],
       "@project/core": ["libs/shared/core/src/index.ts"],
       "@project/data-access": ["libs/shared/data-access/src/index.ts"],
+      "@project/decorators": ["libs/shared/decorators/src/index.ts"],
       "@project/email-subscriber": ["libs/notify/email-subscriber/src/index.ts"],
       "@project/file-uploader": ["libs/file-vault/file-uploader/src/index.ts"],
       "@project/file-vault-config": ["libs/file-vault/config/src/index.ts"],

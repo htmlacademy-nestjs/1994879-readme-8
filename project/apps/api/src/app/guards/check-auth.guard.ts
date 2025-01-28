@@ -1,15 +1,20 @@
-import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { ApplicationServiceURL } from '../app.const';
+import { gatewayConfig } from '@project/api-config';
+import { ConfigType } from '@nestjs/config';
+import { getAppURL } from '@project/helpers';
 
 @Injectable()
 export class CheckAuthGuard implements CanActivate {
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    @Inject(HttpService) private readonly httpService: HttpService,
+    @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>
+  ) {}
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
     const { data } = await this.httpService.axiosRef.post(
-      `${ApplicationServiceURL.Users}/check`,
+      getAppURL(this.baseUrl.account, 'check'),
       {},
       {
         headers: {

@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable, Logger } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { NotifyService } from '@project/api-notify';
-import { UserDetailedRDO, UserRDO } from '@project/authentication';
+import { UserRDO } from '@project/blog-user';
 import { UploadedFileRDO } from '@project/file-uploader';
 import { NotifyNewPostDTO } from '@project/email-subscriber';
 import FormData from 'form-data';
@@ -44,16 +44,6 @@ export class AppService {
 
   public async notifyNewPost(dto: NotifyNewPostDTO): Promise<boolean> {
     return this.notifyService.notifyNewPost(dto);
-  }
-
-  public async getUserDetails(user: UserRDO): Promise<UserDetailedRDO> {
-    const { data: publicationsCount } = await this.httpService.axiosRef.get<number>(
-      getAppURL(this.baseUrl.blog, `count/${user.id}`)
-    );
-    return Object.assign(user, {
-      publicationsCount,
-      subscriptionsCount: user.subscriptions.length,
-    });
   }
 
   public async appendUserInfo(posts: PostRDO[]) {

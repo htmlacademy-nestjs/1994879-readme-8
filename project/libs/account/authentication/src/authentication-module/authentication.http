@@ -1,49 +1,74 @@
-# Create a new user
-POST http://localhost:3000/api/auth/register HTTP/1.1
+@port = 3000
+@baseUrl = http://localhost:{{port}}/api
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzk5MThhYzllYjZjODI2YTBhZjQ4OWEiLCJlbWFpbCI6Im5ldy0tdXNlckBtYWlsLmxvY2FsIiwibmFtZSI6Iktla3MiLCJpYXQiOjE3MzgwODk4NTcsImV4cCI6MTczODA5MDE1N30.YjUu9OLXlsrNJNM8Z8AZM45CnC8rbyKmZPrWnwp0dqY
+@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzk5MTA3NmI4OTRlMjI2ZDc3ZTc5MTciLCJlbWFpbCI6Im5ldy11c2VyQG1haWwubG9jYWwiLCJuYW1lIjoiS2VrcyIsInRva2VuSWQiOiJlZDc2YjNjNi1iMzBlLTRkMjEtYWQ5NC04Y2ZkY2YyMDA2ODMiLCJpYXQiOjE3MzgwODUwNDgsImV4cCI6MTc0MDY3NzA0OH0.xQS4xNeNy0_GQZTISYJ_cb8Lmbb4_MK32DBadySBPec
+
+###
+# Новый пользователь
+POST {{baseUrl}}/users HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "use1@notfound.local",
+  "email": "new--user@mail.local",
   "name": "Keks",
   "password": "123456",
   "avatar": "path/to/avatar.jpg"
 }
 
 ###
-
-# Get user by ID
-GET http://localhost:3000/api/auth/67935baea3d8ea4b799517a0 HTTP/1.1
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczNzcxMDU4NCwiZXhwIjoxNzM3NzEwODg0fQ.WzGePPkm2iYnjCFfRvQcPBKoPpOJ9xXN7qvfPZumhGI
-
-###
-
-# Login user by email and password
-POST http://localhost:3000/api/auth HTTP/1.1
+# Логин в систему
+POST {{baseUrl}}/auth HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "user111@notfound.local",
+  "email": "new--user@mail.local",
   "password": "123456"
 }
 
 ###
+# Информация о пользователе
+GET {{baseUrl}}/users/67991076b894e226d77e7917 HTTP/1.1
+Authorization: Bearer {{accessToken}}
 
-# Login user by email and password
-PATCH http://localhost:3000/api/auth/67608860bd69e5b9f659871b HTTP/1.1
+###
+# Подписаться на обновления пользователя
+
+POST {{baseUrl}}/users/subscribe HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3NjA4ODYwYmQ2OWU1YjlmNjU5ODcxYiIsIm5hbWUiOiJLZWtzIiwiZW1haWwiOiJ1c2VyQG5vdGZvdW5kLmxvY2FsIn0.lHmVwleHddAnLHp9TR5SveI80RtvbSIeUFriHdxN3Fw
+Authorization: Bearer {{accessToken}}
 
 {
-  "password": "123456",
-  "newPassword": "654321"
+  "userId": "67991076b894e226d77e7917"
+}
+
+###
+# Отписаться от обновлений пользователя
+
+POST {{baseUrl}}/users/unsubscribe HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "userId": "67991076b894e226d77e7917"
+}
+
+###
+# Смена пароля
+PATCH {{baseUrl}}/users/password HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "password": "654321",
+  "newPassword": "123456"
 }
 
 ###
 # Refresh token
-POST http://localhost:3333/api/auth/refresh HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAbm90Zm91bmQubG9jYWwiLCJyb2xlIjoidXNlciIsImxhc3RuYW1lIjoiU21pdGgiLCJmaXJzdG5hbWUiOiJLZWtzIiwiaWF0IjoxNzA1NjgwMDA4LCJleHAiOjE3MDgyNzIwMDh9.10Jr7bWOiFTTi42JcMgPh0GVbxa2ikvn8vUVcF8d-AY
+POST {{baseUrl}}/auth/refresh HTTP/1.1
+Authorization: Bearer {{refreshToken}}
 
 ###
 # Check user token
-POST http://localhost:3333/api/auth/check HTTP/1.1
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2NDQwMzJmYmU0Y2FlYjg2OGM2ZWVjMzYiLCJlbWFpbCI6InVzZXJAbm90Zm91bmQubG9jYWwiLCJyb2xlIjoidXNlciIsImxhc3RuYW1lIjoiU21pdGgiLCJmaXJzdG5hbWUiOiJLZWtzIiwiaWF0IjoxNjgzMTIxMzU1LCJleHAiOjE2ODMxMjE5NTV9.laK4-SAzu_ZMznRVsRWrHxELTGu_P48kpY_CwHPjxtk
+POST {{baseUrl}}/auth/check HTTP/1.1
+Authorization: Bearer {{accessToken}}
