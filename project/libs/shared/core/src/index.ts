@@ -1,4 +1,4 @@
-export { APP_PREFIX } from './lib/constants/app.config';
+export { APP_PREFIX, DEFAULT_AVATAR, AppRoute } from './lib/constants/app.config';
 export { Nullable } from './lib/interfaces/nullable';
 export { Entity } from './lib/base/entity';
 export { User } from './lib/types/user.interface';

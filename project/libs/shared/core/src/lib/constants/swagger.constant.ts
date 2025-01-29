@@ -18,6 +18,7 @@ export enum SwaggerOperation {
   Login = 'Basic Authorization by login and password',
   RefreshToken = 'Get new pair access, refresh token',
   CheckAuth = 'Validate access token',
+  Feed = 'Users feed',
 }
 
 export const SwaggerProperty = {
@@ -44,4 +45,5 @@ export enum SwaggerResponse {
   UserCreated = 'The new user has been successfully created.',
   Updated = 'User password updated',
   RefreshToken = 'Get a new access/refresh tokens',
+  Feed = 'Users feed',
 }

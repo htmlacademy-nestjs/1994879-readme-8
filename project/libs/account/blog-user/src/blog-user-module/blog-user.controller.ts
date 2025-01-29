@@ -28,7 +28,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { JwtAuthGuard } from '../../../authentication/src/guards/jwt-auth.guard';
 import { ResponseDescription } from './blog-user.constant';
 import { MongoIdValidationPipe } from '@project/pipes';
-import { SwaggerTag } from '@project/core';
+import { AppRoute, SwaggerTag } from '@project/core';
 import { ChangePasswordDTO } from './dto/change-password.dto';
 import { SubscribeDTO } from './dto/subscribe.dto';
 import { UserId, ApiCustomResponse } from '@project/decorators';
@@ -37,7 +37,7 @@ import { SwaggerProperty } from '../../../../shared/core/src/lib/constants/swagg
 import { TokenName } from '@project/helpers';
 
 @ApiTags(SwaggerTag.User)
-@Controller('users')
+@Controller(AppRoute.User)
 @ApiBearerAuth(TokenName.Access)
 @ApiCustomResponse()
 @SerializeOptions({ type: UserRDO, excludeExtraneousValues: true })
@@ -71,7 +71,7 @@ export class BlogUserController {
     return this.blogUserService.getById(id);
   }
 
-  @Patch('password')
+  @Patch(AppRoute.Password)
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: SwaggerOperation.ChangePassword })
   @ApiOkResponse({ description: ResponseDescription.Updated })
@@ -80,7 +80,7 @@ export class BlogUserController {
     return this.blogUserService.changePassword(userId, dto);
   }
 
-  @Post('subscribe')
+  @Post(AppRoute.Subscribe)
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: SwaggerOperation.Subscribe })
   @ApiOkResponse({ description: ResponseDescription.Subscribed })
@@ -89,7 +89,7 @@ export class BlogUserController {
     return this.blogUserService.subscribe(userId, dto.userId);
   }
 
-  @Post('unsubscribe')
+  @Post(AppRoute.Unsubscribe)
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: SwaggerOperation.Unsubscribe })
   @ApiOkResponse({ description: ResponseDescription.Subscribed })

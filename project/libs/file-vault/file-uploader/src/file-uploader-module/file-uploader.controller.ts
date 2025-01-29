@@ -23,10 +23,10 @@ import {
   ApiTags,
 } from '@nestjs/swagger';
 import { SWAGGER_RESPONSE, SWAGGER_SUMMARY } from './file-uploader.constant';
-import { SwaggerTag } from '@project/core';
+import { AppRoute, SwaggerTag } from '@project/core';
 import { ApiFileUpload } from '@project/decorators';
 
-@Controller('files')
+@Controller(AppRoute.File)
 @ApiTags(SwaggerTag.File)
 @SerializeOptions({ type: UploadedFileRDO, excludeExtraneousValues: true })
 export class FileUploaderController {
@@ -34,7 +34,7 @@ export class FileUploaderController {
     @Inject(FileUploaderService) private readonly fileUploaderService: FileUploaderService
   ) {}
 
-  @Post('/upload')
+  @Post(AppRoute.Upload)
   @ApiOperation({ summary: SWAGGER_SUMMARY.UPLOAD })
   @ApiCreatedResponse({ type: UploadedFileRDO, description: SWAGGER_RESPONSE.CREATED })
   @ApiBadRequestResponse({ description: SWAGGER_RESPONSE.BAD })
@@ -44,6 +44,7 @@ export class FileUploaderController {
   }
 
   @Get(':fileId')
+  @ApiOperation({ summary: SWAGGER_SUMMARY.GET })
   @ApiOkResponse({ type: UploadedFileRDO, description: SWAGGER_RESPONSE.OK })
   @ApiBadRequestResponse({ description: SWAGGER_RESPONSE.BAD })
   @ApiNotFoundResponse({ description: SWAGGER_RESPONSE.NOT_FOUND })

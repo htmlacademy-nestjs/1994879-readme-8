@@ -19,7 +19,7 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { SwaggerOperation, SwaggerResponse } from '@project/core';
+import { AppRoute, SwaggerOperation, SwaggerResponse } from '@project/core';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { RequestWithUser } from './request-with-user.interface';
@@ -31,7 +31,7 @@ import { ApiCustomResponse } from '@project/decorators';
 import { TokenName } from '@project/helpers';
 
 @ApiTags(SwaggerTag.Auth)
-@Controller('auth')
+@Controller(AppRoute.Auth)
 @ApiBearerAuth(TokenName.Access)
 @ApiCustomResponse()
 export class AuthenticationController {
@@ -48,7 +48,7 @@ export class AuthenticationController {
     return await this.authService.createUserToken(user);
   }
 
-  @Post('refresh')
+  @Post(AppRoute.Refresh)
   @UseGuards(JwtRefreshGuard)
   @ApiOperation({ summary: SwaggerOperation.RefreshToken })
   @HttpCode(HttpStatus.OK)
@@ -57,7 +57,7 @@ export class AuthenticationController {
     return this.authService.createUserToken(user);
   }
 
-  @Post('check')
+  @Post(AppRoute.Check)
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: SwaggerOperation.CheckAuth })
   @HttpCode(HttpStatus.OK)

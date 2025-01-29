@@ -14,21 +14,22 @@ import { HttpService } from '@nestjs/axios';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
 import { AddNewPostDTO } from '../dto/add-new-post.dto';
-import { ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AppService } from '../app.service';
 import { UserRDO } from '@project/blog-user';
 import { PostWithPaginationRDO } from '@project/blog-post';
 import { PostQuery } from '@project/blog-post';
 import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
-import { getAppURL } from '@project/helpers';
-import { UserId } from '@project/decorators';
-import { SwaggerTag } from '@project/core';
+import { getAppURL, TokenName } from '@project/helpers';
+import { ApiCustomResponse, UserId } from '@project/decorators';
+import { AppRoute, SwaggerOperation, SwaggerResponse, SwaggerTag } from '@project/core';
 
-@Controller('blog')
+@Controller(AppRoute.Blog)
 @ApiTags(SwaggerTag.Blog)
 @UseGuards(CheckAuthGuard)
 @UseFilters(AxiosExceptionFilter)
+@ApiCustomResponse()
 export class BlogController {
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
@@ -45,9 +46,10 @@ export class BlogController {
   }
 
   @Get()
+  @ApiOperation({ summary: SwaggerOperation.Login })
   public async index(@Query() queryParams: PostQuery) {
     const { data } = await this.httpService.axiosRef.get<PostWithPaginationRDO>(
-      getAppURL(this.baseUrl.blog),
+      getAppURL(this.baseUrl.blog, AppRoute.Post),
       { params: queryParams }
     );
     await this.appService.appendUserInfo(data.entities);
@@ -64,14 +66,19 @@ export class BlogController {
     return data;
   }
 
-  @Get('feed')
+  @Get(AppRoute.Feed)
+  @ApiOperation({ summary: SwaggerOperation.Feed })
+  @ApiOkResponse({ description: SwaggerResponse.Feed })
+  @UseGuards(CheckAuthGuard)
+  @ApiBearerAuth(TokenName.Access)
   public async getUserFeed(@UserId() userId: string, @Req() req: Request) {
     const { data: user } = await this.httpService.axiosRef.get<UserRDO>(
-      getAppURL(this.baseUrl.account, `${userId}`),
+      getAppURL(this.baseUrl.account, AppRoute.User, `${userId}`),
       this.getAuthorizationHeaders(req)
     );
 
     const userIds = [user.id, ...user.subscribers];
+    console.log(333, userIds);
     const userPostsFeed = await this.index({ userIds });
 
     return userPostsFeed;

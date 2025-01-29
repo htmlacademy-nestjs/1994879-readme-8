@@ -2,8 +2,9 @@ import { HttpService } from '@nestjs/axios';
 import {
   Body,
   Controller,
-  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   Param,
   ParseFilePipeBuilder,
@@ -19,29 +20,30 @@ import { LoginUserDTO, LoggedUserRDO } from '@project/authentication';
 import { AvatarLimit } from '../app.const';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
 import {
-  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiBody,
   ApiConflictResponse,
   ApiConsumes,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
 import { getAppURL, TokenName } from '@project/helpers';
-import { MongoIdValidationPipe } from '@project/pipes';
 import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
-import { ApiCustomResponse, UserId } from '@project/decorators';
+import { ApiCustomResponse } from '@project/decorators';
 import { UserService } from './user.service';
-import { SwaggerResponse, SwaggerTag } from '@project/core';
-import { ChangePasswordDTO, RegisterUserDTO } from '@project/blog-user';
+import { AppRoute, SwaggerOperation, SwaggerResponse, SwaggerTag } from '@project/core';
+import { ChangePasswordDTO, RegisterUserDTO, UserDetailedRDO } from '@project/blog-user';
 import { UserRDO } from '@project/blog-user';
+import { SubscribeDTO } from '@project/blog-user';
 
-@Controller('users')
+@Controller(AppRoute.User)
 @ApiTags(SwaggerTag.User)
 @UseFilters(AxiosExceptionFilter)
 @ApiCustomResponse()
@@ -60,10 +62,11 @@ export class UsersController {
     };
   }
 
-  @Post('register')
+  @Post(AppRoute.Register)
+  @ApiOperation({ summary: SwaggerOperation.Register })
   @UseInterceptors(FileInterceptor('avatarFile'))
   @ApiConsumes('multipart/form-data')
-  @ApiCreatedResponse({ description: SwaggerResponse.UserCreated })
+  @ApiCreatedResponse({ type: UserDetailedRDO, description: SwaggerResponse.UserCreated })
   @ApiConflictResponse({ description: SwaggerResponse.UserExist })
   public async register(
     @Body() dto: RegisterUserDTO,
@@ -78,20 +81,22 @@ export class UsersController {
     return this.userService.register(dto, avatarFile);
   }
 
-  @Post('login')
+  @Post(AppRoute.Login)
+  @ApiOperation({ summary: SwaggerOperation.Login })
   @ApiCreatedResponse({ description: SwaggerResponse.UserCreated })
   @ApiNotFoundResponse({ description: SwaggerResponse.UserNotFound })
   @ApiBody({ type: LoginUserDTO })
   public async login(@Body() loginUserDTO: LoginUserDTO) {
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
-      getAppURL(this.baseUrl.account),
+      getAppURL(this.baseUrl.account, AppRoute.Auth),
       loginUserDTO
     );
     return { data };
   }
 
   @Patch(':id')
-  @ApiOkResponse({ type: UserRDO, description: SwaggerResponse.Updated })
+  @ApiOperation({ summary: SwaggerOperation.ChangePassword })
+  @ApiOkResponse({ type: UserDetailedRDO, description: SwaggerResponse.Updated })
   @ApiNotFoundResponse({ description: SwaggerResponse.UserNotFound })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
@@ -101,7 +106,7 @@ export class UsersController {
     @Req() req: Request
   ) {
     const { data } = await this.httpService.axiosRef.patch<UserRDO>(
-      getAppURL(this.baseUrl.account, `${id}`),
+      getAppURL(this.baseUrl.account, `${AppRoute.User}/${id}`),
       dto,
       this.getAuthorizationHeaders(req)
     );
@@ -110,24 +115,26 @@ export class UsersController {
   }
 
   @Get(':id')
+  @ApiOperation({ summary: SwaggerOperation.GetUser })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
-  @ApiOkResponse({ type: UserRDO, description: SwaggerResponse.UserFound })
+  @ApiOkResponse({ type: UserDetailedRDO, description: SwaggerResponse.UserFound })
   @ApiNotFoundResponse({ description: SwaggerResponse.UserNotFound })
   public async show(@Param('id') id: string, @Req() req: Request) {
     const { data } = await this.httpService.axiosRef.get<UserRDO>(
-      getAppURL(this.baseUrl.account, `${id}`),
+      getAppURL(this.baseUrl.account, `${AppRoute.User}/${id}`),
       this.getAuthorizationHeaders(req)
     );
 
     return this.userService.getUserDetails(data);
   }
 
-  @Post('refresh')
+  @Post(AppRoute.Refresh)
+  @ApiOperation({ summary: SwaggerOperation.RefreshToken })
   @ApiBearerAuth(TokenName.Refresh)
   public async refreshToken(@Req() req: Request) {
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
-      getAppURL(this.baseUrl.account, 'refresh'),
+      getAppURL(this.baseUrl.account, AppRoute.Auth, AppRoute.Refresh),
       null,
       this.getAuthorizationHeaders(req)
     );
@@ -135,13 +142,14 @@ export class UsersController {
     return data;
   }
 
-  @Post('check')
+  @Post(AppRoute.Check)
+  @ApiOperation({ summary: SwaggerOperation.CheckAuth })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
   @ApiCreatedResponse({ type: LoggedUserRDO, description: SwaggerResponse.UserFound })
   public async checkToken(@Req() req: Request) {
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
-      getAppURL(this.baseUrl.account, 'check'),
+      getAppURL(this.baseUrl.account, AppRoute.Check),
       null,
       this.getAuthorizationHeaders(req)
     );
@@ -149,27 +157,32 @@ export class UsersController {
     return data;
   }
 
-  @Post('subscribe/:id')
+  @Post(AppRoute.Subscribe)
+  @ApiOperation({ summary: SwaggerOperation.Subscribe })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
   @ApiOkResponse()
-  public async subscribe(@Param('id', MongoIdValidationPipe) id: string, @UserId() userId: string) {
+  @HttpCode(HttpStatus.OK)
+  public async subscribe(@Body() dto: SubscribeDTO, @Req() req: Request) {
     const { data } = await this.httpService.axiosRef.post(
-      getAppURL(this.baseUrl.account, `${userId}/subscribe/${id}`)
+      getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Subscribe),
+      dto,
+      this.getAuthorizationHeaders(req)
     );
     return data;
   }
 
-  @Delete('unsubscribe/:id')
+  @Post(AppRoute.Unsubscribe)
+  @ApiOperation({ summary: SwaggerOperation.Unsubscribe })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
-  @ApiOkResponse()
-  public async unsubscribe(
-    @Param('id', MongoIdValidationPipe) id: string,
-    @UserId() userId: string
-  ) {
-    const { data } = await this.httpService.axiosRef.delete(
-      getAppURL(this.baseUrl.account, `${userId}/unsubscribe/${id}`)
+  @ApiNoContentResponse()
+  @HttpCode(HttpStatus.NO_CONTENT)
+  public async unsubscribe(@Body() dto: SubscribeDTO, @Req() req: Request) {
+    const { data } = await this.httpService.axiosRef.post(
+      getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Unsubscribe),
+      dto,
+      this.getAuthorizationHeaders(req)
     );
     return data;
   }
