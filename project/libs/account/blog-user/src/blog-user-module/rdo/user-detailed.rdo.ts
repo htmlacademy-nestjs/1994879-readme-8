@@ -1,15 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { UserRDO } from './user.rdo';
 import { Exclude, Expose } from 'class-transformer';
-import { SwaggerProperty } from '@project/core';
+import { SwaggerUserProperty } from '@project/core';
 
 export class UserDetailedRDO extends UserRDO {
   @Expose()
-  @ApiProperty(SwaggerProperty.publicationCount)
+  @ApiProperty(SwaggerUserProperty.publicationCount)
   public publicationsCount: number;
 
   @Expose()
-  @ApiProperty(SwaggerProperty.subscribersCount)
+  @ApiProperty(SwaggerUserProperty.subscribersCount)
   subscribersCount: number;
 
   @Exclude()

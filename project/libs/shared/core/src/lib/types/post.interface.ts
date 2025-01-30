@@ -1,17 +1,18 @@
 import { PostStatus } from './post-status.enum';
 import { PostType } from './post-type.enum';
-import { Tag } from './tag.interface';
 
 interface BasePost {
   id?: string;
   type: PostType;
   status: PostStatus;
   publicationDate: Date;
-  tags: Tag[];
+  tags: string[];
   userId: string;
   isRepost: boolean;
   originalId: string;
   originalUserId: string;
+  likesCount: number;
+  commentsCount: number;
 }
 
 export interface VideoPost extends BasePost {

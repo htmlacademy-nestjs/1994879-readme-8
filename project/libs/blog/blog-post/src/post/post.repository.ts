@@ -13,12 +13,6 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
     super(entityFactory, client);
   }
 
-  private includeFields = {
-    tags: true,
-    // comments: true,
-    // favorites: true,
-  };
-
   private async getPostCount(where: Prisma.PostWhereInput): Promise<number> {
     return this.client.post.count({ where });
   }
@@ -30,7 +24,6 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
   public async findById(id: string): Promise<PostEntity> {
     const document = await this.client.post.findFirst({
       where: { id },
-      include: this.includeFields,
     });
 
     if (!document) {
@@ -41,18 +34,23 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
   }
 
   public async findAll(query?: PostQuery): Promise<PaginationResult<PostEntity>> {
+    console.log(query);
     const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
     const take = query?.limit;
     const where: Prisma.PostWhereInput = {};
     const orderBy: Prisma.PostOrderByWithRelationInput = {};
-    if (query?.sortDirection) {
-      orderBy.createdAt = query.sortDirection;
-    }
+    // if (query?.sortDirection) {
+    //   orderBy.createdAt = query.sortDirection;
+    // }
 
-    const [records, postCount] = await Promise.all([
-      this.client.post.findMany({ where, orderBy, skip, take, include: this.includeFields }),
-      this.getPostCount(where),
-    ]);
+    const records = await this.client.post.findMany({ where, orderBy, skip, take });
+
+    const postCount = await this.getPostCount(where);
+
+    // const [records, postCount] = await Promise.all([
+    // this.client.post.findMany({ where, orderBy, skip, take }),
+    // this.getPostCount(where),
+    // ]);
 
     return {
       entities: records.map((record) => this.createEntityFromDocument(record)),
@@ -64,40 +62,24 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
   }
 
   public async save(entity: PostEntity): Promise<void> {
-    const { id, ...postData } = entity.toPOJO();
-
-    const record = await this.client.post.create({
-      data: {
-        ...postData,
-        tags: {
-          connectOrCreate: (postData.tags ?? []).map(({ name }) => ({
-            where: { name },
-            create: { name },
-          })),
-        },
-      },
-    });
-
+    const { id, ...data } = entity.toPOJO();
+    const record = await this.client.post.create({ data });
     entity.id = record.id;
   }
 
   public async update(entity: PostEntity): Promise<void> {
     const post = entity.toPOJO();
-    const record = await this.client.post.update({
+    await this.client.post.update({
       where: { id: post.id },
-      data: {
-        ...post,
-        tags: {
-          connectOrCreate: (post.tags ?? []).map(({ name }) => ({
-            where: { name },
-            create: { name },
-          })),
-        },
-      },
+      data: { ...post },
     });
   }
 
   public async deleteById(id: string): Promise<void> {
     await this.client.post.delete({ where: { id } });
+  }
+
+  public async countUserPost(userId: string): Promise<number> {
+    return this.getPostCount({ userId });
   }
 }

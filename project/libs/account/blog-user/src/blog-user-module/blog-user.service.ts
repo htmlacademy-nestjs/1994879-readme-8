@@ -62,7 +62,7 @@ export class BlogUserService {
     const updatedUser = await user.setPassword(newPassword);
 
     await this.blogUserRepository.update(updatedUser);
-    return user;
+    return updatedUser;
   }
 
   public async findByEmail(email: string): Promise<Nullable<BlogUserEntity>> {
@@ -77,7 +77,7 @@ export class BlogUserService {
     const targetUser = await this.getById(targetUserId);
 
     if (targetUser.subscribers.includes(user.id)) {
-      throw new BadRequestException(UserMessage.SubscriptFound);
+      throw new ConflictException(UserMessage.SubscriptFound);
     }
 
     targetUser.subscribers.push(user.id);

@@ -1,3 +1,6 @@
+import { PostStatus } from '../types/post-status.enum';
+import { PostType } from '../types/post-type.enum';
+
 export enum SwaggerTag {
   Auth = 'Authorization routes',
   Blog = 'Blog routes',
@@ -6,6 +9,7 @@ export enum SwaggerTag {
   Notify = 'Notify service',
   Post = 'Routes for posts',
   Comment = 'Routes for comments',
+  Like = 'Like routes',
 }
 
 export enum SwaggerOperation {
@@ -19,9 +23,19 @@ export enum SwaggerOperation {
   RefreshToken = 'Get new pair access, refresh token',
   CheckAuth = 'Validate access token',
   Feed = 'Users feed',
+  PostCreate = 'Create a new post',
+  PostAll = 'Get all posts',
+  PostOne = 'Get a post by ID',
+  PostUpdate = 'Update a post by ID',
+  PostRemove = 'Delete a post by ID',
+  PostCount = 'Count users post',
+  Like = 'Like post',
+  Unlike = 'Unlike post',
 }
 
-export const SwaggerProperty = {
+export enum PostOperationSummary {}
+
+export const SwaggerUserProperty = {
   userId: { description: 'User ID', example: '67990a7d50e42db86a17146b' },
   name: { description: 'User name', example: 'Keks' },
   avatar: { description: 'User avatar', example: 'keks-avatar.png' },
@@ -29,9 +43,50 @@ export const SwaggerProperty = {
   password: { description: 'User password', example: '123456' },
   accessToken: { description: 'Access token', example: 'WDwFsqLk...' },
   refreshToken: { description: 'Refresh token', example: 'KxwOSwAs...' },
-  registrationDate: { description: 'Registration date', example: '2024-12-12' },
+  registrationDate: { description: 'Registration date', example: '2023-10-01T12:00:00Z' },
   publicationCount: { description: 'Publication count', example: 0 },
   subscribersCount: { description: 'Subscribers count', example: 4 },
+};
+
+export const SwaggerPostProperty = {
+  postId: { description: 'Post ID', example: 'cm6ictinr0000s13gdekn4rgu' },
+  type: {
+    description: 'The type of the post (e.g., Video, Text, Photo, Link, Quote).',
+    example: PostType.Video,
+  },
+  status: {
+    description: 'The status of the post (e.g., Draft, Published).',
+    example: PostStatus.Published,
+  },
+  publicationDate: {
+    description: 'Publication date',
+    example: '2023-10-01T12:00:00Z',
+  },
+  tags: { description: 'An array of tags associated with the post.', example: ['news', 'updates'] },
+  title: {
+    description: 'The title of the post (applicable for Video and Text posts).',
+    example: 'My First Video',
+  },
+  url: {
+    description: 'The URL of the post content (applicable for Video, Photo, and Link posts).',
+    example: 'https://example.com/video.mp4',
+  },
+  description: {
+    description: 'A brief description of the post (applicable for Text and Link posts).',
+    example: 'This is a description of the post.',
+  },
+  text: {
+    description: 'The main text content of the post (applicable for Text and Quote posts).',
+    example: 'This is the main content of the post.',
+  },
+  author: {
+    description: 'The author of the quote (applicable for Quote posts).',
+    example: 'Ernest Hemingway',
+  },
+  originalId: {
+    description: 'The ID of the original post if this is a repost.',
+    example: '123',
+  },
 } as const;
 
 export enum SwaggerResponse {

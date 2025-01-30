@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsMongoId, IsString } from 'class-validator';
-import { SwaggerProperty } from '@project/core';
+import { SwaggerUserProperty } from '@project/core';
 
 export class SubscribeDTO {
   @IsString()
   @IsMongoId()
   @ApiProperty({ required: true })
-  @ApiProperty(SwaggerProperty.userId)
+  @ApiProperty(SwaggerUserProperty.userId)
   public userId: string;
 }

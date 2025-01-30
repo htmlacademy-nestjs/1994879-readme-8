@@ -13,7 +13,6 @@ export class PostFactory implements EntityFactory<PostEntity> {
 
   public static createFromPostDTO(dto: CreatePostDTO | UpdatePostDTO): PostEntity {
     const entity = plainToClass(PostEntity, dto);
-    entity.tags = (dto.tags ?? []).map((name) => ({ name }));
     return entity;
   }
 }

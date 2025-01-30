@@ -1,7 +1,6 @@
 import {
   Body,
   Controller,
-  Delete,
   Get,
   HttpCode,
   HttpStatus,
@@ -33,7 +32,7 @@ import { ChangePasswordDTO } from './dto/change-password.dto';
 import { SubscribeDTO } from './dto/subscribe.dto';
 import { UserId, ApiCustomResponse } from '@project/decorators';
 import { SwaggerOperation } from '@project/core';
-import { SwaggerProperty } from '../../../../shared/core/src/lib/constants/swagger.constant';
+import { SwaggerUserProperty } from '@project/core';
 import { TokenName } from '@project/helpers';
 
 @ApiTags(SwaggerTag.User)
@@ -66,7 +65,7 @@ export class BlogUserController {
   @ApiOperation({ summary: SwaggerOperation.GetUser })
   @ApiOkResponse({ description: ResponseDescription.UserFound })
   @ApiNotFoundResponse({ description: ResponseDescription.UserNotFound })
-  @ApiParam({ name: 'id', ...SwaggerProperty.userId })
+  @ApiParam({ name: 'id', ...SwaggerUserProperty.userId })
   public async show(@Param('id', MongoIdValidationPipe) id: string) {
     return this.blogUserService.getById(id);
   }

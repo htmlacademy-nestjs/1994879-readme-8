@@ -23,7 +23,7 @@ export class UserService {
 
   public async getUserDetails(user: UserRDO): Promise<UserDetailedRDO> {
     const { data: publicationsCount } = await this.httpService.axiosRef.get<number>(
-      getAppURL(this.baseUrl.blog, `count/${user.id}`)
+      getAppURL(this.baseUrl.blog, AppRoute.Post, AppRoute.Count, user.id)
     );
     return Object.assign(user, {
       publicationsCount,

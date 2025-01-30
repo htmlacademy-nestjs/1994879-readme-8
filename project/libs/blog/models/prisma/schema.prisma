@@ -9,53 +9,55 @@ datasource db {
 }
 
 enum PostType {
-  Video
-  Text
-  Photo
-  Link
-  Quote
+  video
+  text
+  photo
+  link
+  quote
 }
 
 enum PostStatus {
-  Published
-  Draft
+  published
+  draft
 }
 
 model Post {
   id              String     @id @default(cuid())
   type            PostType
   status          PostStatus
-  publicationDate DateTime   @map("publication_date")
+  publicationDate DateTime   @map("publication_date") @default(now())
   createdAt       DateTime   @default(now()) @map("created_at")
   updatedAt       DateTime   @updatedAt @map("updated_at")
   userId          String     @map("user_id")
-  title           String?    @db.VarChar(50)
-  description     String?    @db.VarChar(300)
+  title           String?
+  description     String?
   url             String?
-  text            String?    @db.VarChar(1024)
-  author          String?    @map("author")
+  text            String?
+  author          String?
+  tags            String[]
+  commentsCount   Int        @default(0)
+  likesCount      Int        @default(0)
 
   repostId String? @map("repost_id")
   repost   Post?   @relation("repost", fields: [repostId], references: [id])
 
-  tags      Tag[]
-  comments  Comment[]
-  favorites Favorite[]
+  comments Comment[]
+  likes    Like[]
 
   post Post[] @relation("repost")
+
+  @@index([publicationDate])
+  @@index([commentsCount])
+  @@index([likesCount])
+  @@index([type])
+  @@index([status])
+  @@index([createdAt])
   @@map("posts")
-}
-
-model Tag {
-  name  String @id @db.VarChar(10)
-  posts Post[]
-
-  @@map("tags")
 }
 
 model Comment {
   id        String   @id @default(uuid())
-  message   String   @db.VarChar(300)
+  message   String
   userId    String   @map("user_id")
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -67,7 +69,7 @@ model Comment {
   @@map("comments")
 }
 
-model Favorite {
+model Like {
   userId    String
   postId    String
   createdAt DateTime @default(now()) @map("created_at")
@@ -76,5 +78,5 @@ model Favorite {
   post Post @relation(fields: [postId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@unique([userId, postId])
-  @@map("favorites")
+  @@map("likes")
 }

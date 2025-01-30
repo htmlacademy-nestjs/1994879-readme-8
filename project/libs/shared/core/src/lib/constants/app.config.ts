@@ -1,13 +1,12 @@
-import { Subscriber } from '../types/subscriber.interface';
 export const APP_PREFIX = 'api';
 export const DEFAULT_AVATAR = 'default-avatar.png';
 
 export enum AppRoute {
   Auth = 'auth',
   User = 'users',
-  Post = 'post',
+  Post = 'posts',
   File = 'files',
-  Comment = 'comment',
+  Comment = 'comments',
   Blog = 'blog',
   Password = 'password',
   Subscribe = 'subscribe',
@@ -19,4 +18,6 @@ export enum AppRoute {
   Upload = 'upload',
   Static = 'static',
   Feed = 'feed',
+  Count = 'count',
+  Like = 'likes',
 }

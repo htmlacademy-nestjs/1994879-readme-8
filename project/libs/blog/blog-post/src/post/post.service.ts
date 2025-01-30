@@ -1,16 +1,40 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePostDTO } from './dto/create-post.dto';
 import { UpdatePostDTO } from './dto/update-post.dto';
 import { PostRepository } from './post.repository';
-import { plainToClass } from 'class-transformer';
 import { PostEntity } from './entities/post.entity';
 import { PostFactory } from './post.factory';
 import { PostQuery } from './post.query';
-import { Nullable, PaginationResult } from '@project/core';
+import { PaginationResult, PostStatus } from '@project/core';
+import { PostMessage } from './post.constant';
+import { LikeService } from '@project/blog-like';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(
+    @Inject(PostRepository) private readonly postRepository: PostRepository,
+    @Inject(LikeService) private readonly likeService: LikeService
+  ) {}
+
+  private checkAccess(post: PostEntity, userId: string) {
+    if (post.userId !== userId) {
+      throw new ForbiddenException(PostMessage.AccessDeny);
+    }
+  }
+
+  public async getById(id: string): Promise<PostEntity> {
+    const post = this.postRepository.findById(id);
+    if (!post) {
+      throw new NotFoundException(PostMessage.NotFound);
+    }
+    return post;
+  }
 
   async create(dto: CreatePostDTO): Promise<PostEntity> {
     const newPost = PostFactory.createFromPostDTO(dto);
@@ -23,35 +47,39 @@ export class PostService {
   }
 
   async findOne(id: string): Promise<PostEntity> {
-    return this.postRepository.findById(id);
+    return this.getById(id);
   }
 
-  async update(id: string, dto: UpdatePostDTO): Promise<PostEntity> {
-    const existsPost = await this.postRepository.findById(id);
-    const updatePost = PostFactory.createFromPostDTO(dto);
-    let hasChanges = false;
+  async update(id: string, userId: string, dto: UpdatePostDTO): Promise<PostEntity> {
+    const existsPost = await this.getById(id);
+    this.checkAccess(existsPost, userId);
 
-    for (const [key, value] of Object.entries(updatePost)) {
-      if (value !== undefined && existsPost[key] !== value) {
-        existsPost[key] = value;
-        hasChanges = true;
-      }
-    }
+    const updatePost = PostFactory.createFromPostDTO({ ...existsPost.toPOJO, ...dto });
+    await this.postRepository.update(updatePost);
 
-    if (!hasChanges) {
-      return existsPost;
-    }
-
-    await this.postRepository.update(existsPost);
-
-    return existsPost;
+    return updatePost;
   }
 
-  async remove(id: string): Promise<void> {
-    try {
-      await this.postRepository.deleteById(id);
-    } catch {
-      throw new NotFoundException(`Post with ID ${id} not found`);
+  async remove(id: string, userId: string): Promise<void> {
+    const post = await this.getById(id);
+    this.checkAccess(post, userId);
+
+    await this.postRepository.deleteById(id);
+  }
+
+  public getUserPostsCount(userId: string) {
+    return this.postRepository.countUserPost(userId);
+  }
+
+  public async like(postId: string, userId: string): Promise<void> {
+    const post = await this.getById(postId);
+    if (post.status === PostStatus.Draft) {
+      throw new ConflictException(PostMessage.LikeDraft);
     }
+    return this.likeService.like({ postId, userId });
+  }
+
+  public async unlike(postId: string, userId: string): Promise<void> {
+    return this.likeService.unlike({ postId, userId });
   }
 }

@@ -1,29 +1,29 @@
 import { Expose } from 'class-transformer';
 import { ApiProperty } from '@nestjs/swagger';
-import { SwaggerProperty } from '@project/core';
+import { SwaggerUserProperty } from '@project/core';
 
 export class UserRDO {
   @Expose()
-  @ApiProperty(SwaggerProperty.userId)
+  @ApiProperty(SwaggerUserProperty.userId)
   public id: string;
 
   @Expose()
-  @ApiProperty(SwaggerProperty.name)
+  @ApiProperty(SwaggerUserProperty.name)
   public name: string;
 
   @Expose()
-  @ApiProperty(SwaggerProperty.email)
+  @ApiProperty(SwaggerUserProperty.email)
   public email: string;
 
   @Expose()
-  @ApiProperty(SwaggerProperty.avatar)
+  @ApiProperty(SwaggerUserProperty.avatar)
   public avatar: string;
 
   @Expose()
-  @ApiProperty(SwaggerProperty.registrationDate)
+  @ApiProperty(SwaggerUserProperty.registrationDate)
   public registrationDate: string;
 
   @Expose()
-  @ApiProperty(SwaggerProperty.subscribersCount)
+  @ApiProperty(SwaggerUserProperty.subscribersCount)
   public subscribers: string[];
 }

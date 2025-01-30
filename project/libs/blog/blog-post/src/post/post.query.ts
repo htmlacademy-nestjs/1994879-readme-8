@@ -18,10 +18,12 @@ export class PostQuery {
   @IsArray()
   @IsString({ each: true })
   @IsOptional()
+  @ApiPropertyOptional({ isArray: true, type: String })
   public tags?: string[];
 
   @IsIn(Object.values(SortDirection))
   @IsOptional()
+  @ApiPropertyOptional({ enum: SortDirection, default: PaginationDefaults.SortDirection })
   public sortDirection?: SortDirection = PaginationDefaults.SortDirection;
 
   @Transform(({ value }) => +value || PaginationDefaults.PageCount)

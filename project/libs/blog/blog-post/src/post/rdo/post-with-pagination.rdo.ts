@@ -3,10 +3,6 @@ import { PostRDO } from './post.rdo';
 
 export class PostWithPaginationRDO {
   @Expose()
-  @Type(() => PostRDO)
-  public entities: PostRDO[];
-
-  @Expose()
   public totalPages: number;
 
   @Expose()
@@ -17,4 +13,8 @@ export class PostWithPaginationRDO {
 
   @Expose()
   public itemsPerPage: number;
+
+  @Expose()
+  @Type(() => PostRDO)
+  public entities: PostRDO[];
 }

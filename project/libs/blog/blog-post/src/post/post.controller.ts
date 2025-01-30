@@ -6,38 +6,61 @@ import {
   Patch,
   Param,
   Delete,
-  HttpStatus,
   SerializeOptions,
   Query,
+  Inject,
+  UseGuards,
+  HttpCode,
+  HttpStatus,
 } from '@nestjs/common';
 import { PostService } from './post.service';
-import { CreatePostDTO } from './dto/create-post.dto';
+import {
+  CreatePostDTO,
+  LinkPostDTO,
+  PhotoPostDTO,
+  QuotePostDTO,
+  TextPostDTO,
+  VideoPostDTO,
+} from './dto/create-post.dto';
 import { UpdatePostDTO } from './dto/update-post.dto';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { PostOperationSummary, PostResponseDescription, PostSwaggerQuery } from './post.constant';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger';
+import { PostResponseDescription } from './post.constant';
 import { PostRDO } from './rdo/post.rdo';
 import { PostQuery } from './post.query';
 import { PostWithPaginationRDO } from './rdo/post-with-pagination.rdo';
-import { SwaggerTag } from '@project/core';
+import { AppRoute, SwaggerOperation, SwaggerTag, SwaggerPostProperty } from '@project/core';
+import { ApiCustomResponse, ApiPostBody, UserId } from '@project/decorators';
+import { TokenName } from '@project/helpers';
+import { JwtAuthGuard } from '@project/authentication';
 
 @ApiTags(SwaggerTag.Post)
-@Controller('posts')
+@Controller(AppRoute.Post)
 @SerializeOptions({ type: PostRDO, excludeExtraneousValues: true })
+@ApiBearerAuth(TokenName.Access)
+@ApiCustomResponse()
 export class PostController {
-  constructor(private readonly postService: PostService) {}
+  constructor(@Inject(PostService) private readonly postService: PostService) {}
 
   @Post()
-  @ApiOperation({ summary: PostOperationSummary.Create })
-  @ApiResponse({ status: HttpStatus.CREATED, description: PostResponseDescription.Created })
-  @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: PostResponseDescription.BadRequest })
+  @ApiOperation({ summary: SwaggerOperation.PostCreate })
+  @ApiCreatedResponse({ description: PostResponseDescription.Created })
+  @ApiPostBody('type', VideoPostDTO, TextPostDTO, LinkPostDTO, PhotoPostDTO, QuotePostDTO)
   async create(@Body() dto: CreatePostDTO) {
     return this.postService.create(dto);
   }
 
   @Get()
-  @ApiOperation({ summary: PostOperationSummary.FindAll })
-  @ApiResponse({
-    status: HttpStatus.OK,
+  @ApiOperation({ summary: SwaggerOperation.PostAll })
+  @ApiOkResponse({
     type: PostWithPaginationRDO,
     description: PostResponseDescription.AllPosts,
   })
@@ -48,26 +71,53 @@ export class PostController {
   }
 
   @Get(':id')
-  @ApiOperation({ summary: PostOperationSummary.FindOne })
-  @ApiResponse({ status: HttpStatus.OK, description: PostResponseDescription.Found })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: PostResponseDescription.NotFound })
+  @ApiOperation({ summary: SwaggerOperation.PostOne })
+  @ApiOkResponse({ description: PostResponseDescription.Found })
+  @ApiNotFoundResponse({ description: PostResponseDescription.NotFound })
   async findOne(@Param('id') id: string) {
     return this.postService.findOne(id);
   }
 
   @Patch(':id')
-  @ApiOperation({ summary: PostOperationSummary.Update })
-  @ApiResponse({ status: HttpStatus.OK, description: PostResponseDescription.Updated })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: PostResponseDescription.NotFound })
-  async update(@Param('id') id: string, @Body() dto: UpdatePostDTO) {
-    return this.postService.update(id, dto);
+  @ApiOperation({ summary: SwaggerOperation.PostUpdate })
+  @ApiOkResponse({ description: PostResponseDescription.Updated })
+  @ApiNotFoundResponse({ description: PostResponseDescription.NotFound })
+  async update(@Param('id') id: string, @UserId() userId: string, @Body() dto: UpdatePostDTO) {
+    return this.postService.update(id, userId, dto);
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: PostOperationSummary.Remove })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: PostResponseDescription.Deleted })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: PostResponseDescription.NotFound })
-  async remove(@Param('id') id: string) {
-    await this.postService.remove(id);
+  @ApiOperation({ summary: SwaggerOperation.PostRemove })
+  @ApiNoContentResponse({ description: PostResponseDescription.Deleted })
+  @ApiNotFoundResponse({ description: PostResponseDescription.NotFound })
+  async remove(@Param('id') id: string, @UserId() userId: string) {
+    this.postService.remove(id, userId);
+  }
+
+  @Get(AppRoute.Count)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: SwaggerOperation.PostCount })
+  @ApiOkResponse({ description: PostResponseDescription.PostCount })
+  public async getUserPostsCount(@UserId() userId: string): Promise<number> {
+    return this.postService.getUserPostsCount(userId);
+  }
+
+  @Post(`:postId/${AppRoute.Like}`)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: SwaggerOperation.Like })
+  @ApiOkResponse()
+  @HttpCode(HttpStatus.OK)
+  @ApiParam({ name: 'postId', ...SwaggerPostProperty.postId })
+  public likePost(@Param('postId') postId: string, @UserId() userId: string) {
+    return this.postService.like(postId, userId);
+  }
+
+  @Delete(`:postId/${AppRoute.Like}`)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: SwaggerOperation.Unlike })
+  @ApiNoContentResponse()
+  @ApiParam({ name: 'postId', ...SwaggerPostProperty.postId })
+  public unlikePost(@Param('postId') postId: string, @UserId() userId: string) {
+    return this.postService.unlike(postId, userId);
   }
 }

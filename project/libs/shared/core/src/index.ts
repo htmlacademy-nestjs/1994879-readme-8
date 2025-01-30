@@ -15,7 +15,7 @@ export { Environment } from './lib/types/environment.enum';
 export { PostStatus } from './lib/types/post-status.enum';
 export { PostType } from './lib/types/post-type.enum';
 export { Comment } from './lib/types/comment.interface';
-export { Tag } from './lib/types/tag.interface';
+export { Like } from './lib/types/like.interface';
 export { StorableEntity } from './lib/interfaces/storable-entity.interface';
 export { EntityFactory } from './lib/interfaces/entity-factory.interface';
 export { SortDirection } from './lib/interfaces/sort-direction.interface';
@@ -30,7 +30,8 @@ export { Subscriber } from './lib/types/subscriber.interface';
 export { RabbitRouting } from './lib/types/rabbit-routing.enum';
 export {
   SwaggerTag,
-  SwaggerProperty,
+  SwaggerUserProperty,
+  SwaggerPostProperty,
   SwaggerResponse,
   SwaggerOperation,
 } from './lib/constants/swagger.constant';

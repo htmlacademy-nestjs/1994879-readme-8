@@ -15,7 +15,6 @@ export class PostRDO {
   public publicationDate: Date;
 
   @Expose()
-  @Transform(({ value }) => value.map(({ name }) => name), { toClassOnly: true })
   tags?: string[];
 
   @Expose()

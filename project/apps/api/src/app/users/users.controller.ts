@@ -106,7 +106,7 @@ export class UsersController {
     @Req() req: Request
   ) {
     const { data } = await this.httpService.axiosRef.patch<UserRDO>(
-      getAppURL(this.baseUrl.account, `${AppRoute.User}/${id}`),
+      getAppURL(this.baseUrl.account, AppRoute.User, id),
       dto,
       this.getAuthorizationHeaders(req)
     );
@@ -122,7 +122,7 @@ export class UsersController {
   @ApiNotFoundResponse({ description: SwaggerResponse.UserNotFound })
   public async show(@Param('id') id: string, @Req() req: Request) {
     const { data } = await this.httpService.axiosRef.get<UserRDO>(
-      getAppURL(this.baseUrl.account, `${AppRoute.User}/${id}`),
+      getAppURL(this.baseUrl.account, AppRoute.User, id),
       this.getAuthorizationHeaders(req)
     );
 

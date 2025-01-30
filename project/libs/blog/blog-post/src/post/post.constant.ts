@@ -1,13 +1,10 @@
-import { PostStatus } from '@prisma/client';
-import { PostType, SortDirection } from '@project/core';
+import { SortDirection } from '@project/core';
 
-export enum PostOperationSummary {
-  Create = 'Create a new post',
-  FindAll = 'Get all posts',
-  FindOne = 'Get a post by ID',
-  Update = 'Update a post by ID',
-  Remove = 'Delete a post by ID',
-}
+export const PostMessage = {
+  NotFound: 'Post not found',
+  AccessDeny: 'Unable to modify post you are not created',
+  LikeDraft: 'Unable to like "draft" post',
+};
 
 export enum PostResponseDescription {
   Created = 'The post has been successfully created.',
@@ -17,54 +14,8 @@ export enum PostResponseDescription {
   NotFound = 'Post not found.',
   Updated = 'The post has been successfully updated.',
   Deleted = 'The post has been successfully deleted.',
+  PostCount = 'Count of Users post.',
 }
-
-export const PostSwaggerMessage = {
-  id: { description: 'Post ID', example: '3d11998b-f67f-480e-98ad-03bad6a22b64' },
-  type: {
-    description: 'The type of the post (e.g., Video, Text, Photo, Link, Quote).',
-    example: PostType.Video,
-  },
-  status: {
-    description: 'The status of the post (e.g., Draft, Published).',
-    example: PostStatus.Published,
-  },
-  publicationDate: {
-    description: 'The date and time when the post will be published.',
-    example: '2023-10-01T12:00:00Z',
-  },
-  userId: { description: 'The ID of the user creating the post.', example: 'user123' },
-  tags: { description: 'An array of tags associated with the post.', example: ['news', 'updates'] },
-  favorites: {
-    description: 'An array of user IDs who have favorited the post.',
-    example: ['user456', 'user789'],
-  },
-  title: {
-    description: 'The title of the post (applicable for Video and Text posts).',
-    example: 'My First Video',
-  },
-  url: {
-    description: 'The URL of the post content (applicable for Video, Photo, and Link posts).',
-    example: 'https://example.com/video.mp4',
-  },
-  description: {
-    description: 'A brief description of the post (applicable for Text and Link posts).',
-    example: 'This is a description of the post.',
-  },
-  text: {
-    description: 'The main text content of the post (applicable for Text and Quote posts).',
-    example: 'This is the main content of the post.',
-  },
-  author: {
-    description: 'The author of the quote (applicable for Quote posts).',
-    example: 'Ernest Hemingway',
-  },
-  isRepost: { description: 'Indicates whether the post is a repost.', example: true },
-  originalId: {
-    description: 'The ID of the original post if this is a repost.',
-    example: '3d11998b-f67f-480e-98ad-03bad6a22b65',
-  },
-} as const;
 
 export const PostSwaggerQuery = {
   limit: { name: 'limit', required: false, type: Number, description: 'Number of posts to return' },

@@ -8,7 +8,7 @@ import {
   TextPost,
   VideoPost,
 } from '@project/core';
-import { StorableEntity, Post, Tag } from '@project/core';
+import { StorableEntity, Post } from '@project/core';
 
 export class PostEntity extends Entity implements StorableEntity<Post> {
   type: PostType;
@@ -21,8 +21,8 @@ export class PostEntity extends Entity implements StorableEntity<Post> {
   description?: string;
   url?: string;
   text?: string;
-  author: string;
-  tags?: Tag[];
+  author?: string;
+  tags?: string[];
   isRepost: boolean;
   originalId: string;
   originalUserId: string;
