@@ -22,7 +22,11 @@ export class CommentService {
 
   public async create(dto: CreateCommentDTO, userId: string) {
     const newComment = new CommentEntity({ ...dto, userId });
-    await this.commentRepository.save(newComment);
+    try {
+      await this.commentRepository.save(newComment);
+    } catch (error) {
+      throw new ConflictException(CommentMessage.SaveError);
+    }
 
     return newComment;
   }
