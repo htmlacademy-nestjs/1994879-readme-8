@@ -10,6 +10,8 @@ import { NotifyModule } from '@project/api-notify';
 import { AppService } from './app.service';
 import { gatewayConfig } from '@project/api-config';
 import { UserService } from './users/user.service';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { InjectUserIdInterceptor } from '../../../../libs/shared/interceptors/src/lib/inject-user-id.interceptor';
 
 @Module({
   imports: [
@@ -20,6 +22,14 @@ import { UserService } from './users/user.service';
     NotifyModule,
   ],
   controllers: [UsersController, BlogController],
-  providers: [CheckAuthGuard, AppService, UserService],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: InjectUserIdInterceptor,
+    },
+    CheckAuthGuard,
+    AppService,
+    UserService,
+  ],
 })
 export class AppModule {}

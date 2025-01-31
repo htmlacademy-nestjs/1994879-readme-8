@@ -1,5 +1,11 @@
+export const USER_ID_HEADER = Symbol('x-user-id');
 export const APP_PREFIX = 'api';
 export const DEFAULT_AVATAR = 'default-avatar.png';
+
+export const AppHeader = {
+  UserId: typeof USER_ID_HEADER === 'symbol' ? USER_ID_HEADER.description : USER_ID_HEADER,
+  Auth: 'authorization',
+};
 
 export enum AppRoute {
   Auth = 'auth',

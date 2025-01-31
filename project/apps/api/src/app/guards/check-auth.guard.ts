@@ -2,8 +2,8 @@ import { CanActivate, ExecutionContext, Inject, Injectable } from '@nestjs/commo
 import { HttpService } from '@nestjs/axios';
 import { gatewayConfig } from '@project/api-config';
 import { ConfigType } from '@nestjs/config';
-import { getAppURL } from '@project/helpers';
-import { AppRoute } from '@project/core';
+import { getAppHeaders, getAppURL } from '@project/helpers';
+import { AppHeader, AppRoute } from '@project/core';
 
 @Injectable()
 export class CheckAuthGuard implements CanActivate {
@@ -14,14 +14,11 @@ export class CheckAuthGuard implements CanActivate {
 
   public async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest();
+    const headers = getAppHeaders(request, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post(
       getAppURL(this.baseUrl.account, AppRoute.Auth, AppRoute.Check),
       {},
-      {
-        headers: {
-          Authorization: request.headers['authorization'],
-        },
-      }
+      { headers }
     );
 
     request['user'] = data;

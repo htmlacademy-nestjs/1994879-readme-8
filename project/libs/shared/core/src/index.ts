@@ -1,4 +1,4 @@
-export { APP_PREFIX, DEFAULT_AVATAR, AppRoute } from './lib/constants/app.config';
+export { APP_PREFIX, DEFAULT_AVATAR, AppHeader, AppRoute } from './lib/constants/app.config';
 export { Nullable } from './lib/interfaces/nullable';
 export { Entity } from './lib/base/entity';
 export { User } from './lib/types/user.interface';
@@ -34,4 +34,5 @@ export {
   SwaggerPostProperty,
   SwaggerResponse,
   SwaggerOperation,
+  ApiUserHeaderOptions,
 } from './lib/constants/swagger.constant';

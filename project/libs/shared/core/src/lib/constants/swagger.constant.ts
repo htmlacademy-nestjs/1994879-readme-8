@@ -1,5 +1,6 @@
 import { PostStatus } from '../types/post-status.enum';
 import { PostType } from '../types/post-type.enum';
+import { AppHeader } from './app.config';
 
 export enum SwaggerTag {
   Auth = 'Authorization routes',
@@ -102,3 +103,10 @@ export enum SwaggerResponse {
   RefreshToken = 'Get a new access/refresh tokens',
   Feed = 'Users feed',
 }
+
+export const ApiUserHeaderOptions = {
+  name: AppHeader.UserId,
+  example: SwaggerUserProperty.userId.example,
+  description: 'Authorized user id',
+  required: false,
+};

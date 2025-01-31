@@ -4,3 +4,4 @@ export { PortLimit } from './lib/port-limit';
 export { TokenName } from './lib/jwt-const';
 export { setupSwagger } from './lib/swagger.config';
 export { getAppURL } from './lib/get-app-url';
+export { getAppHeaders } from './lib/headers';

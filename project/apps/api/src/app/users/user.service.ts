@@ -38,7 +38,6 @@ export class UserService {
       password: dto.password,
       avatar: avatarFile ? await this.appService.uploadFile(avatarFile) : this.getDefaultAvatar(),
     });
-    console.log(userDTO);
 
     const { data } = await this.httpService.axiosRef.post<UserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.User),

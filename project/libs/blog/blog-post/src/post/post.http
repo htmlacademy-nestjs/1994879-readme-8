@@ -34,14 +34,14 @@ GET {{baseUrl}}/posts/{{postId}} HTTP/1.1
 
 # Удалить пост
 DELETE {{baseUrl}}/posts/{{postId}} HTTP/1.1
-Authorization: Bearer {{accessToken}}
+x-user-id: {{userId}}
 
 ###
 
 # обновить пост
 PATCH {{baseUrl}}/posts/{{postId}} HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
+x-user-id: {{userId}}
 
 {
   "title": "Gosh, what is this!",
@@ -52,11 +52,11 @@ Authorization: Bearer {{accessToken}}
 # Лайк
 POST {{baseUrl}}/posts/{{postId}}/likes HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
+x-user-id: {{userId}}
 
 ###
 # Дизлайк
 DELETE {{baseUrl}}/posts/{{postId}}/likes HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer {{accessToken}}
+x-user-id: {{userId}}
 

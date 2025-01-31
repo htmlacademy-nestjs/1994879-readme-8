@@ -33,12 +33,12 @@ import {
 } from '@nestjs/swagger';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
-import { getAppURL, TokenName } from '@project/helpers';
+import { getAppHeaders, getAppURL, TokenName } from '@project/helpers';
 import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
 import { ApiCustomResponse } from '@project/decorators';
 import { UserService } from './user.service';
-import { AppRoute, SwaggerOperation, SwaggerResponse, SwaggerTag } from '@project/core';
+import { AppHeader, AppRoute, SwaggerOperation, SwaggerResponse, SwaggerTag } from '@project/core';
 import { ChangePasswordDTO, RegisterUserDTO, UserDetailedRDO } from '@project/blog-user';
 import { UserRDO } from '@project/blog-user';
 import { SubscribeDTO } from '@project/blog-user';
@@ -53,14 +53,6 @@ export class UsersController {
     @Inject(UserService) private userService: UserService,
     @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>
   ) {}
-
-  private getAuthorizationHeaders(req: Request) {
-    return {
-      headers: {
-        Authorization: req.headers['authorization'],
-      },
-    };
-  }
 
   @Post(AppRoute.Register)
   @ApiOperation({ summary: SwaggerOperation.Register })
@@ -105,10 +97,11 @@ export class UsersController {
     @Body() dto: ChangePasswordDTO,
     @Req() req: Request
   ) {
+    const headers = getAppHeaders(req, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.patch<UserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.User, id),
       dto,
-      this.getAuthorizationHeaders(req)
+      { headers }
     );
 
     return this.userService.getUserDetails(data);
@@ -121,9 +114,10 @@ export class UsersController {
   @ApiOkResponse({ type: UserDetailedRDO, description: SwaggerResponse.UserFound })
   @ApiNotFoundResponse({ description: SwaggerResponse.UserNotFound })
   public async show(@Param('id') id: string, @Req() req: Request) {
+    const headers = getAppHeaders(req, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.get<UserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.User, id),
-      this.getAuthorizationHeaders(req)
+      { headers }
     );
 
     return this.userService.getUserDetails(data);
@@ -133,10 +127,11 @@ export class UsersController {
   @ApiOperation({ summary: SwaggerOperation.RefreshToken })
   @ApiBearerAuth(TokenName.Refresh)
   public async refreshToken(@Req() req: Request) {
+    const headers = getAppHeaders(req, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.Auth, AppRoute.Refresh),
       null,
-      this.getAuthorizationHeaders(req)
+      { headers }
     );
 
     return data;
@@ -148,10 +143,11 @@ export class UsersController {
   @ApiBearerAuth(TokenName.Access)
   @ApiCreatedResponse({ type: LoggedUserRDO, description: SwaggerResponse.UserFound })
   public async checkToken(@Req() req: Request) {
+    const headers = getAppHeaders(req, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.Check),
       null,
-      this.getAuthorizationHeaders(req)
+      { headers }
     );
 
     return data;
@@ -164,10 +160,11 @@ export class UsersController {
   @ApiOkResponse()
   @HttpCode(HttpStatus.OK)
   public async subscribe(@Body() dto: SubscribeDTO, @Req() req: Request) {
+    const headers = getAppHeaders(req, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post(
       getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Subscribe),
       dto,
-      this.getAuthorizationHeaders(req)
+      { headers }
     );
     return data;
   }
@@ -179,10 +176,11 @@ export class UsersController {
   @ApiNoContentResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
   public async unsubscribe(@Body() dto: SubscribeDTO, @Req() req: Request) {
+    const headers = getAppHeaders(req, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post(
       getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Unsubscribe),
       dto,
-      this.getAuthorizationHeaders(req)
+      { headers }
     );
     return data;
   }

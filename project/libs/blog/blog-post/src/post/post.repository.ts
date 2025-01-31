@@ -34,7 +34,6 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
   }
 
   public async findAll(query?: PostQuery): Promise<PaginationResult<PostEntity>> {
-    console.log(query);
     const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
     const take = query?.limit;
     const where: Prisma.PostWhereInput = {};
