@@ -34,6 +34,9 @@ export enum SwaggerOperation {
   Unlike = 'Unlike post',
   NotiFyNewUser = 'Welcome email for a new user',
   NotifyRenewalPosts = 'Newsletter about new posts',
+  CommentCreate = 'Create a new comment for post',
+  CommentList = 'Get list of comments',
+  CommentDelete = 'Delete a comment by ID',
 }
 
 export enum PostOperationSummary {}
@@ -91,6 +94,13 @@ export const SwaggerPostProperty = {
     example: '123',
   },
 } as const;
+
+export const SwaggerCommentProperty = {
+  message: {
+    description: 'Text of the comment.',
+    example: 'Excellent article! When will there be a sequel?',
+  },
+};
 
 export enum SwaggerResponse {
   Unauthorized = 'Unauthorized error',

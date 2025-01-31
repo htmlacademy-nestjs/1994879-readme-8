@@ -1,41 +1,38 @@
-import { Injectable, NotFoundException, NotImplementedException } from '@nestjs/common';
+import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { CreateCommentDTO } from './dto/create-comment.dto';
 import { CommentRepository } from './comment.repository';
-import { CommentFactory } from './comment.factory';
 import { CommentEntity } from './entities/comment.entity';
+import { CommentMessage } from './comment.constant';
 
 @Injectable()
 export class CommentService {
-  constructor(
-    private readonly commentRepository: CommentRepository,
-    private readonly commentFactory: CommentFactory
-  ) {}
+  constructor(@Inject(CommentRepository) private readonly commentRepository: CommentRepository) {}
 
-  getById(commentId: string) {
-    return this.commentRepository.findById(commentId);
+  public async getById(commentId: string): Promise<CommentEntity> {
+    const comment = await this.commentRepository.findById(commentId);
+    if (!comment) {
+      throw new NotFoundException(CommentMessage.NotFound);
+    }
+    return comment;
   }
 
-  async findAll(postId: string) {
+  public async findAll(postId: string) {
     return this.commentRepository.findAll(postId);
   }
 
-  async create(postId: string, dto: CreateCommentDTO) {
-    try {
-      const newComment = this.commentFactory.createFromDTO(dto, postId);
-      await this.commentRepository.save(newComment);
+  public async create(dto: CreateCommentDTO, userId: string) {
+    const newComment = new CommentEntity({ ...dto, userId });
+    await this.commentRepository.save(newComment);
 
-      return newComment;
-    } catch (err) {
-      throw new NotFoundException(`Post with ID ${postId} not found`);
-    }
+    return newComment;
   }
 
-  async delete(commentId: string) {
-    const existsComment = await this.commentRepository.findById(commentId);
-    if (!existsComment) {
-      throw new NotFoundException(`Comment with ID ${commentId} not found`);
+  public async delete(commentId: string, userId: string): Promise<void> {
+    const comment = await this.getById(commentId);
+    if (comment.userId !== userId) {
+      throw new ConflictException(CommentMessage.AccessDeny);
     }
 
-    return await this.commentRepository.deleteById(commentId);
+    return this.commentRepository.delete(comment.id);
   }
 }

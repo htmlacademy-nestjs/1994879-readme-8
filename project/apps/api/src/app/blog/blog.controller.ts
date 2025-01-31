@@ -19,6 +19,7 @@ import { CheckAuthGuard } from '../guards/check-auth.guard';
 import { AddNewPostDTO } from '../dto/add-new-post.dto';
 import {
   ApiBearerAuth,
+  ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOkResponse,
   ApiOperation,
@@ -32,6 +33,7 @@ import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
 import { getAppHeaders, getAppURL, TokenName } from '@project/helpers';
 import { ApiCustomResponse, UserId } from '@project/decorators';
+import { CreateCommentDTO } from '@project/blog-comment';
 import {
   AppHeader,
   AppRoute,
@@ -111,14 +113,14 @@ export class BlogController {
     return data;
   }
 
-  @Delete(`${AppRoute.Post}/:postId/${AppRoute.Like}`)
+  @Delete(`${AppRoute.Post}/:${AppRoute.PostId}/${AppRoute.Like}`)
   @ApiOperation({ summary: SwaggerOperation.Unlike })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
   @ApiNoContentResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiParam({ name: 'postId', ...SwaggerPostProperty.postId })
-  public async unlikePost(@Param('postId') postId: string, @Req() req: Request) {
+  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
+  public async unlikePost(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
     const headers = getAppHeaders(req, AppHeader.UserId);
     const { data } = await this.httpService.axiosRef.post(
       getAppURL(this.baseUrl.blog, AppRoute.Post, postId, AppRoute.Like),
@@ -126,6 +128,61 @@ export class BlogController {
       { headers }
     );
 
+    return data;
+  }
+
+  @Post(AppRoute.PostComment)
+  @ApiOperation({ summary: SwaggerOperation.CommentCreate })
+  @UseGuards(CheckAuthGuard)
+  @ApiBearerAuth(TokenName.Access)
+  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
+  @ApiCreatedResponse()
+  public async createComment(
+    @Body() dto: CreateCommentDTO,
+    @Param(AppRoute.PostId) postId: string,
+    @Req() req: Request
+  ) {
+    const headers = getAppHeaders(req, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.post(
+      getAppURL(this.baseUrl.blog, AppRoute.Comment),
+      { ...dto, postId },
+      { headers }
+    );
+    return data;
+  }
+
+  @Get(AppRoute.PostComment)
+  @ApiOperation({ summary: SwaggerOperation.CommentList })
+  @UseGuards(CheckAuthGuard)
+  @ApiBearerAuth(TokenName.Access)
+  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
+  @ApiCreatedResponse()
+  public async showComments(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
+    const headers = getAppHeaders(req, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.get(
+      getAppURL(this.baseUrl.blog, AppRoute.Comment),
+      { headers, params: { postId } }
+    );
+    return data;
+  }
+
+  @Delete(`${AppRoute.PostComment}/${AppRoute.CommentId}`)
+  @ApiOperation({ summary: SwaggerOperation.CommentDelete })
+  @UseGuards(CheckAuthGuard)
+  @ApiBearerAuth(TokenName.Access)
+  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
+  @ApiParam({ name: AppRoute.CommentId })
+  @ApiCreatedResponse()
+  public async deleteComment(
+    @Param(AppRoute.PostId) postId: string,
+    @Param(AppRoute.CommentId) commentId: string,
+    @Req() req: Request
+  ) {
+    const headers = getAppHeaders(req, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.delete(
+      getAppURL(this.baseUrl.blog, AppRoute.Comment),
+      { headers, params: { postId, commentId } }
+    );
     return data;
   }
 }

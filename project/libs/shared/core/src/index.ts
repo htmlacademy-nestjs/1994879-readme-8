@@ -32,6 +32,7 @@ export {
   SwaggerTag,
   SwaggerUserProperty,
   SwaggerPostProperty,
+  SwaggerCommentProperty,
   SwaggerResponse,
   SwaggerOperation,
   ApiUserHeaderOptions,

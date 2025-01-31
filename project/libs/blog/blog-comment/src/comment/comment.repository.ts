@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Comment } from '@project/core';
+import { Comment, Nullable } from '@project/core';
 import { PrismaClientService } from '@project/models';
 import { BasePostgresRepository } from '@project/data-access';
 import { CommentEntity } from './entities/comment.entity';
@@ -30,13 +30,13 @@ export class CommentRepository extends BasePostgresRepository<CommentEntity, Com
     return documents.map((document) => this.createEntityFromDocument(document));
   }
 
-  public async findById(id: string): Promise<CommentEntity> {
+  public async findById(id: string): Promise<Nullable<CommentEntity>> {
     const document = await this.client.comment.findFirst({
       where: { id },
     });
 
     if (!document) {
-      throw new NotFoundException(`Comment with id ${id} not found.`);
+      return null;
     }
 
     return this.createEntityFromDocument(document);

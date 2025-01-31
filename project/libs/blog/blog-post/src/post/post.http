@@ -1,7 +1,5 @@
 @port = 4000
 @baseUrl = http://localhost:{{port}}/api
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczODEyNzE0MiwiZXhwIjoxNzM4MTI3NDQyfQ.KrMqsdakhQF3x88KC7ApcPmY3vGEmH0QrSnUsdzAAqM
-@refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzk5MTA3NmI4OTRlMjI2ZDc3ZTc5MTciLCJlbWFpbCI6Im5ldy11c2VyQG1haWwubG9jYWwiLCJuYW1lIjoiS2VrcyIsInRva2VuSWQiOiJlZDc2YjNjNi1iMzBlLTRkMjEtYWQ5NC04Y2ZkY2YyMDA2ODMiLCJpYXQiOjE3MzgwODUwNDgsImV4cCI6MTc0MDY3NzA0OH0.xQS4xNeNy0_GQZTISYJ_cb8Lmbb4_MK32DBadySBPec
 @userId = "67991076b894e226d77e7917"
 @postId = cm6ictinr0000s13gdekn4rgu
 
@@ -10,7 +8,7 @@
 
 POST {{baseUrl}}/posts HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3ODY1ODc3ZWM4OWQ5YTQzMzc0ZWFjNCIsImVtYWlsIjoidXNlcjExMUBub3Rmb3VuZC5sb2NhbCIsIm5hbWUiOiJLZWtzIiwiaWF0IjoxNzM2ODU3NzMzLCJleHAiOjE3MzY4NTgwMzN9.NMZ8DidqS-96nYWENyFjsv8EGjci4Cit2tmeLyTMks4
+x-user-id: {{userId}}
 
 {
   "type": "video",

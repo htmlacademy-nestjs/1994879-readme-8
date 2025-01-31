@@ -1,9 +1,10 @@
 @port = 5000
 @baseUrl = http://localhost:{{port}}/api
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczODMwNTcxOCwiZXhwIjoxNzM4MzA2MDE4fQ.L3zFGk5SpK_munoqCwyLmzSPlv2w-R5DVEqnPCN7MZg
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczODMzNDg4MiwiZXhwIjoxNzM4MzM1MTgyfQ.EznaVL3oaB7p2HfgSY1BTJRydSiHaqVbPnMiWm2aaLU
 @refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzk5MTA3NmI4OTRlMjI2ZDc3ZTc5MTciLCJlbWFpbCI6Im5ldy11c2VyQG1haWwubG9jYWwiLCJuYW1lIjoiS2VrcyIsInRva2VuSWQiOiJlZDc2YjNjNi1iMzBlLTRkMjEtYWQ5NC04Y2ZkY2YyMDA2ODMiLCJpYXQiOjE3MzgwODUwNDgsImV4cCI6MTc0MDY3NzA0OH0.xQS4xNeNy0_GQZTISYJ_cb8Lmbb4_MK32DBadySBPec
 @userId = 67991076b894e226d77e7917
 @postId = cm6i9k2tn0002s160k44mfcsv
+@commentId = e240ed6c-b3f0-4ef8-973e-3d413dd44091
 
 # Новый пользователь
 POST {{baseUrl}}/users/register HTTP/1.1
@@ -70,10 +71,28 @@ Authorization: Bearer {{accessToken}}
   "userId": "67991076b894e226d77e7917"
 }
 
+### Комментарии
+# Создать комментарий
+POST {{baseUrl}}/blog/posts/{{postId}}/comments HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "message": "New Comment from gateway!"
+}
+
+###
+# Список комментариев
+GET {{baseUrl}}/blog/posts/{{postId}}/comments HTTP/1.1
+Authorization: Bearer {{accessToken}}
+
+###
+# удалить комментарий
+DELETE {{baseUrl}}/blog/posts/{{postId}}/comments/{{commentId}} HTTP/1.1
+Authorization: Bearer {{accessToken}}
 
 ###
 # Рассылка о новых постах
 POST {{baseUrl}}/notify HTTP/1.1
-Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 

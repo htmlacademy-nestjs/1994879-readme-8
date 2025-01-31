@@ -1,9 +1,9 @@
 import { Comment, Entity, StorableEntity } from '@project/core';
 
 export class CommentEntity extends Entity implements StorableEntity<Comment> {
-  public createdAt: Date;
+  public createdAt?: Date;
   public updatedAt?: Date;
-  public postId?: string;
+  public postId: string;
   public message: string;
   public userId: string;
 
@@ -18,10 +18,10 @@ export class CommentEntity extends Entity implements StorableEntity<Comment> {
     }
 
     this.id = comment.id ?? undefined;
-    this.createdAt = comment.createdAt;
-    this.updatedAt = comment.updatedAt;
+    this.createdAt = comment.createdAt ?? new Date();
+    this.updatedAt = comment.updatedAt ?? new Date();
     this.message = comment.message;
-    this.postId = comment.postId ?? undefined;
+    this.postId = comment.postId;
     this.userId = comment.userId;
   }
 

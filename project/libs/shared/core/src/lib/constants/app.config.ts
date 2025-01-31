@@ -28,4 +28,6 @@ export enum AppRoute {
   Like = 'likes',
   Notify = 'notify',
   PostId = 'postId',
+  CommentId = 'commentId',
+  PostComment = `${AppRoute.Post}/:${AppRoute.PostId}/${AppRoute.Comment}`,
 }
