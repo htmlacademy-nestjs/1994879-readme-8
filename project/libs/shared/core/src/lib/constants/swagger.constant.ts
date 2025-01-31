@@ -32,6 +32,8 @@ export enum SwaggerOperation {
   PostCount = 'Count users post',
   Like = 'Like post',
   Unlike = 'Unlike post',
+  NotiFyNewUser = 'Welcome email for a new user',
+  NotifyRenewalPosts = 'Newsletter about new posts',
 }
 
 export enum PostOperationSummary {}

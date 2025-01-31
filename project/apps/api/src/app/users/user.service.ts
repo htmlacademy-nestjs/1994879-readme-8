@@ -44,7 +44,8 @@ export class UserService {
       userDTO
     );
 
-    this.appService.notifyNewUser(data);
+    await this.httpService.axiosRef.post(getAppURL(this.baseUrl.notify, AppRoute.User), userDTO);
+
     return this.getUserDetails(data);
   }
 }

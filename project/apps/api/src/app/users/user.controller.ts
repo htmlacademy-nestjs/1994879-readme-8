@@ -47,7 +47,7 @@ import { SubscribeDTO } from '@project/blog-user';
 @ApiTags(SwaggerTag.User)
 @UseFilters(AxiosExceptionFilter)
 @ApiCustomResponse()
-export class UsersController {
+export class UserController {
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
     @Inject(UserService) private userService: UserService,

@@ -4,14 +4,16 @@ import { appConfig } from '@project/app-config';
 import { HttpModule } from '@nestjs/axios';
 import { getHttpAsyncOptions } from '@project/app-config';
 import { CheckAuthGuard } from './guards/check-auth.guard';
-import { UsersController } from './users/users.controller';
+import { UserController } from './users/user.controller';
 import { BlogController } from './blog/blog.controller';
-import { NotifyModule } from '@project/api-notify';
 import { AppService } from './app.service';
 import { gatewayConfig } from '@project/api-config';
 import { UserService } from './users/user.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { InjectUserIdInterceptor } from '../../../../libs/shared/interceptors/src/lib/inject-user-id.interceptor';
+import { InjectUserIdInterceptor } from '@project/interceptors';
+import { NotifyController } from './notify/notify.controller';
+import { NotifyService } from './notify/notify.service';
+import { BlogService } from './blog/blog.service';
 
 @Module({
   imports: [
@@ -19,9 +21,8 @@ import { InjectUserIdInterceptor } from '../../../../libs/shared/interceptors/sr
       load: [appConfig, gatewayConfig],
     }),
     HttpModule.register(getHttpAsyncOptions()),
-    NotifyModule,
   ],
-  controllers: [UsersController, BlogController],
+  controllers: [UserController, BlogController, NotifyController],
   providers: [
     {
       provide: APP_INTERCEPTOR,
@@ -30,6 +31,8 @@ import { InjectUserIdInterceptor } from '../../../../libs/shared/interceptors/sr
     CheckAuthGuard,
     AppService,
     UserService,
+    BlogService,
+    NotifyService,
   ],
 })
 export class AppModule {}

@@ -26,4 +26,6 @@ export enum AppRoute {
   Feed = 'feed',
   Count = 'count',
   Like = 'likes',
+  Notify = 'notify',
+  PostId = 'postId',
 }

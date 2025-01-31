@@ -25,7 +25,6 @@ import {
   ApiParam,
   ApiTags,
 } from '@nestjs/swagger';
-import { AppService } from '../app.service';
 import { UserRDO } from '@project/blog-user';
 import { PostWithPaginationRDO } from '@project/blog-post';
 import { PostQuery } from '@project/blog-post';
@@ -41,6 +40,7 @@ import {
   SwaggerResponse,
   SwaggerTag,
 } from '@project/core';
+import { BlogService } from './blog.service';
 
 @Controller(AppRoute.Blog)
 @ApiTags(SwaggerTag.Blog)
@@ -50,7 +50,7 @@ import {
 export class BlogController {
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
-    @Inject(AppService) private appService: AppService,
+    @Inject(BlogService) private blogService: BlogService,
     @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>
   ) {}
 
@@ -61,7 +61,7 @@ export class BlogController {
       getAppURL(this.baseUrl.blog, AppRoute.Post),
       { params: queryParams }
     );
-    await this.appService.appendUserInfo(data.entities);
+    await this.blogService.appendUserInfo(data.entities);
     return data;
   }
 
@@ -71,7 +71,7 @@ export class BlogController {
       getAppURL(this.baseUrl.blog),
       dto
     );
-    await this.appService.appendUserInfo(data.entities);
+    await this.blogService.appendUserInfo(data.entities);
     return data;
   }
 
@@ -93,14 +93,14 @@ export class BlogController {
     return userPostsFeed;
   }
 
-  @Post(`${AppRoute.Post}/:postId/${AppRoute.Like}`)
+  @Post(`${AppRoute.Post}/:${AppRoute.PostId}/${AppRoute.Like}`)
   @ApiOperation({ summary: SwaggerOperation.Like })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
   @ApiOkResponse()
   @HttpCode(HttpStatus.OK)
-  @ApiParam({ name: 'postId', ...SwaggerPostProperty.postId })
-  public async likePost(@Param('postId') postId: string, @Req() req: Request) {
+  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
+  public async likePost(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
     const headers = getAppHeaders(req, AppHeader.UserId);
     const { data } = await this.httpService.axiosRef.post(
       getAppURL(this.baseUrl.blog, AppRoute.Post, postId, AppRoute.Like),
