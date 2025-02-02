@@ -24,11 +24,6 @@ export class BasePostDTO {
   @ApiProperty(SwaggerPostProperty.status)
   public status: PostStatus;
 
-  @IsDateString()
-  @ApiProperty({ required: true })
-  @ApiProperty(SwaggerPostProperty.publicationDate)
-  public publicationDate: Date;
-
   @IsOptional()
   @IsString({ each: true })
   @ArrayMaxSize(TagsLimit.Max, { message: TagsLimit.Description })

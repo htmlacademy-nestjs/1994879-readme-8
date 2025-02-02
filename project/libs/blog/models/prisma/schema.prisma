@@ -35,8 +35,6 @@ model Post {
   text            String?
   author          String?
   tags            String[]
-  commentsCount   Int        @default(0)
-  likesCount      Int        @default(0)
 
   repostId String? @map("repost_id")
   repost   Post?   @relation("repost", fields: [repostId], references: [id])
@@ -47,8 +45,6 @@ model Post {
   post Post[] @relation("repost")
 
   @@index([publicationDate])
-  @@index([commentsCount])
-  @@index([likesCount])
   @@index([type])
   @@index([status])
   @@index([createdAt])

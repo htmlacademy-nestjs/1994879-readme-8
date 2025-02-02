@@ -35,7 +35,7 @@ import {
 } from '@nestjs/swagger';
 import { PostResponseDescription } from './post.constant';
 import { PostRDO } from './rdo/post.rdo';
-import { PostQuery } from './post.query';
+import { PostQuery } from './queries/post.query';
 import {
   AppRoute,
   SwaggerOperation,
@@ -77,8 +77,9 @@ export class PostController {
   @ApiOperation({ summary: SwaggerOperation.PostOne })
   @ApiOkResponse({ description: PostResponseDescription.Found })
   @ApiNotFoundResponse({ description: PostResponseDescription.NotFound })
+  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
   async findOne(@Param(AppRoute.PostId) postId: string) {
-    return this.postService.findOne(postId);
+    return this.postService.getById(postId);
   }
 
   @Patch(`:${AppRoute.PostId}`)
@@ -110,31 +111,5 @@ export class PostController {
   @ApiOkResponse({ description: PostResponseDescription.PostCount })
   public async getUserPostsCount(@Headers(AppHeader.UserId) userId: string): Promise<number> {
     return this.postService.getUserPostsCount(userId);
-  }
-
-  @Post(`:${AppRoute.PostId}/${AppRoute.Like}`)
-  @UseGuards(XUserIdGuard)
-  @ApiOperation({ summary: SwaggerOperation.Like })
-  @ApiOkResponse()
-  @HttpCode(HttpStatus.OK)
-  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
-  public async likePost(
-    @Param(AppRoute.PostId) postId: string,
-    @Headers(AppHeader.UserId) userId: string
-  ) {
-    return this.postService.like(postId, userId);
-  }
-
-  @Delete(`:${AppRoute.PostId}/${AppRoute.Like}`)
-  @UseGuards(XUserIdGuard)
-  @ApiOperation({ summary: SwaggerOperation.Unlike })
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse()
-  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
-  public async unlikePost(
-    @Param(AppRoute.PostId) postId: string,
-    @Headers(AppHeader.UserId) userId: string
-  ) {
-    await this.postService.unlike(postId, userId);
   }
 }

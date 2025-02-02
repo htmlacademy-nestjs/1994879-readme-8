@@ -4,14 +4,13 @@ import { BasePostgresRepository } from '@project/data-access';
 import { Like, Nullable } from '@project/core';
 import { LikeEntity } from './like.entity';
 import { LikeFactory } from './like.factory';
-import { LikeDTO } from './dto/like.dto';
 
 @Injectable()
 export class LikeRepository extends BasePostgresRepository<LikeEntity, Like> {
   constructor(likeFactory: LikeFactory, readonly client: PrismaClientService) {
     super(likeFactory, client);
   }
-  public async find({ postId, userId }: LikeDTO): Promise<Nullable<LikeEntity>> {
+  public async find(postId: string, userId: string): Promise<Nullable<LikeEntity>> {
     const document = await this.client.like.findFirst({
       where: { userId, postId },
     });

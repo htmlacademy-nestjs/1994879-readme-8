@@ -1,9 +1,8 @@
-import { SortDirection } from '@project/core';
+import { SortDirection, SortType } from '@project/core';
 
 export const PostMessage = {
   NotFound: 'Post not found',
   AccessDeny: 'Unable to modify post you are not created',
-  LikeDraft: 'Unable to like "draft" post',
 };
 
 export enum PostResponseDescription {
@@ -35,10 +34,11 @@ export const PostSwaggerQuery = {
   page: { name: 'page', required: false, type: Number, description: 'Page number for pagination' },
 } as const;
 
-export const PaginationDefaults = {
-  Limit: 10,
+export const QueryDefaults = {
+  Limit: 25,
   Page: 1,
   SortDirection: SortDirection.Desc,
+  SortType: SortType.CreatedAt,
 } as const;
 
 export const TitleLimit = {

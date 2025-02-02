@@ -5,13 +5,9 @@ import { Post as PostModel, Prisma } from '@prisma/client';
 import { PostFactory } from './post.factory';
 import { PrismaClientService } from '@project/models';
 import { PaginationResult } from '@project/core';
-import { PostQuery } from './post.query';
-import {
-  calculateItemsPerPage,
-  calculateSkipItems,
-  createPaginationResponse,
-} from '@project/helpers';
-import { PaginationDefaults } from './post.constant';
+import { PostQuery } from './queries/post.query';
+import { calculateSkipItems, createPaginationResponse } from '@project/helpers';
+import { PostMessage, QueryDefaults } from './post.constant';
 
 @Injectable()
 export class PostRepository extends BasePostgresRepository<PostEntity, PostModel> {
@@ -29,29 +25,64 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
     });
 
     if (!document) {
-      throw new NotFoundException(`Post with id ${id} not found.`);
+      throw new NotFoundException(PostMessage.NotFound);
     }
 
     return this.createEntityFromDocument(document);
   }
 
   public async findAll(query?: PostQuery): Promise<PaginationResult<PostEntity>> {
-    const { page = PaginationDefaults.Page, limit: take = PaginationDefaults.Limit } = query;
+    const { page = QueryDefaults.Page, limit: take = QueryDefaults.Limit } = query;
     const skip = calculateSkipItems(page, take);
-
     const where: Prisma.PostWhereInput = {};
     const orderBy: Prisma.PostOrderByWithRelationInput = {};
-    // if (query?.sortDirection) {
-    //   orderBy.createdAt = query.sortDirection;
-    // }
+
+    if (query.userIds) {
+      where.userId = Array.isArray(query.userIds)
+        ? { in: query.userIds }
+        : { equals: query.userIds };
+    }
+
+    if (query.postType) {
+      where.type = query.postType;
+    }
+
+    if (query.postStatus) {
+      where.status = query.postStatus;
+    }
+
+    if (query.tags) {
+      where.tags = Array.isArray(query.tags)
+        ? { hasSome: [...query.tags] }
+        : { hasSome: [query.tags] };
+    }
+
+    if (query?.title) {
+      where.title = { contains: query.title, mode: 'insensitive' };
+    }
+
+    const sortDirection = query.sortDirection || QueryDefaults.SortDirection;
+
+    if (query.sortType || QueryDefaults.SortType) {
+      // orderBy[query.sortType] = sortDirection;
+      // orderBy.comments = { _count: sortDirection }
+    }
+
+    console.log(where, orderBy);
 
     const [records, postCount] = await Promise.all([
-      this.client.post.findMany({ where, orderBy, skip, take }),
+      this.client.post.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        // select: { _count: { select: { comments: true, likes: true } } },
+      }),
       this.getPostCount(where),
     ]);
     const entities = records.map((record) => this.createEntityFromDocument(record));
 
-    return createPaginationResponse(entities, postCount, take, query?.page);
+    return createPaginationResponse(entities, postCount, take, page);
   }
 
   public async save(entity: PostEntity): Promise<void> {

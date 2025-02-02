@@ -20,8 +20,10 @@ import { CheckAuthGuard } from '../guards/check-auth.guard';
 import { AddNewPostDTO } from '../dto/add-new-post.dto';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
   ApiParam,
@@ -104,13 +106,14 @@ export class BlogController {
   @ApiOperation({ summary: SwaggerOperation.Like })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
-  @ApiOkResponse()
   @HttpCode(HttpStatus.OK)
+  @ApiOkResponse({ description: SwaggerResponse.LikeSuccess })
+  @ApiConflictResponse({ description: SwaggerResponse.LikeExists })
   @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
   public async likePost(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
     const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
     const { data } = await this.httpService.axiosRef.post(
-      getAppURL(this.baseUrl.blog, AppRoute.Post, postId, AppRoute.Like),
+      getAppURL(this.baseUrl.blog, AppRoute.Like, postId),
       {},
       { headers }
     );
@@ -123,13 +126,13 @@ export class BlogController {
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiNoContentResponse()
-  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: SwaggerResponse.LikeDeleted })
+  @ApiNotFoundResponse({ description: SwaggerResponse.LikeNotFound })
   @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
   public async unlikePost(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
     const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
     const { data } = await this.httpService.axiosRef.post(
-      getAppURL(this.baseUrl.blog, AppRoute.Post, postId, AppRoute.Like),
+      getAppURL(this.baseUrl.blog, AppRoute.Like, postId),
       {},
       { headers }
     );

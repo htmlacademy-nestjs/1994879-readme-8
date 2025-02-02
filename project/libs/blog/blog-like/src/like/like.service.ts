@@ -2,38 +2,45 @@ import { ConflictException, Inject, Injectable, NotFoundException } from '@nestj
 import { LikeEntity } from './like.entity';
 import { LikeRepository } from './like.repository';
 import { LIKE_MESSAGE } from './like.constant';
-import { LikeDTO } from './dto/like.dto';
 import { LikeFactory } from './like.factory';
+import { PostService } from '@project/blog-post';
+import { PostStatus } from '@project/core';
 
 @Injectable()
 export class LikeService {
   constructor(
     @Inject(LikeRepository) private readonly likeRepository: LikeRepository,
-    @Inject(LikeFactory) private readonly likeFactory: LikeFactory
+    @Inject(LikeFactory) private readonly likeFactory: LikeFactory,
+    @Inject(PostService) private readonly postService: PostService
   ) {}
 
-  private async getLike(dto: LikeDTO): Promise<LikeEntity> {
-    return this.likeRepository.find(dto);
+  private async getLike(postId: string, userId: string): Promise<LikeEntity> {
+    const post = await this.postService.getById(postId);
+    if (post.status === PostStatus.Draft) {
+      throw new ConflictException(LIKE_MESSAGE.DRAFT);
+    }
+
+    return this.likeRepository.find(postId, userId);
   }
 
-  public async like(dto: LikeDTO): Promise<void> {
-    const existLike = await this.getLike(dto);
+  public async like(postId: string, userId: string): Promise<void> {
+    const like = await this.getLike(postId, userId);
 
-    if (existLike) {
+    if (like) {
       throw new ConflictException(LIKE_MESSAGE.EXISTS);
     }
 
-    const newLike = this.likeFactory.createFromDTO(dto);
+    const newLike = this.likeFactory.createFromDTO({ postId, userId });
     this.likeRepository.save(newLike);
   }
 
-  public async unlike(dto: LikeDTO): Promise<void> {
-    const existLike = await this.getLike(dto);
-    if (!existLike) {
+  public async unlike(postId: string, userId: string): Promise<void> {
+    const like = await this.getLike(postId, userId);
+    if (!like) {
       throw new NotFoundException(LIKE_MESSAGE.NOT_FOUND);
     }
 
-    this.likeRepository.deleteEntity(existLike);
+    this.likeRepository.deleteEntity(like);
   }
 
   public async getLikesCount(postId: string): Promise<number> {

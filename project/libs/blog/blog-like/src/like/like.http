@@ -1,0 +1,16 @@
+@port = 4000
+@baseUrl = http://localhost:{{port}}/api
+@userId = "67991076b894e226d77e7917"
+@postId = cm6i9jycl0000s160vxocwvfp
+
+###
+# Лайк
+POST {{baseUrl}}/likes/{{postId}} HTTP/1.1
+Content-Type: application/json
+x-user-id: {{userId}}
+
+###
+# Дизлайк
+DELETE {{baseUrl}}/likes/{{postId}} HTTP/1.1
+Content-Type: application/json
+x-user-id: {{userId}}

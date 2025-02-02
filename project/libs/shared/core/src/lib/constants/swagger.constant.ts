@@ -1,4 +1,4 @@
-import { SortDirection } from '../interfaces/sort-direction.interface';
+import { SortDirection } from '../types/sort-direction.enum';
 import { PostStatus } from '../types/post-status.enum';
 import { PostType } from '../types/post-type.enum';
 import { AppHeader } from './app.config';
@@ -105,6 +105,7 @@ export const SwaggerCommentProperty = {
 export enum SwaggerResponse {
   Unauthorized = 'Unauthorized error',
   BadRequest = 'Bad request error',
+  NotFound = 'Not Found error',
   LoggedSuccess = 'User has been successfully logged.',
   LoggedError = 'Password or Login is wrong.',
   UserFound = 'User found',
@@ -114,6 +115,10 @@ export enum SwaggerResponse {
   Updated = 'User password updated',
   RefreshToken = 'Get a new access/refresh tokens',
   Feed = 'Users feed',
+  LikeSuccess = 'Post liked',
+  LikeExists = 'Like already exists',
+  LikeNotFound = 'Like not found',
+  LikeDeleted = 'Post unliked',
 }
 
 export const SwaggerPaginationProperty = {
