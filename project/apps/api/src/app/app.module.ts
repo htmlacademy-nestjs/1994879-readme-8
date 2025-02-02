@@ -10,7 +10,7 @@ import { AppService } from './app.service';
 import { gatewayConfig } from '@project/api-config';
 import { UserService } from './users/user.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
-import { InjectUserIdInterceptor } from '@project/interceptors';
+import { InjectUserIdInterceptor, RequestIdInterceptor } from '@project/interceptors';
 import { NotifyController } from './notify/notify.controller';
 import { NotifyService } from './notify/notify.service';
 import { BlogService } from './blog/blog.service';
@@ -27,6 +27,10 @@ import { BlogService } from './blog/blog.service';
     {
       provide: APP_INTERCEPTOR,
       useClass: InjectUserIdInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestIdInterceptor,
     },
     CheckAuthGuard,
     AppService,

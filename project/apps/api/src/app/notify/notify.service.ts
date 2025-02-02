@@ -14,7 +14,7 @@ export class NotifyService {
   ) {}
 
   public async renewalPosts(req: Request, userId: string) {
-    const headers = getAppHeaders(req, AppHeader.UserId, AppHeader.Auth);
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId, AppHeader.Auth);
     const { data: user } = await this.httpService.axiosRef.get<UserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.User, userId),
       { headers }

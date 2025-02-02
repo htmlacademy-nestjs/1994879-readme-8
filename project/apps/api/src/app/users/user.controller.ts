@@ -86,18 +86,18 @@ export class UserController {
     return { data };
   }
 
-  @Patch(':id')
+  @Patch(`:${AppRoute.UserId}`)
   @ApiOperation({ summary: SwaggerOperation.ChangePassword })
   @ApiOkResponse({ type: UserDetailedRDO, description: SwaggerResponse.Updated })
   @ApiNotFoundResponse({ description: SwaggerResponse.UserNotFound })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
   public async update(
-    @Param('id') id: string,
+    @Param(AppRoute.UserId) id: string,
     @Body() dto: ChangePasswordDTO,
     @Req() req: Request
   ) {
-    const headers = getAppHeaders(req, AppHeader.Auth);
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.patch<UserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.User, id),
       dto,
@@ -107,14 +107,14 @@ export class UserController {
     return this.userService.getUserDetails(data);
   }
 
-  @Get(':id')
+  @Get(`:${AppRoute.UserId}`)
   @ApiOperation({ summary: SwaggerOperation.GetUser })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
   @ApiOkResponse({ type: UserDetailedRDO, description: SwaggerResponse.UserFound })
   @ApiNotFoundResponse({ description: SwaggerResponse.UserNotFound })
-  public async show(@Param('id') id: string, @Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.Auth);
+  public async show(@Param(AppRoute.UserId) id: string, @Req() req: Request) {
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.get<UserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.User, id),
       { headers }
@@ -127,7 +127,7 @@ export class UserController {
   @ApiOperation({ summary: SwaggerOperation.RefreshToken })
   @ApiBearerAuth(TokenName.Refresh)
   public async refreshToken(@Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.Auth);
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.Auth, AppRoute.Refresh),
       null,
@@ -143,7 +143,7 @@ export class UserController {
   @ApiBearerAuth(TokenName.Access)
   @ApiCreatedResponse({ type: LoggedUserRDO, description: SwaggerResponse.UserFound })
   public async checkToken(@Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.Auth);
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
       getAppURL(this.baseUrl.account, AppRoute.Check),
       null,
@@ -160,7 +160,7 @@ export class UserController {
   @ApiOkResponse()
   @HttpCode(HttpStatus.OK)
   public async subscribe(@Body() dto: SubscribeDTO, @Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.Auth);
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post(
       getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Subscribe),
       dto,
@@ -176,7 +176,7 @@ export class UserController {
   @ApiNoContentResponse()
   @HttpCode(HttpStatus.NO_CONTENT)
   public async unsubscribe(@Body() dto: SubscribeDTO, @Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.Auth);
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post(
       getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Unsubscribe),
       dto,

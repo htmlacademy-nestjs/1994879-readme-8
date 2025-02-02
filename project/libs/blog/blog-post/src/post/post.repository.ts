@@ -6,6 +6,12 @@ import { PostFactory } from './post.factory';
 import { PrismaClientService } from '@project/models';
 import { PaginationResult } from '@project/core';
 import { PostQuery } from './post.query';
+import {
+  calculateItemsPerPage,
+  calculateSkipItems,
+  createPaginationResponse,
+} from '@project/helpers';
+import { PaginationDefaults } from './post.constant';
 
 @Injectable()
 export class PostRepository extends BasePostgresRepository<PostEntity, PostModel> {
@@ -15,10 +21,6 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
 
   private async getPostCount(where: Prisma.PostWhereInput): Promise<number> {
     return this.client.post.count({ where });
-  }
-
-  private calculatePostsPage(totalCount: number, limit: number): number {
-    return Math.ceil(totalCount / limit);
   }
 
   public async findById(id: string): Promise<PostEntity> {
@@ -34,30 +36,22 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
   }
 
   public async findAll(query?: PostQuery): Promise<PaginationResult<PostEntity>> {
-    const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
-    const take = query?.limit;
+    const { page = PaginationDefaults.Page, limit: take = PaginationDefaults.Limit } = query;
+    const skip = calculateSkipItems(page, take);
+
     const where: Prisma.PostWhereInput = {};
     const orderBy: Prisma.PostOrderByWithRelationInput = {};
     // if (query?.sortDirection) {
     //   orderBy.createdAt = query.sortDirection;
     // }
 
-    const records = await this.client.post.findMany({ where, orderBy, skip, take });
+    const [records, postCount] = await Promise.all([
+      this.client.post.findMany({ where, orderBy, skip, take }),
+      this.getPostCount(where),
+    ]);
+    const entities = records.map((record) => this.createEntityFromDocument(record));
 
-    const postCount = await this.getPostCount(where);
-
-    // const [records, postCount] = await Promise.all([
-    // this.client.post.findMany({ where, orderBy, skip, take }),
-    // this.getPostCount(where),
-    // ]);
-
-    return {
-      entities: records.map((record) => this.createEntityFromDocument(record)),
-      currentPage: query?.page,
-      totalPages: this.calculatePostsPage(postCount, take),
-      itemsPerPage: take,
-      totalItems: postCount,
-    };
+    return createPaginationResponse(entities, postCount, take, query?.page);
   }
 
   public async save(entity: PostEntity): Promise<void> {

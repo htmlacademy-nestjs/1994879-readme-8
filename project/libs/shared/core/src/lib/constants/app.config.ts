@@ -1,3 +1,4 @@
+import { UserId } from '../../../../decorators/src/lib/user-id.decorator';
 export const USER_ID_HEADER = Symbol('x-user-id');
 export const APP_PREFIX = 'api';
 export const DEFAULT_AVATAR = 'default-avatar.png';
@@ -5,6 +6,7 @@ export const DEFAULT_AVATAR = 'default-avatar.png';
 export const AppHeader = {
   UserId: typeof USER_ID_HEADER === 'symbol' ? USER_ID_HEADER.description : USER_ID_HEADER,
   Auth: 'authorization',
+  RequestId: 'x-request_id',
 };
 
 export enum AppRoute {
@@ -27,6 +29,7 @@ export enum AppRoute {
   Count = 'count',
   Like = 'likes',
   Notify = 'notify',
+  UserId = 'userId',
   PostId = 'postId',
   CommentId = 'commentId',
   PostComment = `${AppRoute.Post}/:${AppRoute.PostId}/${AppRoute.Comment}`,

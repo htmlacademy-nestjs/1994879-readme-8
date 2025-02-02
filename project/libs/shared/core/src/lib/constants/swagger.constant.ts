@@ -1,3 +1,4 @@
+import { SortDirection } from '../interfaces/sort-direction.interface';
 import { PostStatus } from '../types/post-status.enum';
 import { PostType } from '../types/post-type.enum';
 import { AppHeader } from './app.config';
@@ -15,7 +16,7 @@ export enum SwaggerTag {
 
 export enum SwaggerOperation {
   Register = 'Register new user',
-  GetUsers = 'Get all users (debug only)',
+  GetUsers = 'Get users by ids',
   GetUser = 'Get user info by id',
   ChangePassword = 'Change users password',
   Subscribe = 'Subscribe to user',
@@ -39,10 +40,9 @@ export enum SwaggerOperation {
   CommentDelete = 'Delete a comment by ID',
 }
 
-export enum PostOperationSummary {}
-
 export const SwaggerUserProperty = {
   userId: { description: 'User ID', example: '67990a7d50e42db86a17146b' },
+  userIds: { description: 'Array of user Ids', example: '' },
   name: { description: 'User name', example: 'Keks' },
   avatar: { description: 'User avatar', example: 'keks-avatar.png' },
   email: { description: 'Email', example: 'keks-the-cat@gmail.com' },
@@ -116,9 +116,14 @@ export enum SwaggerResponse {
   Feed = 'Users feed',
 }
 
-export const ApiUserHeaderOptions = {
-  name: AppHeader.UserId,
-  example: SwaggerUserProperty.userId.example,
-  description: 'Authorized user id',
-  required: false,
+export const SwaggerPaginationProperty = {
+  totalPages: { required: false, description: 'total pages' },
+  totalItems: { required: false, description: 'total items' },
+  currentPage: { required: false, description: 'current page' },
+  itemsPerPage: { required: false, description: 'items per page' },
+  sortDirection: {
+    required: false,
+    description: 'direction',
+    enum: SortDirection,
+  },
 };

@@ -1,10 +1,10 @@
 @port = 5000
 @baseUrl = http://localhost:{{port}}/api
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczODMzNDg4MiwiZXhwIjoxNzM4MzM1MTgyfQ.EznaVL3oaB7p2HfgSY1BTJRydSiHaqVbPnMiWm2aaLU
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczODQ4NDQxNSwiZXhwIjoxNzM4NDg0NzE1fQ.TX1yIPRm9jRGswkWna5GzGV5Agbe-c4KxJQVLzbTVj0
 @refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzk5MTA3NmI4OTRlMjI2ZDc3ZTc5MTciLCJlbWFpbCI6Im5ldy11c2VyQG1haWwubG9jYWwiLCJuYW1lIjoiS2VrcyIsInRva2VuSWQiOiJlZDc2YjNjNi1iMzBlLTRkMjEtYWQ5NC04Y2ZkY2YyMDA2ODMiLCJpYXQiOjE3MzgwODUwNDgsImV4cCI6MTc0MDY3NzA0OH0.xQS4xNeNy0_GQZTISYJ_cb8Lmbb4_MK32DBadySBPec
 @userId = 67991076b894e226d77e7917
 @postId = cm6i9k2tn0002s160k44mfcsv
-@commentId = e240ed6c-b3f0-4ef8-973e-3d413dd44091
+@commentId = 0c73cc7e-330b-4948-b203-7a4ca0e15ebc
 
 # Новый пользователь
 POST {{baseUrl}}/users/register HTTP/1.1
@@ -83,7 +83,7 @@ Authorization: Bearer {{accessToken}}
 
 ###
 # Список комментариев
-GET {{baseUrl}}/blog/posts/{{postId}}/comments HTTP/1.1
+GET {{baseUrl}}/blog/posts/{{postId}}/comments?page=1 HTTP/1.1
 Authorization: Bearer {{accessToken}}
 
 ###

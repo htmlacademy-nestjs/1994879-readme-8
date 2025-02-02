@@ -3,6 +3,7 @@ import { CreateCommentDTO } from './dto/create-comment.dto';
 import { CommentRepository } from './comment.repository';
 import { CommentEntity } from './entities/comment.entity';
 import { CommentMessage } from './comment.constant';
+import { PaginationQuery } from '@project/core';
 
 @Injectable()
 export class CommentService {
@@ -16,8 +17,8 @@ export class CommentService {
     return comment;
   }
 
-  public async findAll(postId: string) {
-    return this.commentRepository.findAll(postId);
+  public async findByPostId(postId: string, pagination: PaginationQuery) {
+    return await this.commentRepository.findByPostId(postId, pagination);
   }
 
   public async create(dto: CreateCommentDTO, userId: string) {
@@ -37,6 +38,6 @@ export class CommentService {
       throw new ConflictException(CommentMessage.AccessDeny);
     }
 
-    return this.commentRepository.delete(comment.id);
+    return await this.commentRepository.delete(comment.id);
   }
 }

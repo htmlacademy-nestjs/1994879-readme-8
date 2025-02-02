@@ -12,6 +12,7 @@ import { CreateUserDTO } from './dto/create-user.dto';
 import { UserMessage } from './blog-user.constant';
 import { BlogUserFactory } from './blog-user.factory';
 import { ChangePasswordDTO } from '@project/blog-user';
+import { UserQuery } from './blog-user.query';
 
 @Injectable()
 export class BlogUserService {
@@ -46,8 +47,8 @@ export class BlogUserService {
     return user;
   }
 
-  public async findAll() {
-    return this.blogUserRepository.findAll();
+  public async findAll({ userIds }: UserQuery) {
+    return this.blogUserRepository.findByIds(userIds);
   }
 
   public async changePassword(id: string, { password, newPassword }: ChangePasswordDTO) {

@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   SerializeOptions,
   UseGuards,
 } from '@nestjs/common';
@@ -34,6 +35,7 @@ import { UserId, ApiCustomResponse } from '@project/decorators';
 import { SwaggerOperation } from '@project/core';
 import { SwaggerUserProperty } from '@project/core';
 import { TokenName } from '@project/helpers';
+import { UserQuery } from './blog-user.query';
 
 @ApiTags(SwaggerTag.User)
 @Controller(AppRoute.User)
@@ -44,7 +46,6 @@ export class BlogUserController {
   constructor(@Inject(BlogUserService) private blogUserService: BlogUserService) {}
 
   @Post('')
-  @UseGuards()
   @ApiOperation({ summary: SwaggerOperation.Register })
   @ApiCreatedResponse({ description: ResponseDescription.UserCreated })
   @ApiConflictResponse({ description: ResponseDescription.UserExist })
@@ -56,17 +57,17 @@ export class BlogUserController {
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: SwaggerOperation.GetUsers })
   @ApiOkResponse()
-  public async showAll() {
-    return this.blogUserService.findAll();
+  public async showAll(@Query() params: UserQuery) {
+    return this.blogUserService.findAll(params);
   }
 
-  @Get(':id')
+  @Get(`:${AppRoute.UserId}`)
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: SwaggerOperation.GetUser })
   @ApiOkResponse({ description: ResponseDescription.UserFound })
   @ApiNotFoundResponse({ description: ResponseDescription.UserNotFound })
-  @ApiParam({ name: 'id', ...SwaggerUserProperty.userId })
-  public async show(@Param('id', MongoIdValidationPipe) id: string) {
+  @ApiParam({ name: AppRoute.UserId, ...SwaggerUserProperty.userId })
+  public async show(@Param(AppRoute.UserId, MongoIdValidationPipe) id: string) {
     return this.blogUserService.getById(id);
   }
 

@@ -1,8 +1,8 @@
 @port = 4000
 @baseUrl = http://localhost:{{port}}/api
 @userId = 67991076b894e226d77e7917
-@postId = cm6kttfe30000s1rcbyy9pd0b
-@commentId = 41256b47-778e-4581-bcba-657f21905683
+@postId = cm6i9jycl0000s160vxocwvfp
+@commentId = bd0f9428-c0ce-4af7-9025-ee83936a7284
 
 ###
 # Новый комментарий
@@ -12,7 +12,7 @@ x-user-id: {{userId}}
 
 {
   "message": "Test message!",
-  "postId": "cm6kttfe30000s1rcbyy9pd0b"
+  "postId": "cm6i9jycl0000s160vxocwvfp"
 }
 
 ###
@@ -25,4 +25,3 @@ GET {{baseUrl}}/comments/{{postId}}?page=1 HTTP/1.1
 DELETE  {{baseUrl}}/comments/{{commentId}} HTTP/1.1
 x-user-id: {{userId}}
 
-###

@@ -33,7 +33,9 @@ export {
   SwaggerUserProperty,
   SwaggerPostProperty,
   SwaggerCommentProperty,
+  SwaggerPaginationProperty,
   SwaggerResponse,
   SwaggerOperation,
-  ApiUserHeaderOptions,
 } from './lib/constants/swagger.constant';
+export { PaginationQuery } from './lib/pagination/pagination-query';
+export { PaginationRDO } from './lib/pagination/pagination.rdo';

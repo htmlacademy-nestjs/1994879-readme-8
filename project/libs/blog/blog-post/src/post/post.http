@@ -1,7 +1,7 @@
 @port = 4000
 @baseUrl = http://localhost:{{port}}/api
 @userId = "67991076b894e226d77e7917"
-@postId = cm6ictinr0000s13gdekn4rgu
+@postId = cm6i9jycl0000s160vxocwvfp
 
 ###
 # Новый пост - Видео

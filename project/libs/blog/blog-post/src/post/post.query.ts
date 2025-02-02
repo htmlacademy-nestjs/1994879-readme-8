@@ -1,21 +1,10 @@
 import { Transform } from 'class-transformer';
-import { IsArray, IsIn, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
-import { SortDirection } from '@project/core';
+import { IsArray, IsIn, IsMongoId, IsNumber, IsOptional, IsString, IsUUID } from 'class-validator';
+import { PaginationQuery, SortDirection, SwaggerUserProperty } from '@project/core';
 import { PaginationDefaults, PostSwaggerQuery } from './post.constant';
-import { ApiPropertyOptional } from '@nestjs/swagger';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
-export class PostQuery {
-  @Transform(({ value }) => +value || PaginationDefaults.Limit)
-  @IsNumber()
-  @IsOptional()
-  @ApiPropertyOptional({
-    type: Number,
-    default: PaginationDefaults.Limit,
-    description: PostSwaggerQuery.limit.description,
-  })
-  public limit? = PaginationDefaults.Limit;
-
-  @IsArray()
+export class PostQuery extends PaginationQuery {
   @IsString({ each: true })
   @IsOptional()
   @ApiPropertyOptional({ isArray: true, type: String })
@@ -26,16 +15,9 @@ export class PostQuery {
   @ApiPropertyOptional({ enum: SortDirection, default: PaginationDefaults.SortDirection })
   public sortDirection?: SortDirection = PaginationDefaults.SortDirection;
 
-  @Transform(({ value }) => +value || PaginationDefaults.PageCount)
   @IsOptional()
-  @ApiPropertyOptional({
-    type: Number,
-    default: PaginationDefaults.PageCount,
-    description: PostSwaggerQuery.page.description,
-  })
-  public page?: number = PaginationDefaults.PageCount;
-
-  @IsOptional()
-  @IsArray()
+  @IsMongoId({ each: true })
+  @ApiPropertyOptional({ isArray: true, type: String })
+  @ApiProperty(SwaggerUserProperty.userIds)
   public userIds?: string[];
 }

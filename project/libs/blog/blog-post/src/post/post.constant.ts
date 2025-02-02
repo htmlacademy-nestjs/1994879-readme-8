@@ -37,7 +37,7 @@ export const PostSwaggerQuery = {
 
 export const PaginationDefaults = {
   Limit: 10,
-  PageCount: 1,
+  Page: 1,
   SortDirection: SortDirection.Desc,
 } as const;
 

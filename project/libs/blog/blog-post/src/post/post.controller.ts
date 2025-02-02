@@ -36,7 +36,6 @@ import {
 import { PostResponseDescription } from './post.constant';
 import { PostRDO } from './rdo/post.rdo';
 import { PostQuery } from './post.query';
-import { PostWithPaginationRDO } from './rdo/post-with-pagination.rdo';
 import {
   AppRoute,
   SwaggerOperation,
@@ -46,6 +45,7 @@ import {
 } from '@project/core';
 import { ApiCustomResponse, ApiPostBody, UserId } from '@project/decorators';
 import { XUserIdGuard } from '@project/interceptors';
+import { PostWithPaginationRDO } from './rdo/post-with-pagination.rdo';
 
 @ApiTags(SwaggerTag.Post)
 @Controller(AppRoute.Post)
@@ -70,38 +70,38 @@ export class PostController {
   })
   @SerializeOptions({ type: PostWithPaginationRDO, excludeExtraneousValues: true })
   async findAll(@Query() query: PostQuery) {
-    const postsWithPagination = await this.postService.findAll(query);
-    return postsWithPagination;
+    return await this.postService.findAll(query);
   }
 
-  @Get(':id')
+  @Get(`:${AppRoute.PostId}`)
   @ApiOperation({ summary: SwaggerOperation.PostOne })
   @ApiOkResponse({ description: PostResponseDescription.Found })
   @ApiNotFoundResponse({ description: PostResponseDescription.NotFound })
-  async findOne(@Param('id') id: string) {
-    return this.postService.findOne(id);
+  async findOne(@Param(AppRoute.PostId) postId: string) {
+    return this.postService.findOne(postId);
   }
 
-  @Patch(':id')
+  @Patch(`:${AppRoute.PostId}`)
   @UseGuards(XUserIdGuard)
   @ApiOperation({ summary: SwaggerOperation.PostUpdate })
   @ApiOkResponse({ description: PostResponseDescription.Updated })
   @ApiNotFoundResponse({ description: PostResponseDescription.NotFound })
   async update(
-    @Param('id') id: string,
+    @Param(AppRoute.PostId) postId: string,
     @Headers(AppHeader.UserId) userId: string,
     @Body() dto: UpdatePostDTO
   ) {
-    return this.postService.update(id, userId, dto);
+    return this.postService.update(postId, userId, dto);
   }
 
-  @Delete(':id')
+  @Delete(`:${AppRoute.PostId}`)
   @UseGuards(XUserIdGuard)
   @ApiOperation({ summary: SwaggerOperation.PostRemove })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse({ description: PostResponseDescription.Deleted })
   @ApiNotFoundResponse({ description: PostResponseDescription.NotFound })
-  async remove(@Param('id') id: string, @Headers(AppHeader.UserId) userId: string) {
-    this.postService.remove(id, userId);
+  async remove(@Param(AppRoute.PostId) postId: string, @Headers(AppHeader.UserId) userId: string) {
+    await this.postService.remove(postId, userId);
   }
 
   @Get(AppRoute.Count)
@@ -112,28 +112,29 @@ export class PostController {
     return this.postService.getUserPostsCount(userId);
   }
 
-  @Post(`:postId/${AppRoute.Like}`)
+  @Post(`:${AppRoute.PostId}/${AppRoute.Like}`)
   @UseGuards(XUserIdGuard)
   @ApiOperation({ summary: SwaggerOperation.Like })
   @ApiOkResponse()
   @HttpCode(HttpStatus.OK)
-  @ApiParam({ name: 'postId', ...SwaggerPostProperty.postId })
+  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
   public async likePost(
-    @Param('postId') postId: string,
+    @Param(AppRoute.PostId) postId: string,
     @Headers(AppHeader.UserId) userId: string
   ) {
     return this.postService.like(postId, userId);
   }
 
-  @Delete(`:postId/${AppRoute.Like}`)
+  @Delete(`:${AppRoute.PostId}/${AppRoute.Like}`)
   @UseGuards(XUserIdGuard)
   @ApiOperation({ summary: SwaggerOperation.Unlike })
+  @HttpCode(HttpStatus.NO_CONTENT)
   @ApiNoContentResponse()
-  @ApiParam({ name: 'postId', ...SwaggerPostProperty.postId })
+  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
   public async unlikePost(
-    @Param('postId') postId: string,
+    @Param(AppRoute.PostId) postId: string,
     @Headers(AppHeader.UserId) userId: string
   ) {
-    return this.postService.unlike(postId, userId);
+    await this.postService.unlike(postId, userId);
   }
 }

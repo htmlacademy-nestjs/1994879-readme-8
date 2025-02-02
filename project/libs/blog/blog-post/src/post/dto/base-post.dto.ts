@@ -30,7 +30,6 @@ export class BasePostDTO {
   public publicationDate: Date;
 
   @IsOptional()
-  @IsArray()
   @IsString({ each: true })
   @ArrayMaxSize(TagsLimit.Max, { message: TagsLimit.Description })
   @Length(TagsLimit.ItemMin, TagsLimit.ItemMax, { each: true, message: TagsLimit.ItemsDescription })

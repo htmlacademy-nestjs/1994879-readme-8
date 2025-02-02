@@ -4,6 +4,8 @@ import { appConfig, getMongooseOptions } from '@project/app-config';
 import { EmailSubscriberModule } from '@project/email-subscriber';
 import { NotifyConfigModule } from '@project/notify-config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { RequestLoggerInterceptor } from '@project/interceptors';
 
 @Module({
   imports: [
@@ -13,6 +15,12 @@ import { MongooseModule } from '@nestjs/mongoose';
     MongooseModule.forRootAsync(getMongooseOptions()),
     NotifyConfigModule,
     EmailSubscriberModule,
+  ],
+  providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: RequestLoggerInterceptor,
+    },
   ],
 })
 export class AppModule {}
