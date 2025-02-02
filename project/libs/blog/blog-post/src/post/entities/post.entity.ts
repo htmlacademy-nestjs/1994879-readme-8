@@ -23,9 +23,12 @@ export class PostEntity extends Entity implements StorableEntity<Post> {
   text?: string;
   author?: string;
   tags?: string[];
+  repost?: PostEntity;
   isRepost: boolean;
   originalId: string;
   originalUserId: string;
+  commentsCount: number;
+  likesCount: number;
 
   constructor(post: Post) {
     super();
@@ -36,6 +39,7 @@ export class PostEntity extends Entity implements StorableEntity<Post> {
     if (!post) {
       return;
     }
+    console.log(11111, post);
 
     this.id = post.id ?? undefined;
     this.type = post.type;
@@ -43,16 +47,17 @@ export class PostEntity extends Entity implements StorableEntity<Post> {
     this.publicationDate = post.publicationDate;
     this.userId = post.userId;
     this.tags = post.tags;
-    this.isRepost = post.isRepost;
-    this.originalId = post.originalId;
-    this.originalUserId = post.originalUserId;
+    this.isRepost = !!post.repost;
+    this.originalId = post.repost.id;
+    this.originalUserId = post.repost.userId;
+    this.commentsCount = post._count.comments;
+    this.likesCount = post._count.likes;
 
     switch (post.type) {
       case PostType.Video: {
-        const { title, url, text } = post as VideoPost;
+        const { title, url } = post as VideoPost;
         this.title = title;
         this.url = url;
-        this.text = text;
         break;
       }
       case PostType.Text: {
@@ -93,6 +98,11 @@ export class PostEntity extends Entity implements StorableEntity<Post> {
       isRepost: this.isRepost,
       originalId: this.originalId,
       originalUserId: this.originalUserId,
+      title: undefined,
+      description: undefined,
+      url: undefined,
+      text: undefined,
+      author: undefined,
     };
 
     switch (this.type) {
@@ -101,7 +111,6 @@ export class PostEntity extends Entity implements StorableEntity<Post> {
           ...basePost,
           title: this.title,
           url: this.url,
-          text: this.text,
         } as VideoPost;
 
       case PostType.Text:

@@ -4,7 +4,7 @@ import { PostEntity } from './entities/post.entity';
 import { Post as PostModel, Prisma } from '@prisma/client';
 import { PostFactory } from './post.factory';
 import { PrismaClientService } from '@project/models';
-import { PaginationResult } from '@project/core';
+import { PaginationResult, SortType } from '@project/core';
 import { PostQuery } from './queries/post.query';
 import { calculateSkipItems, createPaginationResponse } from '@project/helpers';
 import { PostMessage, QueryDefaults } from './post.constant';
@@ -19,23 +19,31 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
     return this.client.post.count({ where });
   }
 
+  private includeRepostAndCount: Prisma.PostInclude = {
+    original: {
+      select: { id: true, userId: true },
+    },
+    _count: {
+      select: { comments: true, likes: true },
+    },
+  };
+
   public async findById(id: string): Promise<PostEntity> {
-    const document = await this.client.post.findFirst({
+    const document = await this.client.post.findUnique({
       where: { id },
+      include: this.includeRepostAndCount,
     });
 
     if (!document) {
       throw new NotFoundException(PostMessage.NotFound);
     }
 
+    console.log(document);
     return this.createEntityFromDocument(document);
   }
 
-  public async findAll(query?: PostQuery): Promise<PaginationResult<PostEntity>> {
-    const { page = QueryDefaults.Page, limit: take = QueryDefaults.Limit } = query;
-    const skip = calculateSkipItems(page, take);
+  private buildWhereClause(query: PostQuery): Prisma.PostWhereInput {
     const where: Prisma.PostWhereInput = {};
-    const orderBy: Prisma.PostOrderByWithRelationInput = {};
 
     if (query.userIds) {
       where.userId = Array.isArray(query.userIds)
@@ -52,22 +60,48 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
     }
 
     if (query.tags) {
-      where.tags = Array.isArray(query.tags)
-        ? { hasSome: [...query.tags] }
-        : { hasSome: [query.tags] };
+      where.tags = Array.isArray(query.tags) ? { hasSome: query.tags } : { hasSome: [query.tags] };
     }
 
-    if (query?.title) {
+    if (query.title) {
       where.title = { contains: query.title, mode: 'insensitive' };
     }
 
-    const sortDirection = query.sortDirection || QueryDefaults.SortDirection;
+    return where;
+  }
 
-    if (query.sortType || QueryDefaults.SortType) {
-      // orderBy[query.sortType] = sortDirection;
-      // orderBy.comments = { _count: sortDirection }
+  private buildOrderByClause(query: PostQuery): Prisma.PostOrderByWithRelationInput {
+    const orderBy: Prisma.PostOrderByWithRelationInput = {};
+
+    const sortDirection = query.sortDirection || QueryDefaults.SortDirection;
+    const sortType = query.sortType || QueryDefaults.SortType;
+
+    switch (sortType) {
+      case SortType.Comments:
+        orderBy.comments = { _count: sortDirection };
+        break;
+      case SortType.Likes:
+        orderBy.likes = { _count: sortDirection };
+        break;
+      case SortType.PublicationDate:
+        orderBy.publicationDate = sortDirection;
+        break;
+      case SortType.CreatedAt:
+        orderBy.createdAt = sortDirection;
+        break;
+      default:
+        orderBy.createdAt = sortDirection;
+        break;
     }
 
+    return orderBy;
+  }
+
+  public async findAll(query?: PostQuery): Promise<PaginationResult<PostEntity>> {
+    const { page = QueryDefaults.Page, limit: take = QueryDefaults.Limit } = query;
+    const skip = calculateSkipItems(page, take);
+    const where: Prisma.PostWhereInput = this.buildWhereClause(query);
+    const orderBy: Prisma.PostOrderByWithRelationInput = this.buildOrderByClause(query);
     console.log(where, orderBy);
 
     const [records, postCount] = await Promise.all([
@@ -76,7 +110,7 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
         orderBy,
         skip,
         take,
-        // select: { _count: { select: { comments: true, likes: true } } },
+        include: this.includeRepostAndCount,
       }),
       this.getPostCount(where),
     ]);
@@ -86,7 +120,7 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
   }
 
   public async save(entity: PostEntity): Promise<void> {
-    const { id, ...data } = entity.toPOJO();
+    const { id, commentsCount, likesCount, ...data } = entity.toPOJO();
     const record = await this.client.post.create({ data });
     entity.id = record.id;
   }

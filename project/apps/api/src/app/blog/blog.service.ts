@@ -61,7 +61,7 @@ export class BlogService {
   }
 
   public async showComments(req: Request, postId: string, params: PaginationQuery) {
-    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
+    const headers = getAppHeaders(req, AppHeader.RequestId);
     const { data } = await this.httpService.axiosRef.get<CommentWithPaginationRDO>(
       getAppURL(this.baseUrl.blog, AppRoute.Comment, postId),
       { headers, params }

@@ -36,18 +36,20 @@ model Post {
   author          String?
   tags            String[]
 
-  repostId String? @map("repost_id")
-  repost   Post?   @relation("repost", fields: [repostId], references: [id])
+  originalUserId  String?   @map("original_user_id")
+  originalId      String?   @map("original_id")
+  original        Post?     @relation("repost", fields: [originalId], references: [id])
 
-  comments Comment[]
-  likes    Like[]
+  comments        Comment[]
+  likes           Like[]
 
-  post Post[] @relation("repost")
+  inheritedPosts  Post[]    @relation("repost")
 
   @@index([publicationDate])
   @@index([type])
   @@index([status])
   @@index([createdAt])
+  @@index([userId])
   @@map("posts")
 }
 

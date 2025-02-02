@@ -157,8 +157,6 @@ export class BlogController {
 
   @Get(AppRoute.PostComment)
   @ApiOperation({ summary: SwaggerOperation.CommentList })
-  @UseGuards(CheckAuthGuard)
-  @ApiBearerAuth(TokenName.Access)
   @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
   @SerializeOptions({ type: BlogCommentWithPaginationRDO, excludeExtraneousValues: true })
   public async showComments(

@@ -42,6 +42,7 @@ import { AppHeader, AppRoute, SwaggerOperation, SwaggerResponse, SwaggerTag } fr
 import { ChangePasswordDTO, RegisterUserDTO, UserDetailedRDO } from '@project/blog-user';
 import { UserRDO } from '@project/blog-user';
 import { SubscribeDTO } from '@project/blog-user';
+import { CheckAnonymousGuard } from '../guards/check-anonymous.guard';
 
 @Controller(AppRoute.User)
 @ApiTags(SwaggerTag.User)
@@ -55,6 +56,7 @@ export class UserController {
   ) {}
 
   @Post(AppRoute.Register)
+  @UseGuards(CheckAnonymousGuard)
   @ApiOperation({ summary: SwaggerOperation.Register })
   @UseInterceptors(FileInterceptor('avatarFile'))
   @ApiConsumes('multipart/form-data')

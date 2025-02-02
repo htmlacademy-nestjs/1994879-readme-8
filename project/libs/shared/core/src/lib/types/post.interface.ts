@@ -1,25 +1,32 @@
 import { PostStatus } from './post-status.enum';
 import { PostType } from './post-type.enum';
 
+interface ReferenceCount {
+  likes: number;
+  comments: number;
+}
+
 interface BasePost {
   id?: string;
   type: PostType;
   status: PostStatus;
-  publicationDate: Date;
+  publicationDate?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
   tags: string[];
   userId: string;
-  isRepost: boolean;
-  originalId: string;
-  originalUserId: string;
-  likesCount: number;
-  commentsCount: number;
+  repost?: BasePost;
+  _count?: ReferenceCount;
+  originalId?: string;
+  originalUserId?: string;
+  likesCount?: number;
+  commentsCount?: number;
 }
 
 export interface VideoPost extends BasePost {
   type: PostType.Video;
   title: string;
   url: string;
-  text: string;
 }
 
 export interface TextPost extends BasePost {
@@ -37,7 +44,7 @@ export interface PhotoPost extends BasePost {
 export interface LinkPost extends BasePost {
   type: PostType.Link;
   url: string;
-  description?: string;
+  description: string;
 }
 
 export interface QuotePost extends BasePost {
