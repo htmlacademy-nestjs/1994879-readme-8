@@ -48,10 +48,10 @@ export class PostEntity extends Entity implements StorableEntity<Post> {
     this.userId = post.userId;
     this.tags = post.tags;
     this.isRepost = !!post.repost;
-    this.originalId = post.repost.id;
-    this.originalUserId = post.repost.userId;
-    this.commentsCount = post._count.comments;
-    this.likesCount = post._count.likes;
+    this.originalId = post.repost?.id;
+    this.originalUserId = post.repost?.userId;
+    this.commentsCount = post._count?.comments;
+    this.likesCount = post._count?.likes;
 
     switch (post.type) {
       case PostType.Video: {

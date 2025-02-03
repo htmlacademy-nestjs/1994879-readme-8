@@ -49,7 +49,7 @@ import { PostWithPaginationRDO } from './rdo/post-with-pagination.rdo';
 
 @ApiTags(SwaggerTag.Post)
 @Controller(AppRoute.Post)
-// @SerializeOptions({ type: PostRDO, excludeExtraneousValues: true })
+@SerializeOptions({ type: PostRDO, excludeExtraneousValues: true })
 @ApiCustomResponse()
 export class PostController {
   constructor(@Inject(PostService) private readonly postService: PostService) {}
