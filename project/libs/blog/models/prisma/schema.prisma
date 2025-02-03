@@ -35,15 +35,16 @@ model Post {
   text            String?
   author          String?
   tags            String[]
+  isRepost        Boolean   @default(false) @map("is_repost")
 
   originalUserId  String?   @map("original_user_id")
   originalId      String?   @map("original_id")
-  original        Post?     @relation("repost", fields: [originalId], references: [id])
+  original        Post?     @relation(name: "post_repost", fields: [originalId], references: [id])
 
   comments        Comment[]
   likes           Like[]
 
-  inheritedPosts  Post[]    @relation("repost")
+  inheritedPosts  Post[]    @relation(name: "post_repost")
 
   @@index([publicationDate])
   @@index([type])

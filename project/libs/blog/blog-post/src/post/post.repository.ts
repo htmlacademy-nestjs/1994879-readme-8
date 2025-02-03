@@ -1,16 +1,16 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { BasePostgresRepository } from '@project/data-access';
 import { PostEntity } from './entities/post.entity';
-import { Post as PostModel, Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import { PostFactory } from './post.factory';
 import { PrismaClientService } from '@project/models';
-import { PaginationResult, SortType } from '@project/core';
+import { CommonPost, PaginationResult, PostStatus, PostType, SortType } from '@project/core';
 import { PostQuery } from './queries/post.query';
 import { calculateSkipItems, createPaginationResponse } from '@project/helpers';
 import { PostMessage, QueryDefaults } from './post.constant';
 
 @Injectable()
-export class PostRepository extends BasePostgresRepository<PostEntity, PostModel> {
+export class PostRepository extends BasePostgresRepository<PostEntity, CommonPost> {
   constructor(entityFactory: PostFactory, readonly client: PrismaClientService) {
     super(entityFactory, client);
   }
@@ -19,27 +19,23 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
     return this.client.post.count({ where });
   }
 
-  private includeRepostAndCount: Prisma.PostInclude = {
-    original: {
-      select: { id: true, userId: true },
-    },
-    _count: {
-      select: { comments: true, likes: true },
-    },
-  };
-
   public async findById(id: string): Promise<PostEntity> {
     const document = await this.client.post.findUnique({
       where: { id },
-      include: this.includeRepostAndCount,
+      include: { _count: { select: { comments: true, likes: true } } },
     });
 
     if (!document) {
       throw new NotFoundException(PostMessage.NotFound);
     }
 
-    console.log(document);
-    return this.createEntityFromDocument(document);
+    return this.createEntityFromDocument({
+      ...document,
+      type: document.type as PostType,
+      status: document.status as PostStatus,
+      commentsCount: document._count.comments,
+      likesCount: document._count.likes,
+    });
   }
 
   private buildWhereClause(query: PostQuery): Prisma.PostWhereInput {
@@ -104,24 +100,39 @@ export class PostRepository extends BasePostgresRepository<PostEntity, PostModel
     const orderBy: Prisma.PostOrderByWithRelationInput = this.buildOrderByClause(query);
     console.log(where, orderBy);
 
-    const [records, postCount] = await Promise.all([
+    const [documents, postCount] = await Promise.all([
       this.client.post.findMany({
         where,
         orderBy,
         skip,
         take,
-        include: this.includeRepostAndCount,
+        include: { _count: { select: { comments: true, likes: true } } },
       }),
       this.getPostCount(where),
     ]);
-    const entities = records.map((record) => this.createEntityFromDocument(record));
+    const entities = documents.map((document) =>
+      this.createEntityFromDocument({
+        ...document,
+        type: document.type as PostType,
+        status: document.status as PostStatus,
+        commentsCount: document._count.comments,
+        likesCount: document._count.likes,
+      })
+    );
 
     return createPaginationResponse(entities, postCount, take, page);
   }
 
   public async save(entity: PostEntity): Promise<void> {
-    const { id, commentsCount, likesCount, ...data } = entity.toPOJO();
-    const record = await this.client.post.create({ data });
+    const postData = entity.toPOJO();
+    const original = postData.originalId ? { connect: { id: postData.originalId } } : undefined;
+
+    const record = await this.client.post.create({
+      data: {
+        ...postData,
+        originalId: postData.originalId,
+      },
+    });
     entity.id = record.id;
   }
 

@@ -1,7 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { PostStatus, PostType } from '@prisma/client';
-import { SwaggerPostProperty, SwaggerUserProperty } from '@project/core';
-import { ArrayMaxSize, IsEnum, IsMongoId, IsOptional, IsString, Length } from 'class-validator';
+import { PostStatus, PostType, SwaggerPostProperty, SwaggerUserProperty } from '@project/core';
+import {
+  ArrayMaxSize,
+  IsDateString,
+  IsEnum,
+  IsMongoId,
+  IsOptional,
+  IsString,
+  Length,
+} from 'class-validator';
 import { TagsLimit } from '../post.constant';
 import { Transform } from 'class-transformer';
 
@@ -11,11 +18,17 @@ export class BasePostDTO {
   @ApiProperty({ required: true, enum: PostType })
   public type: PostType;
 
+  @IsOptional()
   @IsEnum(PostStatus)
   @IsString()
-  @ApiProperty({ required: true, enum: PostStatus })
+  @ApiProperty({ enum: PostStatus })
   @ApiProperty(SwaggerPostProperty.status)
-  public status: PostStatus;
+  public status?: PostStatus;
+
+  @IsDateString()
+  @ApiProperty({ required: true })
+  @ApiProperty(SwaggerPostProperty.publicationDate)
+  public publicationDate: Date;
 
   @IsOptional()
   @IsString({ each: true })

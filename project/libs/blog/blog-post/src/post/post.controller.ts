@@ -58,7 +58,7 @@ export class PostController {
   @ApiOperation({ summary: SwaggerOperation.PostCreate })
   @ApiCreatedResponse({ description: PostResponseDescription.Created })
   @ApiPostBody('type', VideoPostDTO, TextPostDTO, LinkPostDTO, PhotoPostDTO, QuotePostDTO)
-  async create(@Body() dto: CreatePostDTO) {
+  async create(@Body() dto: VideoPostDTO) {
     return this.postService.create(dto);
   }
 

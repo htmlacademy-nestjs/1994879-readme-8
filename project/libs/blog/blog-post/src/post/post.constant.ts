@@ -84,3 +84,7 @@ export const TagsLimit = {
   ItemMax: 10,
   ItemsDescription: 'Tag length must be between 3 and 10 character',
 } as const;
+
+export const UrlLimit = {
+  Youtube: 'URL must be a valid YouTube URL',
+};

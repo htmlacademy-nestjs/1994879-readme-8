@@ -25,14 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { CommentRDO } from './rdo/comment.rdo';
 import { CommentResponseDescription } from './comment.constant';
-import {
-  AppHeader,
-  AppRoute,
-  PaginationQuery,
-  PaginationRDO,
-  SwaggerOperation,
-  SwaggerTag,
-} from '@project/core';
+import { AppHeader, AppRoute, PaginationQuery, SwaggerOperation, SwaggerTag } from '@project/core';
 import { XUserIdGuard } from '@project/interceptors';
 import { CommentWithPaginationRDO } from './rdo/comment-with-pagination.rdo';
 

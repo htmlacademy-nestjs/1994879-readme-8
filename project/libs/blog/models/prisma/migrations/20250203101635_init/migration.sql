@@ -19,9 +19,9 @@ CREATE TABLE "posts" (
     "text" TEXT,
     "author" TEXT,
     "tags" TEXT[],
-    "commentsCount" INTEGER NOT NULL DEFAULT 0,
-    "likesCount" INTEGER NOT NULL DEFAULT 0,
-    "repost_id" TEXT,
+    "is_repost" BOOLEAN NOT NULL DEFAULT false,
+    "original_user_id" TEXT,
+    "original_id" TEXT,
 
     CONSTRAINT "posts_pkey" PRIMARY KEY ("id")
 );
@@ -50,12 +50,6 @@ CREATE TABLE "likes" (
 CREATE INDEX "posts_publication_date_idx" ON "posts"("publication_date");
 
 -- CreateIndex
-CREATE INDEX "posts_commentsCount_idx" ON "posts"("commentsCount");
-
--- CreateIndex
-CREATE INDEX "posts_likesCount_idx" ON "posts"("likesCount");
-
--- CreateIndex
 CREATE INDEX "posts_type_idx" ON "posts"("type");
 
 -- CreateIndex
@@ -65,13 +59,16 @@ CREATE INDEX "posts_status_idx" ON "posts"("status");
 CREATE INDEX "posts_created_at_idx" ON "posts"("created_at");
 
 -- CreateIndex
+CREATE INDEX "posts_user_id_idx" ON "posts"("user_id");
+
+-- CreateIndex
 CREATE INDEX "comments_post_id_idx" ON "comments"("post_id");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "likes_userId_postId_key" ON "likes"("userId", "postId");
 
 -- AddForeignKey
-ALTER TABLE "posts" ADD CONSTRAINT "posts_repost_id_fkey" FOREIGN KEY ("repost_id") REFERENCES "posts"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "posts" ADD CONSTRAINT "posts_original_id_fkey" FOREIGN KEY ("original_id") REFERENCES "posts"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "comments" ADD CONSTRAINT "comments_post_id_fkey" FOREIGN KEY ("post_id") REFERENCES "posts"("id") ON DELETE CASCADE ON UPDATE CASCADE;

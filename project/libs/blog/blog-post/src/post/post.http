@@ -11,13 +11,11 @@ Content-Type: application/json
 x-user-id: {{userId}}
 
 {
-  "type": "111video",
-  "title": "Great test video!",
+
+  "title": "Great test video!!!!!!!",
   "url": "https://example.com/test",
-  "text": "try add text",
   "tags": ["politics", "top100"],
-  "userId": {{userId}},
-  "qqq": "qqq"
+  "userId": {{userId}}
 }
 
 ###

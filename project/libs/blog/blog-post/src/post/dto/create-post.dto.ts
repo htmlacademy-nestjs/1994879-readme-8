@@ -1,8 +1,8 @@
 import { PostType, SwaggerPostProperty } from '@project/core';
 import { BasePostDTO } from './base-post.dto';
-import { IsString, IsUrl, Length } from 'class-validator';
-import { AuthorLimit, DescriptionLimit, TextLimit, TitleLimit } from '../post.constant';
-import { ApiExtraModels, ApiProperty, getSchemaPath } from '@nestjs/swagger';
+import { IsString, IsUrl, Length, Matches } from 'class-validator';
+import { AuthorLimit, DescriptionLimit, TextLimit, TitleLimit, UrlLimit } from '../post.constant';
+import { ApiProperty } from '@nestjs/swagger';
 
 export class VideoPostDTO extends BasePostDTO {
   @ApiProperty({ enum: [PostType.Video], default: PostType.Video })
@@ -14,6 +14,7 @@ export class VideoPostDTO extends BasePostDTO {
   title: string;
 
   @IsUrl()
+  @Matches(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.?be)\/.+$/, { message: UrlLimit.Youtube })
   @ApiProperty(SwaggerPostProperty.url)
   url: string;
 }
