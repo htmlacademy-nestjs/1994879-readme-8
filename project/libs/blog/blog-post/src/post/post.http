@@ -1,7 +1,7 @@
 @port = 4000
 @baseUrl = http://localhost:{{port}}/api
 @userId = 67991076b894e226d77e7917
-@postId = cm6qt56zh0000s13wsotsqupp
+@postId = cm6qy0v6f0001s1f01rizxmr6
 
 #
 #67991076b894e226d77e7917 #6761a4c9916464a230378122
@@ -76,6 +76,17 @@ x-user-id: {{userId}}
   "publicationDate": "2025-10-11T02:45:11Z",
   "url": "/path/to/file-vault/service",
   "text": "123"
+}
+
+###
+# Редактировать
+PATCH {{baseUrl}}/posts/{{postId}} HTTP/1.1
+Content-Type: application/json
+x-user-id: {{userId}}
+
+{
+  "status": "draft",
+  "publicationDate": "2025-10-11T02:45:11Z"
 }
 
 ###

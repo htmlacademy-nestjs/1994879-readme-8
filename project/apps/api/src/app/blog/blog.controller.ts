@@ -7,6 +7,7 @@ import {
   HttpStatus,
   Inject,
   Param,
+  Patch,
   Post,
   Query,
   Req,
@@ -17,7 +18,6 @@ import {
 import { HttpService } from '@nestjs/axios';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
 import { CheckAuthGuard } from '../guards/check-auth.guard';
-import { AddNewPostDTO } from '../dto/add-new-post.dto';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
@@ -52,7 +52,8 @@ import { BlogCommentWithPaginationRDO } from '../rdo/blog-comment-witt-paginatio
 import { BlogPostWithPaginationRDO } from '../rdo/blog-post-witt-pagination.rdo';
 import { BlogPostRDO } from '../rdo/blog-post.rdo';
 import { DEFAULT_SEARCH_LIMIT } from './const';
-import { SwaggerCommentProperty } from '../../../../../libs/shared/core/src/lib/constants/swagger.constant';
+import { SwaggerCommentProperty } from '@project/core';
+import { UpdatePostDTO, CreatePostDTO } from '@project/blog-post';
 
 @Controller(AppRoute.Blog)
 @ApiTags(SwaggerTag.Blog)
@@ -82,13 +83,27 @@ export class BlogController {
   }
 
   @Post(AppRoute.Post)
-  public async create(@Body() dto: AddNewPostDTO, @Req() req: Request) {
-    const { data } = await this.httpService.axiosRef.post<PostRDO>(
-      getAppURL(this.baseUrl.blog),
-      dto
-    );
-    await this.blogService.appendUserInfo(req, data);
-    return data;
+  @ApiOperation({ summary: SwaggerOperation.PostCreate })
+  @UseGuards(CheckAuthGuard)
+  @ApiBearerAuth(TokenName.Access)
+  @ApiOkResponse({ type: BlogPostRDO })
+  @SerializeOptions({ type: BlogPostRDO, excludeExtraneousValues: true })
+  public async create(@Body() dto: CreatePostDTO, @Req() req: Request) {
+    return this.blogService.createPost(req, dto);
+  }
+
+  @Patch(AppRoute.PostById)
+  @ApiOperation({ summary: SwaggerOperation.PostUpdate })
+  @UseGuards(CheckAuthGuard)
+  @ApiBearerAuth(TokenName.Access)
+  @ApiOkResponse({ type: BlogPostRDO })
+  @SerializeOptions({ type: BlogPostRDO, excludeExtraneousValues: true })
+  public async update(
+    @Param(AppRoute.PostId) postId: string,
+    @Body() dto: UpdatePostDTO,
+    @Req() req: Request
+  ) {
+    return this.blogService.updatePost(req, postId, dto);
   }
 
   @Delete(AppRoute.PostById)
@@ -109,14 +124,7 @@ export class BlogController {
   @ApiConflictResponse({ description: SwaggerResponse.LikeExists })
   @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
   public async likePost(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
-    const { data } = await this.httpService.axiosRef.post(
-      getAppURL(this.baseUrl.blog, AppRoute.Like, postId),
-      {},
-      { headers }
-    );
-
-    return data;
+    return this.blogService.likePost(req, postId);
   }
 
   @Delete(`${AppRoute.PostById}/${AppRoute.Like}`)
@@ -128,14 +136,7 @@ export class BlogController {
   @ApiNotFoundResponse({ description: SwaggerResponse.LikeNotFound })
   @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
   public async unlikePost(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
-    const { data } = await this.httpService.axiosRef.post(
-      getAppURL(this.baseUrl.blog, AppRoute.Like, postId),
-      {},
-      { headers }
-    );
-
-    return data;
+    return this.blogService.unlikePost(req, postId);
   }
 
   @Post(AppRoute.PostComment)

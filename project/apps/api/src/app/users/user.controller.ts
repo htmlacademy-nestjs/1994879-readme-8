@@ -90,14 +90,10 @@ export class UserController {
   @ApiNotFoundResponse({ description: SwaggerResponse.UserNotFound })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
-  public async update(
-    @Param(AppRoute.UserId) id: string,
-    @Body() dto: ChangePasswordDTO,
-    @Req() req: Request
-  ) {
+  public async update(@Body() dto: ChangePasswordDTO, @Req() req: Request) {
     const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.patch<UserRDO>(
-      getAppURL(this.baseUrl.account, AppRoute.User, id),
+      getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Password),
       dto,
       { headers }
     );

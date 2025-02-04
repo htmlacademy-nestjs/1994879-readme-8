@@ -9,6 +9,8 @@ import { getAppHeaders, getAppURL } from '@project/helpers';
 import { CommentWithPaginationRDO } from '@project/blog-comment';
 import { CreateBlogCommentDTO } from '../dto/create-blog-comment.dto';
 import { AuthorRDO } from '../rdo/author.rdo';
+import { CreatePostDTO } from 'libs/blog/blog-post/src/post/dto/create-post.dto';
+import { UpdatePostDTO } from 'libs/blog/blog-post/src/post/dto/update-post.dto';
 
 @Injectable()
 export class BlogService {
@@ -57,6 +59,28 @@ export class BlogService {
   public async getPost(req: Request, postId: string): Promise<PostRDO> {
     const { data } = await this.httpService.axiosRef.get<PostRDO>(
       getAppURL(this.baseUrl.blog, AppRoute.Post, postId)
+    );
+    await this.appendUserInfo(req, data);
+    return data;
+  }
+
+  public async createPost(req: Request, dto: CreatePostDTO): Promise<PostRDO> {
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.post<PostRDO>(
+      getAppURL(this.baseUrl.blog, AppRoute.Post),
+      dto,
+      { headers }
+    );
+    await this.appendUserInfo(req, data);
+    return data;
+  }
+
+  public async updatePost(req: Request, postId: string, dto: UpdatePostDTO): Promise<PostRDO> {
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.patch<PostRDO>(
+      getAppURL(this.baseUrl.blog, AppRoute.Post, postId),
+      dto,
+      { headers }
     );
     await this.appendUserInfo(req, data);
     return data;
@@ -112,6 +136,27 @@ export class BlogService {
       null,
       { headers }
     );
+    return data;
+  }
+
+  public async likePost(req: Request, postId: string): Promise<void> {
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.post(
+      getAppURL(this.baseUrl.blog, AppRoute.Like, postId),
+      null,
+      { headers }
+    );
+
+    return data;
+  }
+
+  public async unlikePost(req: Request, postId: string): Promise<void> {
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.delete(
+      getAppURL(this.baseUrl.blog, AppRoute.Like, postId),
+      { headers }
+    );
+
     return data;
   }
 }

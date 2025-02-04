@@ -1,6 +1,6 @@
 @port = 5000
 @baseUrl = http://localhost:{{port}}/api
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2EyNTBjZTdkM2UxNGVmZmRmNzFkNmUiLCJlbWFpbCI6ImNhdEBnbWFpbC5jb20iLCJuYW1lIjoiY2F0IiwiaWF0IjoxNzM4Njk3NDQyLCJleHAiOjE3Mzg2OTc3NDJ9.2kZR21es9hQVf4ct6KaWKcIIMKQE0I-PqW6G2OIS5dg
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2EyNzBkMTZmMmZmOTEyNjEwNTAzYWMiLCJlbWFpbCI6Im1vdXNlQGdtYWlsLmNvbSIsIm5hbWUiOiJqZXJyeSIsImlhdCI6MTczODcwMTA0MSwiZXhwIjoxNzM4NzAxMzQxfQ.yFHNBCRKA-qlzablf-y7nC0z9h_PHoeJutuNHVucd-w
 @refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzk5MTA3NmI4OTRlMjI2ZDc3ZTc5MTciLCJlbWFpbCI6Im5ldy11c2VyQG1haWwubG9jYWwiLCJuYW1lIjoiS2VrcyIsInRva2VuSWQiOiJlZDc2YjNjNi1iMzBlLTRkMjEtYWQ5NC04Y2ZkY2YyMDA2ODMiLCJpYXQiOjE3MzgwODUwNDgsImV4cCI6MTc0MDY3NzA0OH0.xQS4xNeNy0_GQZTISYJ_cb8Lmbb4_MK32DBadySBPec
 @userId = 67991076b894e226d77e7917
 @postId = cm6i9k2tn0002s160k44mfcsv
@@ -22,7 +22,7 @@ POST {{baseUrl}}/users/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "user111@notfound.local",
+  "email": "mouse@gmail.com",
   "password": "123456"
 }
 
@@ -64,19 +64,11 @@ POST {{baseUrl}}/blog/posts/{{postId}}/likes HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
-{
-  "userId": "67991076b894e226d77e7917"
-}
-
 ###
 # Дизлайк
-POST {{baseUrl}}/blog/posts/{{postId}}/likes HTTP/1.1
+DELETE {{baseUrl}}/blog/posts/{{postId}}/likes HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
-
-{
-  "userId": "67991076b894e226d77e7917"
-}
 
 ### Комментарии
 # Создать комментарий
@@ -98,8 +90,43 @@ Authorization: Bearer {{accessToken}}
 DELETE {{baseUrl}}/blog/posts/{{postId}}/comments/{{commentId}} HTTP/1.1
 Authorization: Bearer {{accessToken}}
 
-###
-# Рассылка о новых постах
+### Рассылка о новых постах
 POST {{baseUrl}}/notify HTTP/1.1
 Authorization: Bearer {{accessToken}}
 
+### Поиск
+GET {{baseUrl}}/blog/search?title=My%20First%20Video'
+
+### Фильтры
+GET {{baseUrl}}/blog/posts?limit=10&page=1&tags=top100&tags=one&sortDirection=desc&sortType=comments&postType=video&postStatus=published
+
+### Репост
+POST {{baseUrl}}/blog/posts/{{postId}}/repost
+Authorization: Bearer {{accessToken}}
+
+### Посты
+# Все посты
+GET {{baseUrl}}/blog/posts
+
+###
+# Один пост
+GET {{baseUrl}}/blog/posts/{{postId}}
+Authorization: Bearer {{accessToken}}
+
+### Удалить пост
+DELETE {{baseUrl}}/blog/posts/{{postId}}
+Authorization: Bearer {{accessToken}}
+
+###
+# Новый пост
+POST {{baseUrl}}/blog/posts HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
+{
+  "title": "This is VIDEO post. (20-50)",
+  "type": "video",
+  "status": "draft",
+  "url": "https://youtube.com/test",
+  "tags": [ "ONE", "TWO"]
+}
