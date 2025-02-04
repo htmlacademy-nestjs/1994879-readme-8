@@ -25,10 +25,11 @@ export class BasePostDTO {
   @ApiProperty(SwaggerPostProperty.status)
   public status?: PostStatus;
 
+  @IsOptional()
   @IsDateString()
   @ApiProperty({ required: true })
   @ApiProperty(SwaggerPostProperty.publicationDate)
-  public publicationDate: Date;
+  public publicationDate?: Date;
 
   @IsOptional()
   @IsString({ each: true })
@@ -43,10 +44,4 @@ export class BasePostDTO {
   })
   @ApiProperty(SwaggerPostProperty.tags)
   public tags?: string[];
-
-  @IsString()
-  @IsMongoId()
-  @ApiProperty({ required: true })
-  @ApiProperty(SwaggerUserProperty.userId)
-  public userId: string;
 }

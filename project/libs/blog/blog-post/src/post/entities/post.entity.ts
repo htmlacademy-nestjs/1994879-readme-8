@@ -20,7 +20,7 @@ export class PostEntity extends Entity implements StorableEntity<CommonPost> {
   commentsCount: number;
   likesCount: number;
 
-  constructor(post: CommonPost) {
+  constructor(post?: CommonPost) {
     super();
     this.populate(post);
   }
@@ -29,7 +29,6 @@ export class PostEntity extends Entity implements StorableEntity<CommonPost> {
     if (!post) {
       return;
     }
-    console.log(11111, post);
 
     this.id = post.id ?? undefined;
     this.type = post.type;
@@ -38,8 +37,8 @@ export class PostEntity extends Entity implements StorableEntity<CommonPost> {
     this.userId = post.userId;
     this.tags = post.tags ?? [];
     this.isRepost = post.isRepost;
-    this.originalId = post.originalId ?? null;
-    this.originalUserId = post.originalUserId ?? null;
+    this.originalId = post.originalId ?? undefined;
+    this.originalUserId = post.originalUserId ?? undefined;
     this.commentsCount = post.commentsCount;
     this.likesCount = post.likesCount;
 

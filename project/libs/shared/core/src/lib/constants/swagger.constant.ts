@@ -31,6 +31,7 @@ export enum SwaggerOperation {
   PostUpdate = 'Update a post by ID',
   PostRemove = 'Delete a post by ID',
   PostCount = 'Count users post',
+  Repost = 'Repost publication',
   Like = 'Like post',
   Unlike = 'Unlike post',
   NotiFyNewUser = 'Welcome email for a new user',
@@ -74,8 +75,12 @@ export const SwaggerPostProperty = {
     example: 'My First Video',
   },
   url: {
-    description: 'The URL of the post content (applicable for Video, Photo, and Link posts).',
-    example: 'https://example.com/video.mp4',
+    description: 'The URL of the post content.',
+    example: 'https://youtube.com/video.mp4',
+  },
+  path: {
+    description: 'The URL of the phot post.',
+    example: '/path/to/file-vault',
   },
   description: {
     description: 'A brief description of the post (applicable for Text and Link posts).',
@@ -119,6 +124,13 @@ export enum SwaggerResponse {
   LikeExists = 'Like already exists',
   LikeNotFound = 'Like not found',
   LikeDeleted = 'Post unliked',
+  PostCreated = 'The post has been successfully created.',
+  PostList = 'List of posts.',
+  PostFound = 'The post found.',
+  PostNotFound = 'Post not found.',
+  PostUpdated = 'The post has been successfully updated.',
+  PostDeleted = 'The post has been successfully deleted.',
+  PostCount = 'Count of Users post.',
 }
 
 export const SwaggerPaginationProperty = {

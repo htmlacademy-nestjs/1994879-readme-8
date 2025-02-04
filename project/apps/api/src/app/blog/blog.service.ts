@@ -3,9 +3,8 @@ import { Inject, Injectable, Logger } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
 import { CommentRDO } from '@project/blog-comment';
-import { PostRDO } from '@project/blog-post';
-import { UserRDO } from '@project/blog-user';
-import { AppHeader, AppRoute, PaginationQuery } from '@project/core';
+import { PostQuery, PostRDO } from '@project/blog-post';
+import { AppHeader, AppRoute, PaginationQuery, PaginationResult } from '@project/core';
 import { getAppHeaders, getAppURL } from '@project/helpers';
 import { CommentWithPaginationRDO } from '@project/blog-comment';
 import { CreateBlogCommentDTO } from '../dto/create-blog-comment.dto';
@@ -25,9 +24,11 @@ export class BlogService {
   ) {
     const items = Array.isArray(postsOrComments) ? postsOrComments : [postsOrComments];
     const uniqueUserIds = [...new Set(items.map(({ userId }) => userId))];
+    console.log(333, uniqueUserIds);
 
     try {
-      const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
+      const headers = getAppHeaders(req, AppHeader.RequestId);
+      console.log(headers);
       const response = await this.httpService.axiosRef.get<AuthorRDO[]>(
         getAppURL(this.baseUrl.account, AppRoute.User),
         { headers, params: { userIds: uniqueUserIds } }
@@ -43,6 +44,32 @@ export class BlogService {
         item['user'] = null;
       });
     }
+  }
+
+  public async getPosts(req: Request, params: PostQuery): Promise<PaginationResult<PostRDO>> {
+    const { data } = await this.httpService.axiosRef.get<PaginationResult<PostRDO>>(
+      getAppURL(this.baseUrl.blog, AppRoute.Post),
+      { params }
+    );
+    await this.appendUserInfo(req, data.entities);
+    return data;
+  }
+
+  public async getPost(req: Request, postId: string): Promise<PostRDO> {
+    const { data } = await this.httpService.axiosRef.get<PostRDO>(
+      getAppURL(this.baseUrl.blog, AppRoute.Post, postId)
+    );
+    await this.appendUserInfo(req, data);
+    return data;
+  }
+
+  public async deletePost(req: Request, postId: string): Promise<void> {
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.delete(
+      getAppURL(this.baseUrl.blog, AppRoute.Post, postId),
+      { headers }
+    );
+    return data;
   }
 
   public async createComment(
@@ -74,6 +101,16 @@ export class BlogService {
     const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
     const { data } = await this.httpService.axiosRef.delete(
       getAppURL(this.baseUrl.blog, AppRoute.Comment, commentId),
+      { headers }
+    );
+    return data;
+  }
+
+  public async createRepost(req: Request, postId: string): Promise<PostRDO> {
+    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
+    const { data } = await this.httpService.axiosRef.post(
+      getAppURL(this.baseUrl.blog, AppRoute.Post, postId, AppRoute.Repost),
+      null,
       { headers }
     );
     return data;

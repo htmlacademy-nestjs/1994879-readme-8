@@ -13,7 +13,7 @@ export class PostQuery extends PaginationQuery {
   @IsMongoId({ each: true })
   @ApiPropertyOptional({ isArray: true, type: String })
   @ApiProperty(SwaggerUserProperty.userIds)
-  public userIds?: string[];
+  public userIds?: string | string[];
 
   @IsIn(Object.values(SortDirection))
   @IsOptional()

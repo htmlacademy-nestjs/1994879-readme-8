@@ -1,6 +1,6 @@
 @port = 5000
 @baseUrl = http://localhost:{{port}}/api
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczODQ4NDQxNSwiZXhwIjoxNzM4NDg0NzE1fQ.TX1yIPRm9jRGswkWna5GzGV5Agbe-c4KxJQVLzbTVj0
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczODY0MjM4NCwiZXhwIjoxNzM4NjQyNjg0fQ.1OVaL-kqxoMVD0TQSi2HOwgFBg2cPuofRKf5LPVXDyw
 @refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzk5MTA3NmI4OTRlMjI2ZDc3ZTc5MTciLCJlbWFpbCI6Im5ldy11c2VyQG1haWwubG9jYWwiLCJuYW1lIjoiS2VrcyIsInRva2VuSWQiOiJlZDc2YjNjNi1iMzBlLTRkMjEtYWQ5NC04Y2ZkY2YyMDA2ODMiLCJpYXQiOjE3MzgwODUwNDgsImV4cCI6MTc0MDY3NzA0OH0.xQS4xNeNy0_GQZTISYJ_cb8Lmbb4_MK32DBadySBPec
 @userId = 67991076b894e226d77e7917
 @postId = cm6i9k2tn0002s160k44mfcsv
@@ -95,4 +95,3 @@ Authorization: Bearer {{accessToken}}
 # Рассылка о новых постах
 POST {{baseUrl}}/notify HTTP/1.1
 Authorization: Bearer {{accessToken}}
-

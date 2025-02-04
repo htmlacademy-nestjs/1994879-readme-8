@@ -25,6 +25,7 @@ export enum AppRoute {
   Login = 'login',
   Upload = 'upload',
   Static = 'static',
+  Repost = 'repost',
   Feed = 'feed',
   Count = 'count',
   Like = 'likes',
@@ -32,5 +33,7 @@ export enum AppRoute {
   UserId = 'userId',
   PostId = 'postId',
   CommentId = 'commentId',
+  PostById = `${AppRoute.Post}/:${AppRoute.PostId}`,
   PostComment = `${AppRoute.Post}/:${AppRoute.PostId}/${AppRoute.Comment}`,
+  PostRepost = `${AppRoute.Post}/:${AppRoute.PostId}/${AppRoute.Repost}`,
 }

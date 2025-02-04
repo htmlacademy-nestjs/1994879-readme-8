@@ -54,7 +54,6 @@ export class BlogUserController {
   }
 
   @Get()
-  @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: SwaggerOperation.GetUsers })
   @ApiOkResponse()
   public async showAll(@Query() params: UserQuery) {

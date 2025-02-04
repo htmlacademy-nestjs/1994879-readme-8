@@ -46,4 +46,19 @@ export class PostRDO {
   @Expose()
   @ApiProperty(SwaggerPostProperty.author)
   public author?: string;
+
+  @Expose()
+  public isRepost: boolean;
+
+  @Expose()
+  public originalId: string;
+
+  @Expose()
+  public originalUserId: string;
+
+  @Expose()
+  public commentsCount: number;
+
+  @Expose()
+  public likesCount: number;
 }

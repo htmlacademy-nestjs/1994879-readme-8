@@ -16,47 +16,24 @@ export class PostFactory implements EntityFactory<PostEntity> {
     return new PostEntity(entityPlainData);
   }
 
-  public static createFromPostDTO(dto: CreatePostDTO): PostEntity {
-    const post: CommonPost = {
-      type: dto.type,
-      status: dto.status,
-      publicationDate: dto.publicationDate,
-      tags: dto.tags,
-      userId: dto.userId,
-      originalId: null,
-      originalUserId: null,
-      isRepost: false,
-      commentsCount: 0,
-      likesCount: 0,
-      title: null,
-      description: null,
-      text: null,
-      author: null,
-      url: null,
-    };
+  public static createFromPostDTO(dto: CreatePostDTO, userId: string): PostEntity {
+    const entity = new PostEntity({ ...dto, userId, isRepost: false, status: dto.status });
 
-    if (dto instanceof VideoPostDTO) {
-      const { title, url } = dto as VideoPostDTO;
-      post.title = title;
-      post.url = url;
-    } else if (dto instanceof TextPostDTO) {
-      const { title, description, text } = dto as TextPostDTO;
-      post.title = title;
-      post.description = description;
-      post.text = text;
-    } else if (dto instanceof PhotoPostDTO) {
-      const { url } = dto as PhotoPostDTO;
-      post.url = url;
-    } else if (dto instanceof LinkPostDTO) {
-      const { url, description } = dto as LinkPostDTO;
-      post.url = url;
-      post.description = description;
-    } else if (dto instanceof QuotePostDTO) {
-      const { author, text } = dto as QuotePostDTO;
-      post.author = author;
-      post.text = text;
-    }
+    return entity;
+  }
 
-    return new PostEntity(post);
+  public static createRepost(post: PostEntity, userId: string): PostEntity {
+    post.originalUserId = post.userId;
+    post.originalId = post.id;
+    post.isRepost = true;
+    post.publicationDate = new Date();
+    post.userId = userId;
+    delete post.createdAt;
+    delete post.updatedAt;
+    delete post.commentsCount;
+    delete post.likesCount;
+    post.id = undefined;
+
+    return post;
   }
 }

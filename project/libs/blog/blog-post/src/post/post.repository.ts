@@ -98,7 +98,6 @@ export class PostRepository extends BasePostgresRepository<PostEntity, CommonPos
     const skip = calculateSkipItems(page, take);
     const where: Prisma.PostWhereInput = this.buildWhereClause(query);
     const orderBy: Prisma.PostOrderByWithRelationInput = this.buildOrderByClause(query);
-    console.log(where, orderBy);
 
     const [documents, postCount] = await Promise.all([
       this.client.post.findMany({
@@ -128,10 +127,7 @@ export class PostRepository extends BasePostgresRepository<PostEntity, CommonPos
     const original = postData.originalId ? { connect: { id: postData.originalId } } : undefined;
 
     const record = await this.client.post.create({
-      data: {
-        ...postData,
-        originalId: postData.originalId,
-      },
+      data: postData,
     });
     entity.id = record.id;
   }

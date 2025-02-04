@@ -60,7 +60,7 @@ export class UserController {
   @ApiOperation({ summary: SwaggerOperation.Register })
   @UseInterceptors(FileInterceptor('avatarFile'))
   @ApiConsumes('multipart/form-data')
-  @ApiCreatedResponse({ type: UserDetailedRDO, description: SwaggerResponse.UserCreated })
+  @ApiCreatedResponse({ type: UserRDO, description: SwaggerResponse.UserCreated })
   @ApiConflictResponse({ description: SwaggerResponse.UserExist })
   public async register(
     @Body() dto: RegisterUserDTO,
@@ -106,7 +106,7 @@ export class UserController {
       { headers }
     );
 
-    return this.userService.getUserDetails(data);
+    return this.userService.getUserDetails(data, req);
   }
 
   @Get(`:${AppRoute.UserId}`)
@@ -122,7 +122,7 @@ export class UserController {
       { headers }
     );
 
-    return this.userService.getUserDetails(data);
+    return this.userService.getUserDetails(data, req);
   }
 
   @Post(AppRoute.Refresh)

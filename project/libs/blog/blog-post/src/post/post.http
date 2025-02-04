@@ -1,21 +1,81 @@
 @port = 4000
 @baseUrl = http://localhost:{{port}}/api
-@userId = "67991076b894e226d77e7917"
-@postId = cm6o3kbet0000s1o00prlkot1
+@userId = 67991076b894e226d77e7917
+@postId = cm6pec8nr0004s1iof82e89f0
 
+#
+#67991076b894e226d77e7917 #6761a4c9916464a230378122
 ###
 # Новый пост - Видео
-
 POST {{baseUrl}}/posts HTTP/1.1
 Content-Type: application/json
 x-user-id: {{userId}}
 
 {
+  "title": "This is VIDEO post. (20-50)",
+  "type": "video",
+  "status": "draft",
+  "url": "https://youtube.com/test",
+  "tags": [ "ONE", "TWO"]
+}
 
-  "title": "Great test video!!!!!!!",
-  "url": "https://example.com/test",
-  "tags": ["politics", "top100"],
-  "userId": {{userId}}
+###
+# Новый пост - Текст
+POST {{baseUrl}}/posts HTTP/1.1
+Content-Type: application/json
+x-user-id: {{userId}}
+
+{
+  "title": "This is Text post. Title for search",
+  "type": "text",
+  "description": "Для создания новой публикации типа «Текст» клиент передаёт следующий набор информации:",
+  "text": "Для создания новой публикации типа «Текст» клиент передаёт следующий набор информации: Название публикации (обязательно). Минимальная длина 20 символов, максимальная 50. Анонс публикации (обязательно). Текст с анонсом публикации. Минимальная длина 50 символов, максимальная 255.",
+  "tags": [ "ONE", "TWO"]
+}
+
+###
+# Новый пост - Цитата
+POST {{baseUrl}}/posts HTTP/1.1
+Content-Type: application/json
+x-user-id: {{userId}}
+
+{
+  "title": "Quote of the day. Tags not included",
+  "status": "draft",
+  "type": "quote",
+  "text": "Оставайся в середине круга, и пусть все вещи следуют своим путем.",
+  "author": "Лао-Цзы",
+  "publicationDate": "2023-10-01T12:45:11Z"
+}
+
+###
+# Новый пост - Ссылка
+POST {{baseUrl}}/posts HTTP/1.1
+Content-Type: application/json
+x-user-id: {{userId}}
+
+{
+  "title": "Link post. Link post.",
+  "status": "draft",
+  "type": "link",
+  "publicationDate": "2025-10-11T02:45:11Z",
+  "url": "http://example.com/test",
+  "description": "Для создания новой публикации типа «Ссылка» клиент передаёт следующий набор информации"
+}
+
+###
+# Новый пост - Ссылка
+POST {{baseUrl}}/posts HTTP/1.1
+Content-Type: application/json
+x-user-id: {{userId}}
+
+{
+  "type": "photo",
+  "title": "Link post. Link post.",
+  "status": "published",
+  "publicationDate": "2025-10-11T02:45:11Z",
+  "url": "/path/to/file-vault/service",
+  "text": "123"
 }
 
 ###
@@ -23,18 +83,15 @@ x-user-id: {{userId}}
 GET {{baseUrl}}/posts?limit=10&sortDirection=asc&page=1 HTTP/1.1
 
 ###
-
 # Пост по идентификатору
 GET {{baseUrl}}/posts/{{postId}} HTTP/1.1
 
 ###
-
 # Удалить пост
 DELETE {{baseUrl}}/posts/{{postId}} HTTP/1.1
 x-user-id: {{userId}}
 
 ###
-
 # обновить пост
 PATCH {{baseUrl}}/posts/{{postId}} HTTP/1.1
 Content-Type: application/json
@@ -45,4 +102,12 @@ x-user-id: {{userId}}
   "tags": ["new_tag", "sport", "run2025"]
 }
 
+###
+# Репост
+POST {{baseUrl}}/posts/{{postId}}/repost HTTP/1.1
+x-user-id: {{userId}}
 
+###
+# ФИЛЬТРЫ и ПОИСК
+
+GET {{baseUrl}}/posts?tags=one&tags=top100&sortDirection=desc&sortType=comments&postStatus=published&title=is%20Text%20post.

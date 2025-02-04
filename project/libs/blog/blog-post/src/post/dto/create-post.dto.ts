@@ -1,7 +1,15 @@
 import { PostType, SwaggerPostProperty } from '@project/core';
 import { BasePostDTO } from './base-post.dto';
 import { IsString, IsUrl, Length, Matches } from 'class-validator';
-import { AuthorLimit, DescriptionLimit, TextLimit, TitleLimit, UrlLimit } from '../post.constant';
+import {
+  AuthorLimit,
+  DescriptionLimit,
+  LinkTextLimit,
+  QuoteTextLimit,
+  TextLimit,
+  TitleLimit,
+  UrlLimit,
+} from '../post.constant';
 import { ApiProperty } from '@nestjs/swagger';
 
 export class VideoPostDTO extends BasePostDTO {
@@ -43,8 +51,8 @@ export class PhotoPostDTO extends BasePostDTO {
   @ApiProperty({ enum: [PostType.Photo], default: PostType.Photo })
   type: PostType.Photo;
 
-  @IsUrl()
-  @ApiProperty(SwaggerPostProperty.url)
+  @IsString()
+  @ApiProperty(SwaggerPostProperty.path)
   url: string;
 }
 
@@ -57,7 +65,7 @@ export class LinkPostDTO extends BasePostDTO {
   url: string;
 
   @IsString()
-  @Length(DescriptionLimit.Min, DescriptionLimit.Max, { message: DescriptionLimit.Description })
+  @Length(LinkTextLimit.Min, LinkTextLimit.Max, { message: LinkTextLimit.Description })
   @ApiProperty(SwaggerPostProperty.description)
   description?: string;
 }
@@ -72,7 +80,7 @@ export class QuotePostDTO extends BasePostDTO {
   author: string;
 
   @IsString()
-  @Length(TextLimit.Min, TextLimit.Max, { message: TextLimit.Description })
+  @Length(QuoteTextLimit.Min, QuoteTextLimit.Max, { message: QuoteTextLimit.Description })
   @ApiProperty(SwaggerPostProperty.text)
   text: string;
 }

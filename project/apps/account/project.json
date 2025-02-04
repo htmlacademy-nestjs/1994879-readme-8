@@ -8,9 +8,7 @@
     "serve": {
       "executor": "@nx/js:node",
       "defaultConfiguration": "development",
-      "dependsOn": [
-        "build"
-      ],
+      "dependsOn": ["build"],
       "options": {
         "buildTarget": "account:build",
         "runBuildTargetDependencies": false
@@ -22,6 +20,20 @@
         "production": {
           "buildTarget": "account:build:production"
         }
+      }
+    },
+    "docker:up": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose --file ./docker-compose.yml --project-name readme-account --env-file .env up -d",
+        "cwd": "apps/account"
+      }
+    },
+    "docker:down": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "docker compose --file ./docker-compose.yml --project-name readme-account down",
+        "cwd": "apps/account"
       }
     }
   }
