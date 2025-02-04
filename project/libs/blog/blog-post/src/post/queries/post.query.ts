@@ -1,5 +1,11 @@
 import { IsIn, IsMongoId, IsOptional, IsString, IsUUID } from 'class-validator';
-import { PaginationQuery, PostType, SortDirection, SwaggerUserProperty } from '@project/core';
+import {
+  PaginationQuery,
+  PostType,
+  SortDirection,
+  SwaggerPostProperty,
+  SwaggerUserProperty,
+} from '@project/core';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { SortType, PostStatus } from '@project/core';
 
@@ -36,7 +42,7 @@ export class PostQuery extends PaginationQuery {
   public postStatus?: PostStatus;
 
   @IsOptional()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ example: SwaggerPostProperty.publicationDate.example })
   public fromDate?: Date;
 
   @IsString()

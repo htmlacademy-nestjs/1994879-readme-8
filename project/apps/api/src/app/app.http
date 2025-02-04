@@ -1,6 +1,6 @@
 @port = 5000
 @baseUrl = http://localhost:{{port}}/api
-@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzg2NTg3N2VjODlkOWE0MzM3NGVhYzQiLCJlbWFpbCI6InVzZXIxMTFAbm90Zm91bmQubG9jYWwiLCJuYW1lIjoiS2VrcyIsImlhdCI6MTczODY0MjM4NCwiZXhwIjoxNzM4NjQyNjg0fQ.1OVaL-kqxoMVD0TQSi2HOwgFBg2cPuofRKf5LPVXDyw
+@accessToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2N2EyNTBjZTdkM2UxNGVmZmRmNzFkNmUiLCJlbWFpbCI6ImNhdEBnbWFpbC5jb20iLCJuYW1lIjoiY2F0IiwiaWF0IjoxNzM4Njk3NDQyLCJleHAiOjE3Mzg2OTc3NDJ9.2kZR21es9hQVf4ct6KaWKcIIMKQE0I-PqW6G2OIS5dg
 @refreshToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2Nzk5MTA3NmI4OTRlMjI2ZDc3ZTc5MTciLCJlbWFpbCI6Im5ldy11c2VyQG1haWwubG9jYWwiLCJuYW1lIjoiS2VrcyIsInRva2VuSWQiOiJlZDc2YjNjNi1iMzBlLTRkMjEtYWQ5NC04Y2ZkY2YyMDA2ODMiLCJpYXQiOjE3MzgwODUwNDgsImV4cCI6MTc0MDY3NzA0OH0.xQS4xNeNy0_GQZTISYJ_cb8Lmbb4_MK32DBadySBPec
 @userId = 67991076b894e226d77e7917
 @postId = cm6i9k2tn0002s160k44mfcsv
@@ -33,23 +33,30 @@ Authorization: Bearer {{refreshToken}}
 
 ###
 # Подписка
-POST {{baseUrl}}/users/subscribe HTTP/1.1
+POST {{baseUrl}}/blog/feed/subscribe HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "userId": "67991076b894e226d77e7917"
+  "userId": "67a250ce7d3e14effdf71d6e"
 }
 
 ###
 # Отписка
-POST {{baseUrl}}/users/unsubscribe HTTP/1.1
+POST {{baseUrl}}/blog/feed/unsubscribe HTTP/1.1
 Content-Type: application/json
 Authorization: Bearer {{accessToken}}
 
 {
-  "userId": "67991076b894e226d77e7917"
+  "userId": "67a250ce7d3e14effdf71d6e"
 }
+
+###
+# Моя лента
+GET {{baseUrl}}/blog/feed HTTP/1.1
+Content-Type: application/json
+Authorization: Bearer {{accessToken}}
+
 
 ###
 # Лайк
@@ -95,3 +102,4 @@ Authorization: Bearer {{accessToken}}
 # Рассылка о новых постах
 POST {{baseUrl}}/notify HTTP/1.1
 Authorization: Bearer {{accessToken}}
+

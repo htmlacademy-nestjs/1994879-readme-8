@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { PostEntity } from './entities/post.entity';
+import { PostEntity } from './post.entity';
 import {
   CreatePostDTO,
   LinkPostDTO,

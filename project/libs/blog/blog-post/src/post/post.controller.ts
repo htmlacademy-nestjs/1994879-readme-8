@@ -56,6 +56,14 @@ import { CreatePostValidationPipe } from '@project/pipes';
 export class PostController {
   constructor(@Inject(PostService) private readonly postService: PostService) {}
 
+  @Get(AppRoute.Count)
+  @UseGuards(XUserIdGuard)
+  @ApiOperation({ summary: SwaggerOperation.PostCount })
+  @ApiOkResponse({ description: SwaggerResponse.PostCount })
+  public async getUserPostsCount(@Headers(AppHeader.UserId) userId: string): Promise<number> {
+    return this.postService.getUserPostsCount(userId);
+  }
+
   @Post()
   @UseGuards(XUserIdGuard)
   @ApiOperation({ summary: SwaggerOperation.PostCreate })
@@ -115,13 +123,5 @@ export class PostController {
   @ApiCreatedResponse({ description: SwaggerResponse.PostCreated })
   async repost(@Param(AppRoute.PostId) postId: string, @Headers(AppHeader.UserId) userId: string) {
     return this.postService.createRepost(postId, userId);
-  }
-
-  @Get(AppRoute.Count)
-  @UseGuards(XUserIdGuard)
-  @ApiOperation({ summary: SwaggerOperation.PostCount })
-  @ApiOkResponse({ description: SwaggerResponse.PostCount })
-  public async getUserPostsCount(@Headers(AppHeader.UserId) userId: string): Promise<number> {
-    return this.postService.getUserPostsCount(userId);
   }
 }

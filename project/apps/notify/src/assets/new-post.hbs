@@ -1,3 +1,17 @@
-<p>Привет, {{user}},</p>
+<h2>Привет, {{user}},</h2>
 <p>Список новых постов</p>
-<p>{{content}}</p>
+<ul>
+  {{#each entities}}
+    <li>
+      <p><strong>id:</strong> {{id}}</p>
+      {{#if title}}
+        <p><strong>Название:</strong> {{title}}</p>
+      {{/if}}
+      {{#if url}}
+        <p><strong>URL:</strong> <a href='{{url}}'>{{url}}</a></p>
+      {{/if}}
+      <p><strong>Дата публикации:</strong> {{publicationDate}}</p>
+      <p><strong>Количество комментариев:</strong> {{commentsCount}}</p>
+    </li>
+  {{/each}}
+</ul>

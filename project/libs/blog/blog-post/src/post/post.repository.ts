@@ -1,6 +1,6 @@
 import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { BasePostgresRepository } from '@project/data-access';
-import { PostEntity } from './entities/post.entity';
+import { PostEntity } from './post.entity';
 import { Prisma } from '@prisma/client';
 import { PostFactory } from './post.factory';
 import { PrismaClientService } from '@project/models';
@@ -131,8 +131,6 @@ export class PostRepository extends BasePostgresRepository<PostEntity, CommonPos
 
   public async save(entity: PostEntity): Promise<void> {
     const postData = entity.toPOJO();
-    const original = postData.originalId ? { connect: { id: postData.originalId } } : undefined;
-
     const record = await this.client.post.create({
       data: postData,
     });
@@ -141,9 +139,11 @@ export class PostRepository extends BasePostgresRepository<PostEntity, CommonPos
 
   public async update(entity: PostEntity): Promise<void> {
     const post = entity.toPOJO();
+    delete post.commentsCount;
+    delete post.likesCount;
     await this.client.post.update({
       where: { id: post.id },
-      data: { ...post },
+      data: post,
     });
   }
 

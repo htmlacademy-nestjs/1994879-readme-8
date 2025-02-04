@@ -52,6 +52,7 @@ import { BlogCommentWithPaginationRDO } from '../rdo/blog-comment-witt-paginatio
 import { BlogPostWithPaginationRDO } from '../rdo/blog-post-witt-pagination.rdo';
 import { BlogPostRDO } from '../rdo/blog-post.rdo';
 import { DEFAULT_SEARCH_LIMIT } from './const';
+import { SwaggerCommentProperty } from '../../../../../libs/shared/core/src/lib/constants/swagger.constant';
 
 @Controller(AppRoute.Blog)
 @ApiTags(SwaggerTag.Blog)
@@ -170,8 +171,7 @@ export class BlogController {
   @HttpCode(HttpStatus.NO_CONTENT)
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
-  @ApiParam({ name: AppRoute.PostId, ...SwaggerPostProperty.postId })
-  @ApiParam({ name: AppRoute.CommentId })
+  @ApiParam({ name: AppRoute.CommentId, ...SwaggerCommentProperty.commentId })
   @ApiCreatedResponse()
   public async deleteComment(@Param(AppRoute.CommentId) commentId: string, @Req() req: Request) {
     return this.blogService.deleteComment(req, commentId);

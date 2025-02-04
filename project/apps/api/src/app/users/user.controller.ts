@@ -81,7 +81,7 @@ export class UserController {
       getAppURL(this.baseUrl.account, AppRoute.Auth),
       loginUserDTO
     );
-    return { data };
+    return data;
   }
 
   @Patch(`:${AppRoute.UserId}`)
@@ -143,7 +143,7 @@ export class UserController {
   public async checkToken(@Req() req: Request) {
     const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
     const { data } = await this.httpService.axiosRef.post<LoggedUserRDO>(
-      getAppURL(this.baseUrl.account, AppRoute.Check),
+      getAppURL(this.baseUrl.account, AppRoute.Auth, AppRoute.Check),
       null,
       { headers }
     );

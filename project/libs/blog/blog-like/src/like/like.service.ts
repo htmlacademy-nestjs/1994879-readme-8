@@ -25,7 +25,6 @@ export class LikeService {
 
   public async like(postId: string, userId: string): Promise<void> {
     const like = await this.getLike(postId, userId);
-
     if (like) {
       throw new ConflictException(LIKE_MESSAGE.EXISTS);
     }

@@ -59,7 +59,7 @@ export const SwaggerUserProperty = {
 };
 
 export const SwaggerPostProperty = {
-  postId: { description: 'Post ID', example: 'cm6ictinr0000s13gdekn4rgu' },
+  postId: { description: 'Post Id', example: 'cm6ictinr0000s13gdekn4rgu' },
   type: {
     description: 'The type of the post (e.g., Video, Text, Photo, Link, Quote).',
     example: PostType.Video,
@@ -70,7 +70,11 @@ export const SwaggerPostProperty = {
   },
   publicationDate: {
     description: 'Publication date',
-    example: '2023-10-01T12:00:00Z',
+    example: '2025-02-01T12:13:00Z',
+  },
+  createdAt: {
+    description: 'Created date',
+    example: '2025-02-01T12:13:00Z',
   },
   tags: { description: 'An array of tags associated with the post.', example: ['news', 'updates'] },
   title: {
@@ -107,6 +111,9 @@ export const SwaggerCommentProperty = {
   message: {
     description: 'Text of the comment.',
     example: 'Excellent article! When will there be a sequel?',
+  },
+  commentId: {
+    description: 'Comment Id',
   },
 };
 

@@ -1,7 +1,7 @@
 @port = 4000
 @baseUrl = http://localhost:{{port}}/api
 @userId = 67991076b894e226d77e7917
-@postId = cm6pec8nr0004s1iof82e89f0
+@postId = cm6qt56zh0000s13wsotsqupp
 
 #
 #67991076b894e226d77e7917 #6761a4c9916464a230378122
@@ -98,7 +98,7 @@ Content-Type: application/json
 x-user-id: {{userId}}
 
 {
-  "title": "Gosh, what is this!",
+  "title": "Gosh, what is this! New Title",
   "tags": ["new_tag", "sport", "run2025"]
 }
 

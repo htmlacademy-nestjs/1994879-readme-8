@@ -6,14 +6,14 @@ import { NotifyService } from '@project/api-notify';
 import { UserRDO } from '@project/blog-user';
 import { AppHeader, AppRoute, PaginationResult, PostStatus } from '@project/core';
 import { getAppHeaders, getAppURL } from '@project/helpers';
-import { MESSAGE, SUBSCRIBERS_NOT_FOUND } from './const';
+import { MESSAGE } from './const';
 import { PostQuery, PostRDO } from '@project/blog-post';
 
 @Injectable()
 export class NotificationService {
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
-    @Inject(NotifyService) private readonly notifyService: NotifyService
+    @Inject(NotifyService) private readonly notifyService: NotifyService,
     @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>
   ) {}
 
@@ -31,7 +31,7 @@ export class NotificationService {
     const params: PostQuery = {
       fromDate: user.subscribersNotifyDate,
       postStatus: PostStatus.Published,
-      userIds: [userId]
+      userIds: [userId],
     };
     const { data } = await this.httpService.axiosRef.get<PaginationResult<PostRDO>>(
       getAppURL(this.baseUrl.blog, AppRoute.Post),
@@ -42,14 +42,13 @@ export class NotificationService {
       throw new NotFoundException(MESSAGE.NEW_POSTS_NOT_FOUND);
     }
 
-          const response = await this.httpService.axiosRef.get<AuthorRDO[]>(
-            getAppURL(this.baseUrl.account, AppRoute.User),
-            { headers, params: { userIds: uniqueUserIds } }
-          );
-
+    const { data: userData } = await this.httpService.axiosRef.get<UserRDO[]>(
+      getAppURL(this.baseUrl.account, AppRoute.User),
+      { headers, params: { userIds: user.subscribers } }
+    );
 
     this.notifyService.renewalPosts({
-      subscribers: user.subscribers,
+      subscribers: userData,
       entities: data.entities,
     });
   }

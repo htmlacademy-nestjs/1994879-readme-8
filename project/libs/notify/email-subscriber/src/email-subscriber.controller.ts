@@ -35,14 +35,15 @@ export class EmailSubscriberController {
   public async notifyNewPost(dto: NotifyNewPostsDTO) {
     this.logger.debug(RabbitRouting.NewPost);
 
-    const data = dto.entities.map((post) => post.title).join('<br>');
-
     await Promise.all(
       dto.subscribers.map(async (subscriber) => {
         try {
-          await this.mailService.sendRenewalPosts(subscriber, data);
+          await this.mailService.sendRenewalPosts(subscriber, dto.entities);
         } catch (error) {
-          this.logger.error(`Failed to send email to subscriber ${subscriber.email}:`, error);
+          this.logger.error(
+            `Failed to send email to subscriber ${subscriber.email}:`,
+            JSON.stringify(error)
+          );
         }
       })
     );

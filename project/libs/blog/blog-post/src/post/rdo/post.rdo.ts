@@ -20,6 +20,10 @@ export class PostRDO {
   public publicationDate: Date;
 
   @Expose()
+  @ApiProperty(SwaggerPostProperty.publicationDate)
+  public createdAt: Date;
+
+  @Expose()
   @ApiProperty(SwaggerPostProperty.tags)
   tags?: string[];
 

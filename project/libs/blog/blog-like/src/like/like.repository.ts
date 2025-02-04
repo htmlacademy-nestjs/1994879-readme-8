@@ -19,7 +19,7 @@ export class LikeRepository extends BasePostgresRepository<LikeEntity, Like> {
 
   public override async save(entity: LikeEntity): Promise<void> {
     await this.client.like.create({
-      data: { ...entity.toPOJO() },
+      data: entity.toPOJO(),
     });
   }
 
