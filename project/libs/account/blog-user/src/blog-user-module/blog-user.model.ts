@@ -24,6 +24,9 @@ export class BlogUserModel extends Document implements AuthUser {
 
   @Prop()
   subscribers: string[];
+
+  @Prop()
+  subscribersNotifyDate: Date;
 }
 
 export const BlogUserSchema = SchemaFactory.createForClass(BlogUserModel);

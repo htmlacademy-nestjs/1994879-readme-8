@@ -1,4 +1,5 @@
 export const RabbitConfig = {
   Exchange: 'readme.notify',
-  Queue: 'queue.income',
+  QueueUser: 'queue.income.user',
+  QueuePost: 'queue.income.post',
 };

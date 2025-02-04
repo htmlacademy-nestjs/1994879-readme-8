@@ -8,13 +8,15 @@ import { AppService } from '../app.service';
 import { plainToInstance } from 'class-transformer';
 import { CreateUserDTO } from '@project/blog-user';
 import { AppHeader, AppRoute, DEFAULT_AVATAR } from '@project/core';
+import { NotifyService } from '@project/api-notify';
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
     @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>,
-    private readonly appService: AppService
+    @Inject(AppService) private readonly appService: AppService,
+    @Inject(NotifyService) private readonly notifyService: NotifyService
   ) {}
 
   private getDefaultAvatar(): string {
@@ -46,8 +48,7 @@ export class UserService {
       userDTO
     );
 
-    //await this.httpService.axiosRef.post(getAppURL(this.baseUrl.notify, AppRoute.User), userDTO);
-
+    this.notifyService.registerSubscriber(userDTO);
     return data;
   }
 }

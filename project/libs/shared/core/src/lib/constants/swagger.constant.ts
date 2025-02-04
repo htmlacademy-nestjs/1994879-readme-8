@@ -38,7 +38,7 @@ export enum SwaggerOperation {
   Like = 'Like post',
   Unlike = 'Unlike post',
   NotiFyNewUser = 'Welcome email for a new user',
-  NotifyRenewalPosts = 'Newsletter about new posts',
+  NotifyRenewalPosts = 'Newsletter to SUBSCRIBERS about new posts',
   CommentCreate = 'Create a new comment for post',
   CommentList = 'Get list of comments',
   CommentDelete = 'Delete a comment by ID',

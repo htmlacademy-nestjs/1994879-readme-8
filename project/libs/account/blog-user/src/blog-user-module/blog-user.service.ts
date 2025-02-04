@@ -30,6 +30,7 @@ export class BlogUserService {
         passwordHash: '',
         registrationDate: new Date(),
         subscribers: [],
+        subscribersNotifyDate: new Date(),
       })
       .setPassword(dto.password);
 

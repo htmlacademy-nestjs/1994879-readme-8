@@ -92,7 +92,6 @@ export class BlogUserController {
   @ApiOperation({ summary: SwaggerOperation.Subscriptions })
   @ApiOkResponse({ type: [UserRDO] })
   public async getSubscriptions(@UserId() userId: string) {
-    console.log(1111111);
     return this.blogUserService.findSubscriptions(userId);
   }
 

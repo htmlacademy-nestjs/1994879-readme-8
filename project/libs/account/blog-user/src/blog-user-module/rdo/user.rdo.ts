@@ -26,4 +26,7 @@ export class UserRDO {
   @Expose()
   @ApiProperty(SwaggerUserProperty.subscribersCount)
   public subscribers: string[];
+
+  @Expose()
+  subscribersNotifyDate: Date;
 }

@@ -16,11 +16,5 @@ import { RequestLoggerInterceptor } from '@project/interceptors';
     NotifyConfigModule,
     EmailSubscriberModule,
   ],
-  providers: [
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: RequestLoggerInterceptor,
-    },
-  ],
 })
 export class AppModule {}

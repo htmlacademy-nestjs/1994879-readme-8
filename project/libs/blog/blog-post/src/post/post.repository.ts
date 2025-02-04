@@ -65,6 +65,10 @@ export class PostRepository extends BasePostgresRepository<PostEntity, CommonPos
       where.title = { contains: query.title, mode: 'insensitive' };
     }
 
+    if (query.fromDate) {
+      where.createdAt = { gte: new Date(query.fromDate) };
+    }
+
     return where;
   }
 

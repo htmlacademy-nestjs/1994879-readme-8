@@ -3,7 +3,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
 import { SubscribeDTO, UserRDO } from '@project/blog-user';
-import { AppHeader, AppRoute, PaginationResult } from '@project/core';
+import { AppHeader, AppRoute, PaginationResult, PostStatus } from '@project/core';
 import { getAppHeaders, getAppURL } from '@project/helpers';
 import { BlogService } from '../blog/blog.service';
 import { FeedQuery } from './feed.query';
@@ -51,7 +51,11 @@ export class FeedService {
     const subscriptions = data.map(({ id }) => id);
 
     const userIds = [userId, ...subscriptions];
-    const userPostsFeed = await this.blogService.getPosts(req, { ...query, userIds });
+    const userPostsFeed = await this.blogService.getPosts(req, {
+      ...query,
+      userIds,
+      postStatus: PostStatus.Published,
+    });
 
     return userPostsFeed;
   }

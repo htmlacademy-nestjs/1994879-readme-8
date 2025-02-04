@@ -11,11 +11,12 @@ import { gatewayConfig } from '@project/api-config';
 import { UserService } from './users/user.service';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { InjectUserIdInterceptor, RequestIdInterceptor } from '@project/interceptors';
-import { NotifyController } from './notify/notify.controller';
-import { NotifyService } from './notify/notify.service';
+import { NotificationController } from './notify/notification.controller';
+import { NotificationService } from './notify/notification.service';
 import { BlogService } from './blog/blog.service';
 import { FeedController } from './feed/feed.controller';
 import { FeedService } from './feed/feed.service';
+import { NotifyModule } from '@project/api-notify';
 
 @Module({
   imports: [
@@ -23,8 +24,9 @@ import { FeedService } from './feed/feed.service';
       load: [appConfig, gatewayConfig],
     }),
     HttpModule.register(getHttpAsyncOptions()),
+    NotifyModule,
   ],
-  controllers: [UserController, BlogController, NotifyController, FeedController],
+  controllers: [UserController, BlogController, NotificationController, FeedController],
   providers: [
     {
       provide: APP_INTERCEPTOR,
@@ -39,7 +41,7 @@ import { FeedService } from './feed/feed.service';
     UserService,
     BlogService,
     FeedService,
-    NotifyService,
+    NotificationService,
   ],
 })
 export class AppModule {}

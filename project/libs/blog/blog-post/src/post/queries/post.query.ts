@@ -35,6 +35,10 @@ export class PostQuery extends PaginationQuery {
   @ApiPropertyOptional({ enum: PostStatus })
   public postStatus?: PostStatus;
 
+  @IsOptional()
+  @ApiPropertyOptional()
+  public fromDate?: Date;
+
   @IsString()
   @IsOptional()
   @ApiPropertyOptional({ type: String })

@@ -4,7 +4,7 @@ export const MailConfig = {
     template: './add-subscriber',
   },
   newPost: {
-    subject: 'Новый пост!',
+    subject: 'Новыt посты!',
     template: './new-post',
   },
 };
