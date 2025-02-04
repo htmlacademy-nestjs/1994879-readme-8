@@ -29,7 +29,7 @@ cp apps/file-vault/.env.example apps/file-vault/.env
 cp apps/notify/.env.example apps/notify/.env
 ```
 
-3. Развернуть Docker
+3. Развернуть _Docker_
 
 ```
 npx nx run account:docker:up
@@ -61,8 +61,8 @@ npx nx run api:serve
 
 ## Документация
 
-Документирование выполнено с помощью встроенных средств в фреймворк Nest.
-С переменными окружения по умолчанию доступно по ссылкам
+Документирование выполнено с помощью встроенных средств в фреймворк _Nest_.
+С переменными окружения по умолчанию доступно по ссылкам `http://<service>/api`
 
 ```
 http://localhost:5000/api - api
