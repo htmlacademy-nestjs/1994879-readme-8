@@ -60,16 +60,6 @@ export class BlogUserController {
     return this.blogUserService.findAll(params);
   }
 
-  @Get(`:${AppRoute.UserId}`)
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: SwaggerOperation.GetUser })
-  @ApiOkResponse({ description: ResponseDescription.UserFound })
-  @ApiNotFoundResponse({ description: ResponseDescription.UserNotFound })
-  @ApiParam({ name: AppRoute.UserId, ...SwaggerUserProperty.userId })
-  public async show(@Param(AppRoute.UserId, MongoIdValidationPipe) id: string) {
-    return this.blogUserService.getById(id);
-  }
-
   @Patch(AppRoute.Password)
   @UseGuards(JwtAuthGuard)
   @ApiOperation({ summary: SwaggerOperation.ChangePassword })
@@ -95,5 +85,24 @@ export class BlogUserController {
   @HttpCode(HttpStatus.NO_CONTENT)
   public async unsubscribe(@UserId() userId: string, @Body() dto: SubscribeDTO) {
     return this.blogUserService.unsubscribe(userId, dto.userId);
+  }
+
+  @Get(AppRoute.Subscriptions)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: SwaggerOperation.Subscriptions })
+  @ApiOkResponse({ type: [UserRDO] })
+  public async getSubscriptions(@UserId() userId: string) {
+    console.log(1111111);
+    return this.blogUserService.findSubscriptions(userId);
+  }
+
+  @Get(`:${AppRoute.UserId}`)
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: SwaggerOperation.GetUser })
+  @ApiOkResponse({ description: ResponseDescription.UserFound })
+  @ApiNotFoundResponse({ description: ResponseDescription.UserNotFound })
+  @ApiParam({ name: AppRoute.UserId, ...SwaggerUserProperty.userId })
+  public async show(@Param(AppRoute.UserId, MongoIdValidationPipe) id: string) {
+    return this.blogUserService.getById(id);
   }
 }

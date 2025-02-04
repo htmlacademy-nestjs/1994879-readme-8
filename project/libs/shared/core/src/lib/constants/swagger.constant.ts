@@ -12,6 +12,7 @@ export enum SwaggerTag {
   Post = 'Routes for posts',
   Comment = 'Routes for comments',
   Like = 'Like routes',
+  Feed = 'My feed',
 }
 
 export enum SwaggerOperation {
@@ -21,6 +22,7 @@ export enum SwaggerOperation {
   ChangePassword = 'Change users password',
   Subscribe = 'Subscribe to user',
   Unsubscribe = 'Unsubscribe from user',
+  Subscriptions = 'List of user subscriptions',
   Login = 'Basic Authorization by login and password',
   RefreshToken = 'Get new pair access, refresh token',
   CheckAuth = 'Validate access token',
@@ -32,6 +34,7 @@ export enum SwaggerOperation {
   PostRemove = 'Delete a post by ID',
   PostCount = 'Count users post',
   Repost = 'Repost publication',
+  Search = 'Search posts by title',
   Like = 'Like post',
   Unlike = 'Unlike post',
   NotiFyNewUser = 'Welcome email for a new user',

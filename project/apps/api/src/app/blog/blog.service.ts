@@ -24,11 +24,10 @@ export class BlogService {
   ) {
     const items = Array.isArray(postsOrComments) ? postsOrComments : [postsOrComments];
     const uniqueUserIds = [...new Set(items.map(({ userId }) => userId))];
-    console.log(333, uniqueUserIds);
+    this.logger.debug('uniqueUserIds', uniqueUserIds);
 
     try {
       const headers = getAppHeaders(req, AppHeader.RequestId);
-      console.log(headers);
       const response = await this.httpService.axiosRef.get<AuthorRDO[]>(
         getAppURL(this.baseUrl.account, AppRoute.User),
         { headers, params: { userIds: uniqueUserIds } }

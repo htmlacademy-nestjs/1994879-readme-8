@@ -14,6 +14,8 @@ import { InjectUserIdInterceptor, RequestIdInterceptor } from '@project/intercep
 import { NotifyController } from './notify/notify.controller';
 import { NotifyService } from './notify/notify.service';
 import { BlogService } from './blog/blog.service';
+import { FeedController } from './feed/feed.controller';
+import { FeedService } from './feed/feed.service';
 
 @Module({
   imports: [
@@ -22,7 +24,7 @@ import { BlogService } from './blog/blog.service';
     }),
     HttpModule.register(getHttpAsyncOptions()),
   ],
-  controllers: [UserController, BlogController, NotifyController],
+  controllers: [UserController, BlogController, NotifyController, FeedController],
   providers: [
     {
       provide: APP_INTERCEPTOR,
@@ -36,6 +38,7 @@ import { BlogService } from './blog/blog.service';
     AppService,
     UserService,
     BlogService,
+    FeedService,
     NotifyService,
   ],
 })

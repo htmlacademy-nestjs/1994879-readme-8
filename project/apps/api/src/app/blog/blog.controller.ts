@@ -27,9 +27,9 @@ import {
   ApiOkResponse,
   ApiOperation,
   ApiParam,
+  ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { UserRDO } from '@project/blog-user';
 import { PostRDO } from '@project/blog-post';
 import { PostQuery } from '@project/blog-post';
 import { ConfigType } from '@nestjs/config';
@@ -40,7 +40,6 @@ import {
   AppHeader,
   AppRoute,
   PaginationQuery,
-  PaginationResult,
   SwaggerOperation,
   SwaggerPostProperty,
   SwaggerResponse,
@@ -52,6 +51,7 @@ import { BlogCommentRDO } from '../rdo/blog-comment.rdo';
 import { BlogCommentWithPaginationRDO } from '../rdo/blog-comment-witt-pagination.rdo';
 import { BlogPostWithPaginationRDO } from '../rdo/blog-post-witt-pagination.rdo';
 import { BlogPostRDO } from '../rdo/blog-post.rdo';
+import { DEFAULT_SEARCH_LIMIT } from './const';
 
 @Controller(AppRoute.Blog)
 @ApiTags(SwaggerTag.Blog)
@@ -97,24 +97,6 @@ export class BlogController {
   @ApiNoContentResponse({ description: SwaggerResponse.PostDeleted })
   public async deletePost(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
     return this.blogService.deletePost(req, postId);
-  }
-
-  @Get(AppRoute.Feed)
-  @ApiOperation({ summary: SwaggerOperation.Feed })
-  @ApiOkResponse({ description: SwaggerResponse.Feed })
-  @UseGuards(CheckAuthGuard)
-  @ApiBearerAuth(TokenName.Access)
-  public async getUserFeed(@UserId() userId: string, @Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
-    const { data: user } = await this.httpService.axiosRef.get<UserRDO>(
-      getAppURL(this.baseUrl.account, AppRoute.User, `${userId}`),
-      { headers }
-    );
-
-    const userIds = [user.id, ...user.subscribers];
-    const userPostsFeed = await this.getPosts({ userIds }, req);
-
-    return userPostsFeed;
   }
 
   @Post(`${AppRoute.PostById}/${AppRoute.Like}`)
@@ -202,5 +184,13 @@ export class BlogController {
   @ApiCreatedResponse({ description: SwaggerResponse.PostCreated })
   async repost(@Param(AppRoute.PostId) postId: string, @Req() req: Request) {
     return this.blogService.createRepost(req, postId);
+  }
+
+  @Get(AppRoute.Search)
+  @ApiOperation({ summary: SwaggerOperation.Search })
+  @ApiOkResponse({ description: SwaggerResponse.PostList })
+  @ApiQuery({ name: AppRoute.Title, ...SwaggerPostProperty.title })
+  async search(@Query(AppRoute.Title) title: string, @Req() req: Request) {
+    return this.getPosts({ title, limit: DEFAULT_SEARCH_LIMIT }, req);
   }
 }

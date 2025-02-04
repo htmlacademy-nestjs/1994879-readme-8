@@ -3,8 +3,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Inject,
   Param,
   ParseFilePipeBuilder,
@@ -25,7 +23,6 @@ import {
   ApiConflictResponse,
   ApiConsumes,
   ApiCreatedResponse,
-  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiOperation,
@@ -41,7 +38,6 @@ import { UserService } from './user.service';
 import { AppHeader, AppRoute, SwaggerOperation, SwaggerResponse, SwaggerTag } from '@project/core';
 import { ChangePasswordDTO, RegisterUserDTO, UserDetailedRDO } from '@project/blog-user';
 import { UserRDO } from '@project/blog-user';
-import { SubscribeDTO } from '@project/blog-user';
 import { CheckAnonymousGuard } from '../guards/check-anonymous.guard';
 
 @Controller(AppRoute.User)
@@ -152,38 +148,6 @@ export class UserController {
       { headers }
     );
 
-    return data;
-  }
-
-  @Post(AppRoute.Subscribe)
-  @ApiOperation({ summary: SwaggerOperation.Subscribe })
-  @UseGuards(CheckAuthGuard)
-  @ApiBearerAuth(TokenName.Access)
-  @ApiOkResponse()
-  @HttpCode(HttpStatus.OK)
-  public async subscribe(@Body() dto: SubscribeDTO, @Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
-    const { data } = await this.httpService.axiosRef.post(
-      getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Subscribe),
-      dto,
-      { headers }
-    );
-    return data;
-  }
-
-  @Post(AppRoute.Unsubscribe)
-  @ApiOperation({ summary: SwaggerOperation.Unsubscribe })
-  @UseGuards(CheckAuthGuard)
-  @ApiBearerAuth(TokenName.Access)
-  @ApiNoContentResponse()
-  @HttpCode(HttpStatus.NO_CONTENT)
-  public async unsubscribe(@Body() dto: SubscribeDTO, @Req() req: Request) {
-    const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.Auth);
-    const { data } = await this.httpService.axiosRef.post(
-      getAppURL(this.baseUrl.account, AppRoute.User, AppRoute.Unsubscribe),
-      dto,
-      { headers }
-    );
     return data;
   }
 }

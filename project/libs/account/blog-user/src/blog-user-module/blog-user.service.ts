@@ -70,6 +70,10 @@ export class BlogUserService {
     return this.blogUserRepository.findByEmail(email);
   }
 
+  public async findSubscriptions(userId: string): Promise<BlogUserEntity[]> {
+    return this.blogUserRepository.findSubscriptions(userId);
+  }
+
   public async subscribe(userId: string, targetUserId: string): Promise<void> {
     if (userId === targetUserId) {
       throw new BadRequestException(UserMessage.SubscribeLoop);

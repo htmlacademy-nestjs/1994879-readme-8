@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { BasePostgresRepository } from '@project/data-access';
 import { PostEntity } from './entities/post.entity';
 import { Prisma } from '@prisma/client';
@@ -11,6 +11,8 @@ import { PostMessage, QueryDefaults } from './post.constant';
 
 @Injectable()
 export class PostRepository extends BasePostgresRepository<PostEntity, CommonPost> {
+  private readonly logger = new Logger(PostRepository.name);
+
   constructor(entityFactory: PostFactory, readonly client: PrismaClientService) {
     super(entityFactory, client);
   }
@@ -98,6 +100,7 @@ export class PostRepository extends BasePostgresRepository<PostEntity, CommonPos
     const skip = calculateSkipItems(page, take);
     const where: Prisma.PostWhereInput = this.buildWhereClause(query);
     const orderBy: Prisma.PostOrderByWithRelationInput = this.buildOrderByClause(query);
+    this.logger.debug(where, orderBy);
 
     const [documents, postCount] = await Promise.all([
       this.client.post.findMany({

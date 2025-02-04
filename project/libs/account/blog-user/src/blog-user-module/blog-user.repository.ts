@@ -25,4 +25,9 @@ export class BlogUserRepository extends BaseMongoRepository<BlogUserEntity, Blog
     const documents = await this.model.find({ _id: { $in: ids } }).exec();
     return documents.map((document) => this.createEntityFromDocument(document));
   }
+
+  public async findSubscriptions(userId: string): Promise<BlogUserEntity[]> {
+    const documents = await this.model.find({ subscribers: userId }).exec();
+    return documents.map((document) => this.createEntityFromDocument(document));
+  }
 }

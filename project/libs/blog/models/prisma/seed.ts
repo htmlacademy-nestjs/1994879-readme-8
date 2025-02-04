@@ -1,18 +1,9 @@
 import { PostStatus, PostType, PrismaClient } from '@prisma/client';
-import { Comment } from '../../../shared/core/src/lib/types/comment.interface';
-
-const getTags = () => [
-  { name: 'technology' },
-  { name: 'health' },
-  { name: 'lifestyle' },
-  { name: 'education' },
-  { name: 'travel' },
-];
 
 const getPosts = () => [
   {
-    type: PostType.Video,
-    status: PostStatus.Published,
+    type: PostType.video,
+    status: PostStatus.published,
     userId: 'user1',
     title: 'Understanding TypeScript',
     description: 'A comprehensive guide to TypeScript.',
@@ -20,8 +11,8 @@ const getPosts = () => [
     tags: ['travel', 'health'],
   },
   {
-    type: PostType.Quote,
-    status: PostStatus.Draft,
+    type: PostType.quote,
+    status: PostStatus.draft,
     userId: 'user2',
     title: 'My Journey to Fitness',
     description: 'Sharing my fitness journey and tips.',
@@ -30,8 +21,8 @@ const getPosts = () => [
     tags: ['travel'],
   },
   {
-    type: PostType.Photo,
-    status: PostStatus.Published,
+    type: PostType.photo,
+    status: PostStatus.published,
     userId: 'user3',
     title: 'Beautiful Sunset',
     url: 'https://example.com/sunset-photo',
@@ -39,25 +30,17 @@ const getPosts = () => [
 ];
 
 async function seedDb(prismaClient: PrismaClient) {
-  const tags = getTags();
-  await prismaClient.tag.createMany({ data: tags, skipDuplicates: true });
-
   const posts = getPosts();
   for (const post of posts) {
     await prismaClient.post.create({
       data: {
         ...post,
-        tags: post.tags
-          ? {
-              connect: post.tags.map((tag) => ({ name: tag })),
-            }
-          : undefined,
       },
     });
   }
 
   const [firstPost, secondPost] = await prismaClient.post.findMany({ take: 2 });
-  await prismaClient.favorite.createMany({
+  await prismaClient.like.createMany({
     data: [
       {
         userId: 'user4',

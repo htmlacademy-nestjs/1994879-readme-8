@@ -11,11 +11,6 @@ export class PaginationQuery {
   @ApiProperty(SwaggerPaginationProperty.itemsPerPage)
   public limit?: number;
 
-  // @IsIn(Object.values(SortDirection))
-  // @IsOptional()
-  // @ApiProperty(SwaggerPaginationProperty.sortDirection)
-  // public sortDirection?: SortDirection;
-
   @Transform(({ value }) => +value)
   @IsOptional()
   @ApiProperty(SwaggerPaginationProperty.currentPage)
