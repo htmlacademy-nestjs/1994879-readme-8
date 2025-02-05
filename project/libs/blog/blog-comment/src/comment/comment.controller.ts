@@ -6,57 +6,63 @@ import {
   Param,
   Delete,
   SerializeOptions,
+  UseGuards,
+  Headers,
+  HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { CommentService } from './comment.service';
 import { CreateCommentDTO } from './dto/create-comment.dto';
-import { ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { CommentRDO } from './rdo/comment.rdo';
 import {
-  CommentApiParam,
-  CommentOperationSummary,
-  CommentResponseDescription,
-} from './comment.constant';
+  ApiBadRequestResponse,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiNotFoundResponse,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { CommentRDO } from './rdo/comment.rdo';
+import { CommentResponseDescription } from './comment.constant';
+import { AppHeader, AppRoute, PaginationQuery, SwaggerOperation, SwaggerTag } from '@project/core';
+import { XUserIdGuard } from '@project/interceptors';
+import { CommentWithPaginationRDO } from './rdo/comment-with-pagination.rdo';
 
-@ApiTags('Routes for comments')
-@Controller('posts/:postId/comments')
-@SerializeOptions({ type: CommentRDO, excludeExtraneousValues: true })
+@ApiTags(SwaggerTag.Comment)
+@Controller(AppRoute.Comment)
 export class CommentController {
   constructor(private readonly commentService: CommentService) {}
 
   @Post()
-  @ApiOperation({ summary: CommentOperationSummary.Create })
-  @ApiParam({ required: true, ...CommentApiParam.postId })
-  @ApiResponse({ status: HttpStatus.CREATED, description: CommentResponseDescription.Created })
-  @ApiResponse({
-    status: HttpStatus.BAD_REQUEST,
-    description: CommentResponseDescription.BadRequest,
-  })
-  async create(@Body() dto: CreateCommentDTO, @Param('postId') postId: string) {
-    return this.commentService.create(postId, dto);
+  @UseGuards(XUserIdGuard)
+  @ApiOperation({ summary: SwaggerOperation.CommentCreate })
+  @ApiCreatedResponse({ type: CommentRDO, description: CommentResponseDescription.Created })
+  @ApiBadRequestResponse({ description: CommentResponseDescription.BadRequest })
+  @SerializeOptions({ type: CommentRDO, excludeExtraneousValues: true })
+  async create(@Body() dto: CreateCommentDTO, @Headers(AppHeader.UserId) userId: string) {
+    return this.commentService.create(dto, userId);
   }
 
-  @Get()
-  @ApiOperation({ summary: CommentOperationSummary.FindAll })
-  @ApiParam({ required: true, ...CommentApiParam.postId })
-  @ApiResponse({ status: HttpStatus.OK, description: CommentResponseDescription.All })
-  async findAll(@Param('postId') postId: string) {
-    return this.commentService.findAll(postId);
+  @Get(`:${AppRoute.PostId}`)
+  @ApiOperation({ summary: SwaggerOperation.CommentList })
+  @ApiOkResponse({ type: CommentWithPaginationRDO, description: CommentResponseDescription.All })
+  @SerializeOptions({ type: CommentWithPaginationRDO, excludeExtraneousValues: true })
+  async findByPostId(@Param(AppRoute.PostId) postId: string, @Query() pagination: PaginationQuery) {
+    const result = await this.commentService.findByPostId(postId, pagination);
+    return result;
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: CommentOperationSummary.FindOne })
-  @ApiResponse({ status: HttpStatus.OK, description: CommentResponseDescription.Found })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: CommentResponseDescription.NotFound })
-  async findOne(@Param('id') id: string) {
-    return this.commentService.getById(id);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: CommentOperationSummary.Remove })
-  @ApiResponse({ status: HttpStatus.NO_CONTENT, description: CommentResponseDescription.Deleted })
-  @ApiResponse({ status: HttpStatus.NOT_FOUND, description: CommentResponseDescription.NotFound })
-  async remove(@Param('id') id: string) {
-    await this.commentService.delete(id);
+  @Delete(`:${AppRoute.CommentId}`)
+  @UseGuards(XUserIdGuard)
+  @ApiOperation({ summary: SwaggerOperation.CommentDelete })
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @ApiNoContentResponse({ description: CommentResponseDescription.Deleted })
+  @ApiNotFoundResponse({ description: CommentResponseDescription.NotFound })
+  async remove(
+    @Param(AppRoute.CommentId) commentId: string,
+    @Headers(AppHeader.UserId) userId: string
+  ) {
+    return this.commentService.delete(commentId, userId);
   }
 }

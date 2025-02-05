@@ -5,6 +5,8 @@ import { ConfigModule } from '@nestjs/config';
 import { appConfig, getMongooseOptions } from '@project/app-config';
 import { AccountConfigModule } from '@project/account-config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { APP_INTERCEPTOR } from '@nestjs/core';
+import { RequestLoggerInterceptor } from '@project/interceptors';
 
 @Module({
   imports: [
@@ -16,7 +18,6 @@ import { MongooseModule } from '@nestjs/mongoose';
       load: [appConfig],
     }),
   ],
-  controllers: [],
-  providers: [],
+  providers: [{ provide: APP_INTERCEPTOR, useClass: RequestLoggerInterceptor }],
 })
 export class AppModule {}

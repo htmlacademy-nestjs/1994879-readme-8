@@ -1,12 +1,13 @@
-import { IsString } from 'class-validator';
+import { IsArray, IsString } from 'class-validator';
+import { PostRDO } from '@project/blog-post';
+import { Type } from 'class-transformer';
+import { UserRDO } from '@project/blog-user';
 
-export class NotifyNewPostDTO {
+export class NotifyNewPostsDTO {
   @IsString()
-  title: string;
+  @IsArray()
+  subscribers: UserRDO[];
 
-  @IsString()
-  content: string;
-
-  @IsString()
-  author: string;
+  @Type(() => PostRDO)
+  public entities: PostRDO[];
 }

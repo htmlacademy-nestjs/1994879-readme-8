@@ -1,10 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Comment } from '@project/core';
+import { Comment, Nullable, PaginationQuery, PaginationResult } from '@project/core';
 import { PrismaClientService } from '@project/models';
 import { BasePostgresRepository } from '@project/data-access';
 import { CommentEntity } from './entities/comment.entity';
 import { CommentFactory } from './comment.factory';
 import { MAX_COMMENTS_COUNT } from './comment.constant';
+import { Prisma } from '@prisma/client';
+import { calculateSkipItems, createPaginationResponse } from '@project/helpers';
 
 @Injectable()
 export class CommentRepository extends BasePostgresRepository<CommentEntity, Comment> {
@@ -21,22 +23,30 @@ export class CommentRepository extends BasePostgresRepository<CommentEntity, Com
     entity.id = record.id;
   }
 
-  public async findAll(postId: string): Promise<CommentEntity[]> {
-    const documents = await this.client.comment.findMany({
-      where: { postId },
-      take: MAX_COMMENTS_COUNT,
-    });
+  public async findByPostId(
+    postId: string,
+    pagination: PaginationQuery
+  ): Promise<PaginationResult<CommentEntity>> {
+    const { page = 1, limit: take = MAX_COMMENTS_COUNT } = pagination;
+    const skip = calculateSkipItems(page, take);
+    const where: Prisma.CommentWhereInput = { postId };
 
-    return documents.map((document) => this.createEntityFromDocument(document));
+    const [count, documents] = await Promise.all([
+      this.client.comment.count({ where }),
+      this.client.comment.findMany({ skip, take, where }),
+    ]);
+    const entities = documents.map((document) => this.createEntityFromDocument(document));
+
+    return createPaginationResponse(entities, count, take, pagination?.page);
   }
 
-  public async findById(id: string): Promise<CommentEntity> {
+  public async findById(id: string): Promise<Nullable<CommentEntity>> {
     const document = await this.client.comment.findFirst({
       where: { id },
     });
 
     if (!document) {
-      throw new NotFoundException(`Comment with id ${id} not found.`);
+      return null;
     }
 
     return this.createEntityFromDocument(document);

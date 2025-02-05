@@ -3,8 +3,7 @@ import { Strategy } from 'passport-local';
 import { Inject, Injectable } from '@nestjs/common';
 import { User } from '@project/core';
 import { AuthenticationService } from '../authentication-module/authentication.service';
-
-const USERNAME_FIELD_NAME = 'email';
+import { USERNAME_FIELD_NAME } from './local.const';
 
 @Injectable()
 export class LocalStrategy extends PassportStrategy(Strategy) {

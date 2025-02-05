@@ -1,103 +1,157 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
 import { BasePostgresRepository } from '@project/data-access';
-import { PostEntity } from './entities/post.entity';
-import { Post as PostModel, Prisma } from '@prisma/client';
+import { PostEntity } from './post.entity';
+import { Prisma } from '@prisma/client';
 import { PostFactory } from './post.factory';
 import { PrismaClientService } from '@project/models';
-import { PaginationResult } from '@project/core';
-import { PostQuery } from './post.query';
+import { CommonPost, PaginationResult, PostStatus, PostType, SortType } from '@project/core';
+import { PostQuery } from './queries/post.query';
+import { calculateSkipItems, createPaginationResponse } from '@project/helpers';
+import { PostMessage, QueryDefaults } from './post.constant';
 
 @Injectable()
-export class PostRepository extends BasePostgresRepository<PostEntity, PostModel> {
+export class PostRepository extends BasePostgresRepository<PostEntity, CommonPost> {
+  private readonly logger = new Logger(PostRepository.name);
+
   constructor(entityFactory: PostFactory, readonly client: PrismaClientService) {
     super(entityFactory, client);
   }
-
-  private includeFields = {
-    tags: true,
-    // comments: true,
-    // favorites: true,
-  };
 
   private async getPostCount(where: Prisma.PostWhereInput): Promise<number> {
     return this.client.post.count({ where });
   }
 
-  private calculatePostsPage(totalCount: number, limit: number): number {
-    return Math.ceil(totalCount / limit);
-  }
-
   public async findById(id: string): Promise<PostEntity> {
-    const document = await this.client.post.findFirst({
+    const document = await this.client.post.findUnique({
       where: { id },
-      include: this.includeFields,
+      include: { _count: { select: { comments: true, likes: true } } },
     });
 
     if (!document) {
-      throw new NotFoundException(`Post with id ${id} not found.`);
+      throw new NotFoundException(PostMessage.NotFound);
     }
 
-    return this.createEntityFromDocument(document);
+    return this.createEntityFromDocument({
+      ...document,
+      type: document.type as PostType,
+      status: document.status as PostStatus,
+      commentsCount: document._count.comments,
+      likesCount: document._count.likes,
+    });
+  }
+
+  private buildWhereClause(query: PostQuery): Prisma.PostWhereInput {
+    const where: Prisma.PostWhereInput = {};
+
+    if (query.userIds) {
+      where.userId = Array.isArray(query.userIds)
+        ? { in: query.userIds }
+        : { equals: query.userIds };
+    }
+
+    if (query.postType) {
+      where.type = query.postType;
+    }
+
+    if (query.postStatus) {
+      where.status = query.postStatus;
+    }
+
+    if (query.tags) {
+      where.tags = Array.isArray(query.tags) ? { hasSome: query.tags } : { hasSome: [query.tags] };
+    }
+
+    if (query.title) {
+      where.title = { contains: query.title, mode: 'insensitive' };
+    }
+
+    if (query.fromDate) {
+      where.createdAt = { gte: new Date(query.fromDate) };
+    }
+
+    return where;
+  }
+
+  private buildOrderByClause(query: PostQuery): Prisma.PostOrderByWithRelationInput {
+    const orderBy: Prisma.PostOrderByWithRelationInput = {};
+
+    const sortDirection = query.sortDirection || QueryDefaults.SortDirection;
+    const sortType = query.sortType || QueryDefaults.SortType;
+
+    switch (sortType) {
+      case SortType.Comments:
+        orderBy.comments = { _count: sortDirection };
+        break;
+      case SortType.Likes:
+        orderBy.likes = { _count: sortDirection };
+        break;
+      case SortType.PublicationDate:
+        orderBy.publicationDate = sortDirection;
+        break;
+      case SortType.CreatedAt:
+        orderBy.createdAt = sortDirection;
+        break;
+      default:
+        orderBy.createdAt = sortDirection;
+        break;
+    }
+
+    return orderBy;
   }
 
   public async findAll(query?: PostQuery): Promise<PaginationResult<PostEntity>> {
-    const skip = query?.page && query?.limit ? (query.page - 1) * query.limit : undefined;
-    const take = query?.limit;
-    const where: Prisma.PostWhereInput = {};
-    const orderBy: Prisma.PostOrderByWithRelationInput = {};
-    if (query?.sortDirection) {
-      orderBy.createdAt = query.sortDirection;
-    }
+    const { page = QueryDefaults.Page, limit: take = QueryDefaults.Limit } = query;
+    const skip = calculateSkipItems(page, take);
+    const where: Prisma.PostWhereInput = this.buildWhereClause(query);
+    const orderBy: Prisma.PostOrderByWithRelationInput = this.buildOrderByClause(query);
+    this.logger.debug(where, orderBy);
 
-    const [records, postCount] = await Promise.all([
-      this.client.post.findMany({ where, orderBy, skip, take, include: this.includeFields }),
+    const [documents, postCount] = await Promise.all([
+      this.client.post.findMany({
+        where,
+        orderBy,
+        skip,
+        take,
+        include: { _count: { select: { comments: true, likes: true } } },
+      }),
       this.getPostCount(where),
     ]);
+    const entities = documents.map((document) =>
+      this.createEntityFromDocument({
+        ...document,
+        type: document.type as PostType,
+        status: document.status as PostStatus,
+        commentsCount: document._count.comments,
+        likesCount: document._count.likes,
+      })
+    );
 
-    return {
-      entities: records.map((record) => this.createEntityFromDocument(record)),
-      currentPage: query?.page,
-      totalPages: this.calculatePostsPage(postCount, take),
-      itemsPerPage: take,
-      totalItems: postCount,
-    };
+    return createPaginationResponse(entities, postCount, take, page);
   }
 
   public async save(entity: PostEntity): Promise<void> {
-    const { id, ...postData } = entity.toPOJO();
-
+    const postData = entity.toPOJO();
     const record = await this.client.post.create({
-      data: {
-        ...postData,
-        tags: {
-          connectOrCreate: (postData.tags ?? []).map(({ name }) => ({
-            where: { name },
-            create: { name },
-          })),
-        },
-      },
+      data: postData,
     });
-
     entity.id = record.id;
   }
 
   public async update(entity: PostEntity): Promise<void> {
     const post = entity.toPOJO();
-    const record = await this.client.post.update({
+    delete post.commentsCount;
+    delete post.likesCount;
+    await this.client.post.update({
       where: { id: post.id },
-      data: {
-        ...post,
-        tags: {
-          connectOrCreate: (post.tags ?? []).map(({ name }) => ({
-            where: { name },
-            create: { name },
-          })),
-        },
-      },
+      data: post,
     });
   }
 
   public async deleteById(id: string): Promise<void> {
     await this.client.post.delete({ where: { id } });
+  }
+
+  public async countUserPost(userId: string): Promise<number> {
+    return this.getPostCount({ userId });
   }
 }

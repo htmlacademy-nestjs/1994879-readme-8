@@ -1,28 +1,19 @@
 import { PostStatus, PostType, PrismaClient } from '@prisma/client';
-import { Comment } from '../../../shared/core/src/lib/types/comment.interface';
-
-const getTags = () => [
-  { name: 'technology' },
-  { name: 'health' },
-  { name: 'lifestyle' },
-  { name: 'education' },
-  { name: 'travel' },
-];
 
 const getPosts = () => [
   {
-    type: PostType.Video,
-    status: PostStatus.Published,
-    userId: 'user1',
+    type: PostType.video,
+    status: PostStatus.published,
+    userId: '67908456a1b5434e7d6e4a9f',
     title: 'Understanding TypeScript',
     description: 'A comprehensive guide to TypeScript.',
     url: 'https://example.com/typescript-guide',
     tags: ['travel', 'health'],
   },
   {
-    type: PostType.Quote,
-    status: PostStatus.Draft,
-    userId: 'user2',
+    type: PostType.quote,
+    status: PostStatus.draft,
+    userId: '67908456a1b5434e7d6e4a9f',
     title: 'My Journey to Fitness',
     description: 'Sharing my fitness journey and tips.',
     text: 'I started my fitness journey a year ago...',
@@ -30,47 +21,39 @@ const getPosts = () => [
     tags: ['travel'],
   },
   {
-    type: PostType.Photo,
-    status: PostStatus.Published,
-    userId: 'user3',
+    type: PostType.photo,
+    status: PostStatus.published,
+    userId: '67991076b894e226d77e7917',
     title: 'Beautiful Sunset',
     url: 'https://example.com/sunset-photo',
   },
 ];
 
 async function seedDb(prismaClient: PrismaClient) {
-  const tags = getTags();
-  await prismaClient.tag.createMany({ data: tags, skipDuplicates: true });
-
   const posts = getPosts();
   for (const post of posts) {
     await prismaClient.post.create({
       data: {
         ...post,
-        tags: post.tags
-          ? {
-              connect: post.tags.map((tag) => ({ name: tag })),
-            }
-          : undefined,
       },
     });
   }
 
   const [firstPost, secondPost] = await prismaClient.post.findMany({ take: 2 });
-  await prismaClient.favorite.createMany({
+  await prismaClient.like.createMany({
     data: [
       {
-        userId: 'user4',
+        userId: '67991076b894e226d77e7917',
         postId: firstPost.id,
       },
       {
-        userId: 'user5',
+        userId: '6761a4c9916464a230378122',
         postId: secondPost.id,
       },
     ],
   });
 
-  const comments = await prismaClient.comment.createMany({
+  await prismaClient.comment.createMany({
     data: [
       {
         message: 'Great post! Very informative.',

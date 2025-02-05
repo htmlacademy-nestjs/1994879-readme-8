@@ -1,57 +1,82 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ConflictException,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreatePostDTO } from './dto/create-post.dto';
 import { UpdatePostDTO } from './dto/update-post.dto';
 import { PostRepository } from './post.repository';
-import { plainToClass } from 'class-transformer';
-import { PostEntity } from './entities/post.entity';
+import { PostEntity } from './post.entity';
 import { PostFactory } from './post.factory';
-import { PostQuery } from './post.query';
-import { Nullable, PaginationResult } from '@project/core';
+import { PostQuery } from './queries/post.query';
+import { PaginationResult } from '@project/core';
+import { PostMessage } from './post.constant';
 
 @Injectable()
 export class PostService {
-  constructor(private readonly postRepository: PostRepository) {}
+  constructor(@Inject(PostRepository) private readonly postRepository: PostRepository) {}
 
-  async create(dto: CreatePostDTO): Promise<PostEntity> {
-    const newPost = PostFactory.createFromPostDTO(dto);
+  private checkAccess(post: PostEntity, userId: string) {
+    if (post.userId !== userId) {
+      throw new ForbiddenException(PostMessage.AccessDeny);
+    }
+  }
+
+  public async getById(id: string): Promise<PostEntity> {
+    const post = this.postRepository.findById(id);
+    if (!post) {
+      throw new NotFoundException(PostMessage.NotFound);
+    }
+    return post;
+  }
+
+  public async create(userId: string, dto: CreatePostDTO): Promise<PostEntity> {
+    const newPost = PostFactory.createFromPostDTO(dto, userId);
     await this.postRepository.save(newPost);
     return newPost;
   }
 
-  async findAll(query: PostQuery): Promise<PaginationResult<PostEntity>> {
+  public async findAll(query: PostQuery): Promise<PaginationResult<PostEntity>> {
     return this.postRepository.findAll(query);
   }
 
-  async findOne(id: string): Promise<PostEntity> {
-    return this.postRepository.findById(id);
+  public async update(id: string, userId: string, dto: UpdatePostDTO): Promise<PostEntity> {
+    const existsPost = await this.getById(id);
+    this.checkAccess(existsPost, userId);
+
+    const updatePost = Object.assign(existsPost, dto, { userId, id });
+    await this.postRepository.update(updatePost);
+
+    return updatePost;
   }
 
-  async update(id: string, dto: UpdatePostDTO): Promise<PostEntity> {
-    const existsPost = await this.postRepository.findById(id);
-    const updatePost = PostFactory.createFromPostDTO(dto);
-    let hasChanges = false;
+  public async remove(id: string, userId: string): Promise<void> {
+    const post = await this.getById(id);
+    this.checkAccess(post, userId);
 
-    for (const [key, value] of Object.entries(updatePost)) {
-      if (value !== undefined && existsPost[key] !== value) {
-        existsPost[key] = value;
-        hasChanges = true;
-      }
-    }
-
-    if (!hasChanges) {
-      return existsPost;
-    }
-
-    await this.postRepository.update(existsPost);
-
-    return existsPost;
+    await this.postRepository.deleteById(id);
   }
 
-  async remove(id: string): Promise<void> {
-    try {
-      await this.postRepository.deleteById(id);
-    } catch {
-      throw new NotFoundException(`Post with ID ${id} not found`);
+  public async createRepost(postId: string, userId: string): Promise<PostEntity> {
+    const post = await this.getById(postId);
+    if (post.userId === userId) {
+      throw new ConflictException(PostMessage.RepostSelf);
     }
+
+    const { entities } = await this.postRepository.findAll({ userIds: userId });
+    const repostExists = entities.some((entity) => entity.isRepost && entity.originalId === postId);
+    if (repostExists) {
+      throw new ConflictException(PostMessage.RepostExists);
+    }
+
+    const newRepost = PostFactory.createRepost(post, userId);
+    await this.postRepository.save(newRepost);
+    return newRepost;
+  }
+
+  public async getUserPostsCount(userId: string): Promise<number> {
+    return this.postRepository.countUserPost(userId);
   }
 }

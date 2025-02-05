@@ -1,0 +1,27 @@
+@port = 4000
+@baseUrl = http://localhost:{{port}}/api
+@userId = 67991076b894e226d77e7917
+@postId = cm6p93n830000s1tou1anh001
+@commentId = cm6pbtpl80003s108bqqdnbwo
+
+###
+# Новый комментарий
+POST {{baseUrl}}/comments HTTP/1.1
+Content-Type: application/json
+x-user-id: {{userId}}
+
+{
+  "message": "Test message!",
+  "postId": "cm6p9pvcy0000s1qokqkbwsy5"
+}
+
+###
+# Комментарии постранично
+GET {{baseUrl}}/comments/{{postId}}?page=1 HTTP/1.1
+
+###
+
+# Удалить комментарий
+DELETE  {{baseUrl}}/comments/{{commentId}} HTTP/1.1
+x-user-id: {{userId}}
+

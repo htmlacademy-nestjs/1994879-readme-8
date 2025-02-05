@@ -1,11 +1,4 @@
-import { UserRDO } from './rdo/user.rdo';
 export { AuthenticationModule } from './authentication-module/authentication.module';
 export { JwtAuthGuard } from './guards/jwt-auth.guard';
 export { LoginUserDTO } from './dto/login-user.dto';
-export { CreateUserDTO } from './dto/create-user.dto';
-export { RegisterUserDTO } from './dto/register-user.dto';
-export { UserRDO } from './rdo/user.rdo';
-export { UserDetailedRDO } from './rdo/user-detailed.rdo';
 export { LoggedUserRDO } from './rdo/logged-user.rdo';
-export { AuthResponseDescription } from './authentication-module/authentication.constant';
-export { ChangePasswordDTO } from './dto/change-password.dto';

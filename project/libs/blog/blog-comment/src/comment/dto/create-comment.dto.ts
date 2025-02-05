@@ -1,15 +1,17 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
-import { CommentSwaggerMessage } from '../comment.constant';
+import { IsNotEmpty, IsString } from 'class-validator';
+import { SwaggerCommentProperty, SwaggerPostProperty } from '@project/core';
 
 export class CreateCommentDTO {
   @IsString()
   @IsNotEmpty()
-  @ApiProperty({ required: true, ...CommentSwaggerMessage.message })
+  @ApiProperty({ required: true })
+  @ApiProperty(SwaggerCommentProperty.message)
   public message: string;
 
   @IsString()
-  @IsMongoId()
-  @ApiProperty({ required: true, ...CommentSwaggerMessage.userId })
-  public userId: string;
+  @IsNotEmpty()
+  @ApiProperty({ required: true })
+  @ApiProperty(SwaggerPostProperty.postId)
+  public postId: string;
 }

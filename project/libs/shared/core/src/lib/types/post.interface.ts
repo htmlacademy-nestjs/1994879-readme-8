@@ -1,48 +1,26 @@
+import { Nullable } from '../interfaces/nullable';
 import { PostStatus } from './post-status.enum';
 import { PostType } from './post-type.enum';
-import { Tag } from './tag.interface';
 
-interface BasePost {
+export interface CommonPost {
   id?: string;
   type: PostType;
   status: PostStatus;
-  publicationDate: Date;
-  tags: Tag[];
+  publicationDate?: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
+  tags?: string[];
   userId: string;
   isRepost: boolean;
-  originalId: string;
-  originalUserId: string;
-}
+  originalId?: string;
+  originalUserId?: string;
 
-export interface VideoPost extends BasePost {
-  type: PostType.Video;
-  title: string;
-  url: string;
-  text: string;
-}
-
-export interface TextPost extends BasePost {
-  type: PostType.Text;
-  title: string;
-  description: string;
-  text: string;
-}
-
-export interface PhotoPost extends BasePost {
-  type: PostType.Photo;
-  url: string;
-}
-
-export interface LinkPost extends BasePost {
-  type: PostType.Link;
-  url: string;
+  title?: string;
   description?: string;
-}
+  text?: string;
+  author?: string;
+  url?: string;
 
-export interface QuotePost extends BasePost {
-  type: PostType.Quote;
-  author: string;
-  text: string;
+  likesCount?: number;
+  commentsCount?: number;
 }
-
-export type Post = VideoPost | TextPost | PhotoPost | LinkPost | QuotePost;

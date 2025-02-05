@@ -1,7 +1,8 @@
 import { APP_PREFIX } from '@project/core';
 
-export function getAppURL(base: string, url?: string): string {
+export function getAppURL(base: string, ...args: string[]): string {
   const normalizedBase = base.endsWith('/') ? base : `${base}/`;
-  const normalizedPrefix = APP_PREFIX + '/';
-  return new URL(url, normalizedBase + normalizedPrefix).toString();
+  const url = args.length > 0 ? args.join('/') : '';
+
+  return new URL(url, normalizedBase).toString();
 }

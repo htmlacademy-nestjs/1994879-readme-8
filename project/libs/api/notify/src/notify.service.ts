@@ -3,7 +3,7 @@ import { AmqpConnection } from '@golevelup/nestjs-rabbitmq';
 import { ConfigType } from '@nestjs/config';
 import { RabbitRouting } from '@project/core';
 import { rabbitMQConfig } from '@project/app-config';
-import { CreateSubscriberDTO, NotifyNewPostDTO } from '@project/email-subscriber';
+import { CreateSubscriberDTO, NotifyNewPostsDTO } from '@project/email-subscriber';
 
 @Injectable()
 export class NotifyService {
@@ -18,7 +18,7 @@ export class NotifyService {
     return this.rabbitClient.publish(this.rabbitOptions.exchange, RabbitRouting.AddSubscriber, dto);
   }
 
-  public async notifyNewPost(dto: NotifyNewPostDTO) {
+  public async renewalPosts(dto: NotifyNewPostsDTO) {
     this.logger.debug(RabbitRouting.NewPost, dto);
     return this.rabbitClient.publish(this.rabbitOptions.exchange, RabbitRouting.NewPost, dto);
   }
