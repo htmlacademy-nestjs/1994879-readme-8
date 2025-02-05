@@ -7,13 +7,16 @@ import {
   HttpStatus,
   Inject,
   Param,
+  ParseFilePipeBuilder,
   Patch,
   Post,
   Query,
   Req,
   SerializeOptions,
+  UploadedFile,
   UseFilters,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { AxiosExceptionFilter } from '../filters/axios-exception.filter';
@@ -21,6 +24,7 @@ import { CheckAuthGuard } from '../guards/check-auth.guard';
 import {
   ApiBearerAuth,
   ApiConflictResponse,
+  ApiConsumes,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -30,16 +34,16 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import { PostRDO } from '@project/blog-post';
+
 import { PostQuery } from '@project/blog-post';
 import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
-import { getAppHeaders, getAppURL, TokenName } from '@project/helpers';
+import { TokenName } from '@project/helpers';
 import { ApiCustomResponse, UserId } from '@project/decorators';
 import {
-  AppHeader,
   AppRoute,
   PaginationQuery,
+  PostStatus,
   SwaggerOperation,
   SwaggerPostProperty,
   SwaggerResponse,
@@ -53,7 +57,10 @@ import { BlogPostWithPaginationRDO } from '../rdo/blog-post-witt-pagination.rdo'
 import { BlogPostRDO } from '../rdo/blog-post.rdo';
 import { DEFAULT_SEARCH_LIMIT } from './const';
 import { SwaggerCommentProperty } from '@project/core';
-import { UpdatePostDTO, CreatePostDTO } from '@project/blog-post';
+import { UpdatePostDTO } from '@project/blog-post';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { PhotoLimit } from '../app.const';
+import { CreateBlogPostDTO } from '../dto/create-blog-post.dto';
 
 @Controller(AppRoute.Blog)
 @ApiTags(SwaggerTag.Blog)
@@ -86,10 +93,22 @@ export class BlogController {
   @ApiOperation({ summary: SwaggerOperation.PostCreate })
   @UseGuards(CheckAuthGuard)
   @ApiBearerAuth(TokenName.Access)
+  @UseInterceptors(FileInterceptor('photo'))
+  @ApiConsumes('multipart/form-data')
   @ApiOkResponse({ type: BlogPostRDO })
   @SerializeOptions({ type: BlogPostRDO, excludeExtraneousValues: true })
-  public async create(@Body() dto: CreatePostDTO, @Req() req: Request) {
-    return this.blogService.createPost(req, dto);
+  public async create(
+    @Body() dto: CreateBlogPostDTO,
+    @Req() req: Request,
+    @UploadedFile(
+      new ParseFilePipeBuilder()
+        .addMaxSizeValidator({ maxSize: PhotoLimit.MaxSize })
+        .addFileTypeValidator({ fileType: PhotoLimit.AvailableTypes })
+        .build({ fileIsRequired: false })
+    )
+    photo?: Express.Multer.File
+  ) {
+    return this.blogService.createPost(req, dto, photo);
   }
 
   @Patch(AppRoute.PostById)
@@ -193,5 +212,14 @@ export class BlogController {
   @ApiQuery({ name: AppRoute.Title, ...SwaggerPostProperty.title })
   async search(@Query(AppRoute.Title) title: string, @Req() req: Request) {
     return this.getPosts({ title, limit: DEFAULT_SEARCH_LIMIT }, req);
+  }
+
+  @Get(AppRoute.Draft)
+  @UseGuards(CheckAuthGuard)
+  @ApiBearerAuth(TokenName.Access)
+  @ApiOperation({ summary: SwaggerOperation.Draft })
+  @ApiOkResponse({ type: BlogPostWithPaginationRDO })
+  async getDraft(@UserId() userId: string, @Req() req: Request) {
+    return this.getPosts({ postStatus: PostStatus.Draft, userIds: [userId] }, req);
   }
 }

@@ -4,19 +4,21 @@ import { ConfigType } from '@nestjs/config';
 import { gatewayConfig } from '@project/api-config';
 import { CommentRDO } from '@project/blog-comment';
 import { PostQuery, PostRDO } from '@project/blog-post';
-import { AppHeader, AppRoute, PaginationQuery, PaginationResult } from '@project/core';
+import { AppHeader, AppRoute, PaginationQuery, PaginationResult, PostType } from '@project/core';
 import { getAppHeaders, getAppURL } from '@project/helpers';
 import { CommentWithPaginationRDO } from '@project/blog-comment';
 import { CreateBlogCommentDTO } from '../dto/create-blog-comment.dto';
 import { AuthorRDO } from '../rdo/author.rdo';
-import { CreatePostDTO } from 'libs/blog/blog-post/src/post/dto/create-post.dto';
 import { UpdatePostDTO } from 'libs/blog/blog-post/src/post/dto/update-post.dto';
+import { AppService } from '../app.service';
+import { CreateBlogPostDTO } from '../dto/create-blog-post.dto';
 
 @Injectable()
 export class BlogService {
   private readonly logger = new Logger(BlogService.name);
   constructor(
     @Inject(HttpService) private readonly httpService: HttpService,
+    @Inject(AppService) private readonly appService: AppService,
     @Inject(gatewayConfig.KEY) private baseUrl: ConfigType<typeof gatewayConfig>
   ) {}
 
@@ -64,7 +66,15 @@ export class BlogService {
     return data;
   }
 
-  public async createPost(req: Request, dto: CreatePostDTO): Promise<PostRDO> {
+  public async createPost(
+    req: Request,
+    dto: CreateBlogPostDTO,
+    photo?: Express.Multer.File
+  ): Promise<PostRDO> {
+    if (dto.type === PostType.Photo) {
+      dto.url = await this.appService.uploadFile(photo);
+    }
+
     const headers = getAppHeaders(req, AppHeader.RequestId, AppHeader.UserId);
     const { data } = await this.httpService.axiosRef.post<PostRDO>(
       getAppURL(this.baseUrl.blog, AppRoute.Post),

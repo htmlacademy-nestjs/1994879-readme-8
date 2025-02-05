@@ -27,7 +27,7 @@ export class BasePostDTO {
 
   @IsOptional()
   @IsDateString()
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   @ApiProperty(SwaggerPostProperty.publicationDate)
   public publicationDate?: Date;
 
@@ -37,7 +37,8 @@ export class BasePostDTO {
   @Length(TagsLimit.ItemMin, TagsLimit.ItemMax, { each: true, message: TagsLimit.ItemsDescription })
   @Transform(({ value }) => {
     if (value) {
-      const lowercased = value.map((item: string) => item.toLowerCase());
+      const items = Array.isArray(value) ? value : [value];
+      const lowercased = items.map((item: string) => item.toLowerCase());
       return Array.from(new Set(lowercased));
     }
     return value;

@@ -30,6 +30,7 @@ export enum AppRoute {
   Feed = 'feed',
   Search = 'search',
   Title = 'title',
+  Draft = 'draft',
   Count = 'count',
   Like = 'likes',
   Notify = 'notify',

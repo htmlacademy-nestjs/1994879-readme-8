@@ -27,6 +27,7 @@ export enum SwaggerOperation {
   RefreshToken = 'Get new pair access, refresh token',
   CheckAuth = 'Validate access token',
   Feed = 'Users feed',
+  Draft = 'Get list of draft posts',
   PostCreate = 'Create a new post',
   PostAll = 'Get all posts',
   PostOne = 'Get a post by ID',
